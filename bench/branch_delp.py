@@ -16,6 +16,14 @@ Granularity ladder (the paper's ablation axis):
           through attributed drift -> the mechanism is *where* old anchors
           keep fighting after later tasks move the shared weights.
 
+B experiment (option B, pre-registered): granularity x budget axis.
+  Job kind "bfifo": same run_gran but the anchor stack is capped at M
+  anchors (fifo eviction of the oldest, identical to anchor_budget.fifo).
+  Question: at matched anchor count M, does the finer-grained branch anchor
+  buy more ell than the neuron anchor (budget savings), or do the two stay
+  paired as in P1?  Sanity: bfifo with M > T never evicts and must
+  bit-match the gran arm of the same seed.
+
 Instrumentation (per run): seg_mass[t, k]  = Fisher mass of anchor t routed
 to segment k; dom_hist[t] = per-neuron dominant segment under task t.
 
@@ -162,13 +170,14 @@ def attribute_drift(anchors, w_pk, dW, gran):
 
 
 # ---------------------------------------------------------------- one run
-def run_gran(seed, data, perms, ntask, lam, gran):
+def run_gran(seed, data, perms, ntask, lam, gran, M=None):
     xtr, ytr, xte, yte = data
     torch.manual_seed(seed)
     model = ADNet(protected=True, nseg=ntask, ntask=ntask).to(DEV)
     opt = torch.optim.Adam(model.parameters(), lr=LR)
     anchors, acc = [], {}
     seg_mass_all, dom_all = [], []
+    evicted, n_created = [], 0
     for phase in range(ntask):
         xs, ys = permute(xtr[:NTRAIN], perms[phase]), ytr[:NTRAIN]
         dl = DataLoader(TensorDataset(xs, ys), batch_size=BS, shuffle=True)
@@ -204,9 +213,14 @@ def run_gran(seed, data, perms, ntask, lam, gran):
             w_pk = win_cnt / max(n_seen, 1)
             attribute_drift(anchors, w_pk, dW, gran)
         anchors.append(make_anchor(model, xs, phase, ntask, gran))
+        n_created += 1
         if gran == "branch":
             seg_mass_all.append(anchors[-1]["seg_mass"])
             dom_all.append(anchors[-1]["dom_hist"])
+        if M is not None:
+            while len(anchors) > M:          # fifo, identical to anchor_budget
+                anchors.pop(0)
+                evicted.append(n_created - len(anchors) - 1)  # origin task id
         a = eval_model(model, xte, yte, perms, phase, ntask, True)
         acc.update(a)
         print(f"  s{seed} {gran} T{phase}: "
@@ -221,6 +235,9 @@ def run_gran(seed, data, perms, ntask, lam, gran):
     if gran == "branch":
         rec["seg_mass"] = [[round(m, 4) for m in row] for row in seg_mass_all]
         rec["dom_hist"] = dom_all
+    if M is not None:
+        rec["M"] = M
+        rec["evicted"] = evicted
     return rec
 
 
@@ -238,6 +255,11 @@ def main():
     ap.add_argument("--dataset", default="mnist", choices=["mnist", "fashion"])
     ap.add_argument("--with-refs", action="store_true",
                     help="also queue corrected SI/MAS reference arms")
+    ap.add_argument("--budgets", default="",
+                    help="comma list of fifo budgets; non-empty queues bfifo "
+                         "jobs for the granularities in --granularities")
+    ap.add_argument("--skip-gran", action="store_true",
+                    help="skip unbounded gran arms (e.g. when P1 data covers them)")
     a = ap.parse_args()
 
     grans = a.granularities.split(",")
@@ -256,30 +278,46 @@ def main():
         sys.modules[__name__].NFISHER, sys.modules[__name__].NUSAGE = 20, 50
         jobs = [("gran", 4, 0, g, 5000.0) for g in GRANS]
         jobs += [("si", 4, 0, "si", LAM_SI), ("mas", 4, 0, "mas", LAM_MAS)]
+        # budget-path sanity: M=10 >= T+1 never evicts -> must bit-match gran
+        jobs += [("bfifo", 4, 0, "neuron", 5000.0, 10),
+                 ("bfifo", 4, 0, "branch", 5000.0, 2)]   # M=2 exercises eviction
     else:
         jobs = []
         for nt in nt_list:
-            for g in grans:
-                for seed in seed_list:
-                    for lam in lam_list:
-                        jobs.append(("gran", nt, seed, g, lam))
+            if not a.skip_gran:
+                for g in grans:
+                    for seed in seed_list:
+                        for lam in lam_list:
+                            jobs.append(("gran", nt, seed, g, lam))
             if a.with_refs:
                 for kind, lam in (("si", LAM_SI), ("mas", LAM_MAS)):
                     for seed in seed_list:
                         jobs.append((kind, nt, seed, kind, lam))
+            if a.budgets:
+                for g in grans:
+                    for Mb in [int(s) for s in a.budgets.split(",")]:
+                        if Mb > nt:
+                            continue          # M >= T+1 can never trigger eviction
+                        for seed in seed_list:
+                            for lam in lam_list:
+                                jobs.append(("bfifo", nt, seed, g, lam, Mb))
 
     mine = [j for i, j in enumerate(jobs) if i % a.n_tasks == a.task_id]
     print(f"[shard {a.task_id}/{a.n_tasks}] {len(mine)}/{len(jobs)} jobs",
           flush=True)
     data = load_data(a.dataset)
     res, t0 = [], time.time()
-    for kind, nt, seed, g, lam in mine:
+    for job in mine:
+        kind, nt, seed, g, lam = job[:5]
+        Mb = job[5] if len(job) > 5 else None
         rec = {"kind": kind, "ntask": nt, "seed": seed,
-               "gran": g if kind == "gran" else kind,
+               "gran": g if kind in ("gran", "bfifo") else kind,
                "lam": lam, "dataset": a.dataset}
         try:
             if kind == "gran":
                 r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g)
+            elif kind == "bfifo":
+                r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g, M=Mb)
             elif kind == "si":
                 r = run_si_impl(seed, data, get_perms(seed, nt), nt, lam)
             elif kind == "mas":
@@ -291,7 +329,8 @@ def main():
             rec["error"] = f"{type(exc).__name__}: {exc}"
             print(f"  FAIL {rec}", flush=True)
         res.append(rec)
-        print(f"  {g} T{nt} s{seed} lam{lam:.0f}: bwt={rec.get('bwt')} "
+        print(f"  {kind} {g}{'M'+str(Mb) if Mb else ''} T{nt} s{seed} "
+              f"lam{lam:.0f}: bwt={rec.get('bwt')} "
               f"avg={rec.get('final_avg')} ell={rec.get('ell')}", flush=True)
 
     if a.smoke:
@@ -300,7 +339,8 @@ def main():
         nt = 4
         ref = ab.run_ours_bounded(0, data, get_perms(0, nt), nt, 5000.0,
                                   "unbounded", 2)
-        neu = next(r for r in res if r.get("gran") == "neuron")
+        neu = next(r for r in res if r.get("gran") == "neuron"
+                   and r.get("kind") == "gran")
         same = ref["acc_matrix"] == neu["acc_matrix"]
         print(f"\nEQUIVALENCE neuron-vs-original: "
               f"{'PASS' if same else 'FAIL'}", flush=True)
@@ -308,6 +348,14 @@ def main():
             print("  orig:", ref["acc_matrix"])
             print("  neu :", neu["acc_matrix"])
         res.append({"kind": "equivalence_check", "pass": bool(same)})
+        # budget path: M=10 >= T+1 never evicts -> bit-match gran neuron
+        bneu = next(r for r in res if r.get("kind") == "bfifo"
+                    and r.get("gran") == "neuron")
+        same_b = bneu["acc_matrix"] == neu["acc_matrix"] \
+            and bneu.get("evicted") == []
+        print(f"EQUIVALENCE bfifo(M=10,no-evict)-vs-gran: "
+              f"{'PASS' if same_b else 'FAIL'}", flush=True)
+        res.append({"kind": "equivalence_check_bfifo", "pass": bool(same_b)})
 
     out = a.out if a.n_tasks == 1 else f"{a.out}.part{a.task_id}"
     json.dump({"results": res, "elapsed": round(time.time() - t0, 1)},
@@ -316,9 +364,10 @@ def main():
 
     agg = {}
     for r in res:
-        if "error" in r or r.get("kind") != "gran":
+        if "error" in r or r.get("kind") not in ("gran", "bfifo"):
             continue
-        agg.setdefault(f"{r['gran']}|lam{r['lam']:.0f}|T{r['ntask']}", []) \
+        mtag = f"M{r['M']}" if r["kind"] == "bfifo" else "unb"
+        agg.setdefault(f"{r['gran']}|{mtag}|lam{r['lam']:.0f}|T{r['ntask']}", []) \
             .append(r)
     print("\n==== aggregate (mean±sd over seeds) ====")
     for key, rs in sorted(agg.items()):

@@ -35,7 +35,7 @@ Usage (server):  CUDA_VISIBLE_DEVICES=0 python branch_delp.py --task-id 0 --n-ta
 Usage (smoke):   python branch_delp.py --smoke --out smoke_branch.json
 """
 import argparse, json, os, statistics as st, sys, time
-import torch, torch.nn.functional as F
+import torch, torch.nn as nn, torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
 _here = os.path.dirname(os.path.abspath(__file__))
@@ -54,6 +54,53 @@ NFISHER, NUSAGE = 300, 500
 GRANS = ["neuron", "branch", "plain"]
 PARAM_KEYS = ["ff.w", "ff.b", "out.w", "out.b"]
 LAM_SI, LAM_MAS = 100.0, 1.0     # SI: S2-paper reference value; MAS: exp6 grid
+
+
+class BiasADNet(ADNet):
+    """ADNet + bias on the OWN segment's dendritic input (C-2 causal probe).
+
+    Layout note: dend.weight is (nh*nseg, ntask); task-t gating uses ONLY
+    column t, and protect_grads trains only block t (own segment) of that
+    column.  fixed mode adds a constant b to segment==ctx-task everywhere
+    (train, eval, usage alike); learned mode adds a trained per-(task,seg)
+    bias table seg_bias (ntask, nseg) initialised at zero.
+    """
+    def __init__(self, ntask, nseg, own_bias=0.0, bias_mode="fixed"):
+        super().__init__(protected=True, nseg=nseg, ntask=ntask)
+        self.own_bias, self.bias_mode = own_bias, bias_mode
+        if bias_mode == "learned":
+            self.seg_bias = nn.Parameter(torch.zeros(ntask, nseg))
+
+    def forward(self, x, ctx):
+        t = self.ff(x)
+        u = self.dend(ctx).view(-1, self.nseg, self.nh)
+        if self.bias_mode == "fixed":
+            if self.own_bias != 0.0:
+                tid = ctx.argmax(1)                       # (batch,)
+                bias = torch.zeros_like(u)
+                bias[torch.arange(u.size(0), device=u.device), tid] = self.own_bias
+                u = u + bias
+        else:                                             # learned
+            u = u + self.seg_bias[ctx.argmax(1)].unsqueeze(2)
+        d, seg_id = u.max(dim=1)
+        h = kwta(t * torch.sigmoid(d))
+        return self.out(h), seg_id
+
+
+def dom_instr(o, o_seg, ntask):
+    """Gating instrumentation with the dead-neuron artifact controlled:
+    dom_hist over ALL neurons (legacy, inflated bin 0 by never-active
+    neurons) and dom_hist_active over o>0 neurons only, plus dead_frac."""
+    act = o > 0
+    dom = o_seg.argmax(0)
+    hist = torch.bincount(dom, minlength=ntask).tolist()
+    if act.any():
+        hist_a = torch.bincount(dom[act], minlength=ntask).tolist()
+    else:
+        hist_a = [0] * ntask
+    return {"dom_hist": hist, "dom_hist_active": hist_a,
+            "dead_frac": round(float((~act).float().mean()), 4),
+            "o_mean": round(float(o.mean()), 4)}
 
 
 # ------------------------------------------------------------ stats & anchors
@@ -109,12 +156,14 @@ def make_anchor(model, xs, task_id, ntask, gran):
     theta = _clone(P)
     if gran in ("neuron", "plain"):
         fisher = fisher_raw(model, xs, task_id, ntask)
+        o, o_seg_all = usage_stats(model, xs, task_id, ntask)
         if gran == "neuron":
-            o, _ = usage_stats(model, xs, task_id, ntask)
             fisher["ff.w"] = fisher["ff.w"] * o.unsqueeze(1)
             fisher["ff.b"] = fisher["ff.b"] * o
             fisher["out.w"] = fisher["out.w"] * o.unsqueeze(0)
-        return {"gran": gran, "theta": theta, "fisher": fisher}
+        rec = {"gran": gran, "theta": theta, "fisher": fisher}
+        rec.update(dom_instr(o, o_seg_all, ntask))
+        return rec
     # branch
     fisher = fisher_raw(model, xs, task_id, ntask)
     o, o_seg = usage_stats(model, xs, task_id, ntask)
@@ -127,9 +176,10 @@ def make_anchor(model, xs, task_id, ntask, gran):
         m = m + (o_seg[k].unsqueeze(0) * fisher["out.w"]).sum()
         seg_mass.append(float(m) + float(fisher["out.b"].sum()) / len(kz))
     dom = o_seg.argmax(0)
-    return {"gran": gran, "theta": theta, "fisher": fisher, "o_seg": o_seg,
-            "refs": refs, "kz": kz, "seg_mass": seg_mass,
-            "dom_hist": torch.bincount(dom, minlength=o_seg.shape[0]).tolist()}
+    rec = {"gran": gran, "theta": theta, "fisher": fisher, "o_seg": o_seg,
+           "refs": refs, "kz": kz, "seg_mass": seg_mass}
+    rec.update(dom_instr(o, o_seg, ntask))
+    return rec
 
 
 def anchor_penalty(a, P, gran):
@@ -170,14 +220,21 @@ def attribute_drift(anchors, w_pk, dW, gran):
 
 
 # ---------------------------------------------------------------- one run
-def run_gran(seed, data, perms, ntask, lam, gran, M=None):
+def run_gran(seed, data, perms, ntask, lam, gran, M=None,
+             own_bias=0.0, bias_mode="none"):
     xtr, ytr, xte, yte = data
     torch.manual_seed(seed)
-    model = ADNet(protected=True, nseg=ntask, ntask=ntask).to(DEV)
+    if own_bias or bias_mode == "learned":
+        model = BiasADNet(ntask, ntask, own_bias=own_bias,
+                          bias_mode=bias_mode if bias_mode != "none"
+                          else "fixed").to(DEV)
+    else:
+        model = ADNet(protected=True, nseg=ntask, ntask=ntask).to(DEV)
     opt = torch.optim.Adam(model.parameters(), lr=LR)
     anchors, acc = [], {}
     seg_mass_all, dom_all = [], []
     evicted, n_created = [], 0
+    bias_eye = torch.zeros(ntask, ntask, device=DEV)
     for phase in range(ntask):
         xs, ys = permute(xtr[:NTRAIN], perms[phase]), ytr[:NTRAIN]
         dl = DataLoader(TensorDataset(xs, ys), batch_size=BS, shuffle=True)
@@ -202,6 +259,9 @@ def run_gran(seed, data, perms, ntask, lam, gran, M=None):
                     loss = loss + lam * pen
                 loss.backward()
                 model.protect_grads(phase)
+                if bias_mode == "learned" and model.seg_bias.grad is not None:
+                    model.seg_bias.grad.mul_(bias_eye)   # only entry [phase,phase]
+                    bias_eye[phase, phase] = 1.0
                 opt.step()
                 if gran == "branch":
                     for k in range(ntask):
@@ -216,7 +276,8 @@ def run_gran(seed, data, perms, ntask, lam, gran, M=None):
         n_created += 1
         if gran == "branch":
             seg_mass_all.append(anchors[-1]["seg_mass"])
-            dom_all.append(anchors[-1]["dom_hist"])
+        dom_all.append({k: anchors[-1][k] for k in
+                        ("dom_hist", "dom_hist_active", "dead_frac")})
         if M is not None:
             while len(anchors) > M:          # fifo, identical to anchor_budget
                 anchors.pop(0)
@@ -234,10 +295,19 @@ def run_gran(seed, data, perms, ntask, lam, gran, M=None):
                           for p in range(ntask)]}
     if gran == "branch":
         rec["seg_mass"] = [[round(m, 4) for m in row] for row in seg_mass_all]
-        rec["dom_hist"] = dom_all
+    rec["dom_per_phase"] = dom_all
     if M is not None:
         rec["M"] = M
         rec["evicted"] = evicted
+    if own_bias or bias_mode != "none":
+        rec["own_bias"], rec["bias_mode"] = own_bias, bias_mode
+    if bias_mode == "learned":
+        # Q8b: record the trained per-(task,seg) bias table, not the scalar
+        # constructor arg.  seg_bias[t, t] is the own-task own-segment bias;
+        # zero-effect claim = diag ~ 0 and absmax ~ 0.
+        sb = model.seg_bias.detach().cpu()
+        rec["seg_bias_own"] = [round(v, 6) for v in sb.diag().tolist()]
+        rec["seg_bias_absmax"] = round(sb.abs().max().item(), 6)
     return rec
 
 
@@ -260,6 +330,11 @@ def main():
                          "jobs for the granularities in --granularities")
     ap.add_argument("--skip-gran", action="store_true",
                     help="skip unbounded gran arms (e.g. when P1 data covers them)")
+    ap.add_argument("--own-bias", type=float, default=0.0,
+                    help="C-2 causal probe: bias on own segment (applies to all "
+                         "gran jobs of this process)")
+    ap.add_argument("--bias-mode", default="none",
+                    choices=["none", "fixed", "learned"])
     a = ap.parse_args()
 
     grans = a.granularities.split(",")
@@ -315,9 +390,11 @@ def main():
                "lam": lam, "dataset": a.dataset}
         try:
             if kind == "gran":
-                r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g)
+                r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g,
+                             own_bias=a.own_bias, bias_mode=a.bias_mode)
             elif kind == "bfifo":
-                r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g, M=Mb)
+                r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g, M=Mb,
+                             own_bias=a.own_bias, bias_mode=a.bias_mode)
             elif kind == "si":
                 r = run_si_impl(seed, data, get_perms(seed, nt), nt, lam)
             elif kind == "mas":

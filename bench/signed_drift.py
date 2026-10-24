@@ -74,18 +74,17 @@ def run(seed, data, perms, bias):
     anchors, acc = [], {}
     phases = []
     for t in range(NTASK):
-        xtr_t = permute(xtr, perms[t])[:NTRAIN]
-        ytr_t = torch.full((len(xtr_t),), t, dtype=torch.long)
-        xs = xtr_t[:NUSAGE]
-        dl = DataLoader(TensorDataset(xtr_t, ytr_t), batch_size=BS,
-                        shuffle=True)
+        xs, ys = permute(xtr[:NTRAIN], perms[t]), ytr[:NTRAIN]
+        dl = DataLoader(TensorDataset(xs, ys), batch_size=BS, shuffle=True)
         snap = model.dend.weight[:, t].detach().clone()
         u0 = usage_gate(model, xs, t, NTASK)
         for ep in range(EPOCHS):
             for xb, yb in dl:
                 xb, yb = xb.to(DEV), yb.to(DEV)
+                ctx = F.one_hot(torch.full((xb.size(0),), t, device=DEV),
+                                NTASK).float()
                 opt.zero_grad()
-                out, _ = model(xb, F.one_hot(yb, NTASK).float())
+                out, _ = model(xb, ctx)
                 loss = F.cross_entropy(out, yb)
                 if anchors:
                     from exp6_baselines import flat_params

@@ -37,13 +37,15 @@ for _cand in (os.path.join(_here, "..", "dendritic-lab"),   # server layout
         sys.path.insert(0, _cand)
         break
 from exp6_baselines import (SEEDS, EPOCHS, BS, NTRAIN, NH, LR, DEV,
-                            get_perms, flat_params, eval_model, finish)
+                            get_perms, flat_params, eval_model, finish,
+                            run_si_impl, run_mas_impl)
 from exp4_branch_protection import ADNet, permute, kwta
 from anchor_budget import load_data
 
 NFISHER, NUSAGE = 300, 500
 GRANS = ["neuron", "branch", "plain"]
 PARAM_KEYS = ["ff.w", "ff.b", "out.w", "out.b"]
+LAM_SI, LAM_MAS = 100.0, 1.0     # SI: S2-paper reference value; MAS: exp6 grid
 
 
 # ------------------------------------------------------------ stats & anchors
@@ -234,6 +236,8 @@ def main():
     ap.add_argument("--lams", default="5000")
     ap.add_argument("--ntasks", default="10,20")
     ap.add_argument("--dataset", default="mnist", choices=["mnist", "fashion"])
+    ap.add_argument("--with-refs", action="store_true",
+                    help="also queue corrected SI/MAS reference arms")
     a = ap.parse_args()
 
     grans = a.granularities.split(",")
@@ -251,6 +255,7 @@ def main():
         eb.NFISHER, eb.NUSAGE = 20, 50
         sys.modules[__name__].NFISHER, sys.modules[__name__].NUSAGE = 20, 50
         jobs = [("gran", 4, 0, g, 5000.0) for g in GRANS]
+        jobs += [("si", 4, 0, "si", LAM_SI), ("mas", 4, 0, "mas", LAM_MAS)]
     else:
         jobs = []
         for nt in nt_list:
@@ -258,6 +263,10 @@ def main():
                 for seed in seed_list:
                     for lam in lam_list:
                         jobs.append(("gran", nt, seed, g, lam))
+            if a.with_refs:
+                for kind, lam in (("si", LAM_SI), ("mas", LAM_MAS)):
+                    for seed in seed_list:
+                        jobs.append((kind, nt, seed, kind, lam))
 
     mine = [j for i, j in enumerate(jobs) if i % a.n_tasks == a.task_id]
     print(f"[shard {a.task_id}/{a.n_tasks}] {len(mine)}/{len(jobs)} jobs",
@@ -265,10 +274,18 @@ def main():
     data = load_data(a.dataset)
     res, t0 = [], time.time()
     for kind, nt, seed, g, lam in mine:
-        rec = {"kind": kind, "ntask": nt, "seed": seed, "gran": g,
+        rec = {"kind": kind, "ntask": nt, "seed": seed,
+               "gran": g if kind == "gran" else kind,
                "lam": lam, "dataset": a.dataset}
         try:
-            r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g)
+            if kind == "gran":
+                r = run_gran(seed, data, get_perms(seed, nt), nt, lam, g)
+            elif kind == "si":
+                r = run_si_impl(seed, data, get_perms(seed, nt), nt, lam)
+            elif kind == "mas":
+                r = run_mas_impl(seed, data, get_perms(seed, nt), nt, lam)
+            else:
+                raise ValueError(kind)
             rec.update(r)
         except Exception as exc:                              # noqa: BLE001
             rec["error"] = f"{type(exc).__name__}: {exc}"
@@ -299,7 +316,7 @@ def main():
 
     agg = {}
     for r in res:
-        if "error" in r or r.get("gran") is None:
+        if "error" in r or r.get("kind") != "gran":
             continue
         agg.setdefault(f"{r['gran']}|lam{r['lam']:.0f}|T{r['ntask']}", []) \
             .append(r)

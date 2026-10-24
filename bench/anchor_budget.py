@@ -149,7 +149,16 @@ def _evict_agew2(anchors, M, theta_now, origin=None):
                 origin.pop(0)
 
 
-def _enforce(anchors, M, policy, theta_now, origin=None):
+def _stack_penalty(anchors, theta_now):
+    """Total quadratic penalty of the current stack at theta_now (unit lambda)."""
+    pen = 0.0
+    for a in anchors:
+        for k, v in theta_now.items():
+            pen = pen + (a["fisher"][k] * (v - a["theta"][k]) ** 2).sum()
+    return float(pen)
+
+
+def _enforce(anchors, M, policy, theta_now, origin=None, stats=None):
     if policy == "unbounded":
         return
     if policy == "fifo":
@@ -163,10 +172,21 @@ def _enforce(anchors, M, policy, theta_now, origin=None):
     elif policy == "agew2":
         _evict_agew2(anchors, M, theta_now, origin)
     elif policy == "merge":
+        instrument = stats is not None
+        if instrument:
+            stats["pen_before"] = _stack_penalty(anchors, theta_now)
         while len(anchors) > M:
             i, j = _merge_once(anchors)
+            if stats is not None:
+                stats["n_merges"] += 1
             if origin is not None:
                 origin.pop(j)   # merged twin stored at i; slot j's origin dies
+        if instrument:
+            pen_after = _stack_penalty(anchors, theta_now)
+            rel = abs(pen_after - stats["pen_before"]) / max(stats["pen_before"],
+                                                             1e-12)
+            stats["drifts"].append(rel)
+            stats["max_rel_drift"] = max(stats["max_rel_drift"], rel)
     else:
         raise ValueError(policy)
 
@@ -179,6 +199,7 @@ def run_ours_bounded(seed, data, perms, ntask, lam, policy, M):
     opt = torch.optim.Adam(model.parameters(), lr=LR)
     anchors, acc = [], {}
     origin, survivor_history = [], []
+    mstats = {"n_merges": 0, "max_rel_drift": 0.0, "drifts": []}
     for phase in range(ntask):
         xs, ys = permute(xtr[:NTRAIN], perms[phase]), ytr[:NTRAIN]
         dl = DataLoader(TensorDataset(xs, ys), batch_size=BS, shuffle=True)
@@ -206,7 +227,7 @@ def run_ours_bounded(seed, data, perms, ntask, lam, policy, M):
         anchors.append(new_anchor)
         origin.append(phase)
         theta_now = flat_params(model)
-        _enforce(anchors, M, policy, theta_now, origin)
+        _enforce(anchors, M, policy, theta_now, origin, mstats)
         survivor_history.append(sorted(origin))
         a = eval_model(model, xte, yte, perms, phase, ntask, True)
         acc.update(a)
@@ -219,7 +240,10 @@ def run_ours_bounded(seed, data, perms, ntask, lam, policy, M):
             "ell": round(ell, 2), "n_anchors_final": len(anchors),
             "acc_matrix": [[round(acc[(p, c)], 2) for c in range(p + 1)]
                            for p in range(ntask)],
-            "survivor_history": survivor_history}
+            "survivor_history": survivor_history,
+            "n_merges": mstats["n_merges"],
+            "max_rel_drift": round(mstats["max_rel_drift"], 8),
+            "merge_drifts": [round(d, 8) for d in mstats["drifts"]]}
 
 
 # ---------------------------------------------------------------- driver

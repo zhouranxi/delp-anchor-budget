@@ -36,11 +36,41 @@ from the plasticity axis.
 (keep only the previous task's anchor) posts the highest final accuracy of
 any arm on Permuted-MNIST (68.3–71.1 at T=10, 56.4–59.4 at T=20) by
 maximizing the learning term (ℓ 81–85) — at 3–5× the forgetting of
-unbounded DeLP (BWT −15.8/−25.7). Online EWC (Chaudhry 2018, γ=1) at its
-best λ=1000 reaches 67.5/46.0: statistically indistinguishable from
-DeLP-fifo at the same λ at T=10 (67.4, t(9)=−0.3), behind it at T=20
-(fifo +3.5, t(9)=7.0). Neither scheme can accumulate the stack problem —
-that is the point of the comparison.
+unbounded DeLP (BWT −15.8/−25.7).
+
+**Soft bound beats hard bound, and they obey one law (R8, n=10).**
+Sweeping online EWC's discount γ ∈ {0.5, 0.9, 1}: γ=0.5 overtakes
+DeLP-fifo at *every* (λ, T) grid cell (paired +4.7…+7.9, all |t(9)|≥10.4)
+at matched BWT — an honest negative result for our own repair. The
+mechanism: discounting is itself a *soft* bound (mass converges to a
+horizon ≈ 1/(1−γ) tasks). Across all five bounded-mass arms the learning
+term is log-linear in the protected-mass horizon h:
+
+| arm | h | ℓ (T=20, λ=1000) |
+|---|---|---|
+| plain EWC | 1 | 83.7 |
+| online γ=0.5 | 2 | 76.1 |
+| DeLP-fifo M=5 | 5 | 68.3 |
+| online γ=0.9 | 10 | 56.6 |
+| unbounded | 20 | 51.8 |
+
+ℓ ≈ 84 − 11·ln h, **R² = 0.99** (`analyze_soft_hard_bound.py`). Robustness:
+the fit holds per-seed (every seed individually R² ≥ 0.98, slope −10.9±0.6),
+replicates at T=10 (R² = 1.00), and the ordering is monotone at every grid λ
+(mean-fit R² 0.99/0.94/0.80 as λ tightens). Bounding
+accumulated anchor mass — not the eviction mechanism — is the active
+ingredient; the explicit window's residual is an auditable, discrete,
+policy-selectable protection set.
+
+**Merge, measured (R8 instrumentation, 40 runs).** Merge removes exactly
+the inter-anchor cross terms: the stack penalty drops one-sidedly (per-run
+maxima 43–45% at M=2, worst 64%; 18–34% at M=5; 77% of individual merges
+move the penalty at all), while the accuracy trajectory remains
+indistinguishable from unbounded.
+
+**Budget dose–response (R8, T=20, λ=5000, n=10).** M = 2,3,4,5,6,8,10 →
+accuracy 52.6, 49.0, 44.7, 42.0, 40.1, 36.3, 35.1 (BWT −24.3 → −5.2);
+every M significantly above unbounded (38.6; paired t(9) 27.2 → 8.0).
 
 **No-protection reference (R7, Split-CIFAR-100, n=10).** λ=0 (plain SGD)
 reaches 27.0±1.7 (T=10) and 36.9±3.4 (T=20) — above every DeLP arm.

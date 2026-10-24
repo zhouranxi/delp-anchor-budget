@@ -30,7 +30,7 @@ from exp4_branch_protection import ADNet, permute
 from anchor_budget import load_data
 
 
-def run_ewc(seed, data, perms, ntask, lam, mode):
+def run_ewc(seed, data, perms, ntask, lam, mode, gamma=1.0):
     xtr, ytr, xte, yte = data
     torch.manual_seed(seed)
     model = ADNet(protected=True, nseg=ntask, ntask=ntask).to(DEV)
@@ -61,9 +61,11 @@ def run_ewc(seed, data, perms, ntask, lam, mode):
         new_anchor = fisher_usage(model, xs, phase, ntask)
         if mode == "plain" or anchor is None:
             anchor = new_anchor
-        else:                       # online (gamma=1): Fisher adds, theta tracks latest
+        else:   # online (Chaudhry et al.): Fisher runs with discount gamma,
+                # theta_ref tracks the latest snapshot
             anchor = {"theta": new_anchor["theta"],
-                      "fisher": {k: anchor["fisher"][k] + new_anchor["fisher"][k]
+                      "fisher": {k: gamma * anchor["fisher"][k]
+                                 + new_anchor["fisher"][k]
                                  for k in new_anchor["fisher"]}}
         a = eval_model(model, xte, yte, perms, phase, ntask, True)
         acc.update(a)
@@ -88,6 +90,7 @@ def main():
     ap.add_argument("--seeds", default="0,1,2,3,4,5,6,7,8,9")
     ap.add_argument("--lams", default="5000")
     ap.add_argument("--ntasks", default="10,20")
+    ap.add_argument("--gamma", type=float, default=1.0)
     ap.add_argument("--dataset", default="mnist", choices=["mnist", "fashion"])
     a = ap.parse_args()
 
@@ -117,9 +120,10 @@ def main():
     res, t0 = [], time.time()
     for mode, nt, seed, lam in mine:
         rec = {"kind": "ewc", "mode": mode, "ntask": nt, "seed": seed,
-               "lam": lam, "dataset": a.dataset}
+               "lam": lam, "gamma": a.gamma, "dataset": a.dataset}
         try:
-            rec.update(run_ewc(seed, data, get_perms(seed, nt), nt, lam, mode))
+            rec.update(run_ewc(seed, data, get_perms(seed, nt), nt, lam,
+                               mode, a.gamma))
         except Exception as exc:                                  # noqa: BLE001
             rec["error"] = f"{type(exc).__name__}: {exc}"
             print(f"  FAIL {rec}", flush=True)

@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{zhou2026delpS1}
+R.~Zhou, Segment specialization in active-dendrite continual learning: An audit, an artifact, and a causal repair, Preprint, Zenodo, version 1, doi:10.5281/zenodo.23637973, code: \url{https://github.com/zhouranxi/delp-anchor-budget} (2026).
+
+\bibitem{iyer2022}
+A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
+
+\bibitem{boahen2022}
+K.~Boahen, Dendrocentric learning for synthetic intelligence, Nature 612 (2022) 43--50.
+
+\bibitem{poirazi2020}
+P.~Poirazi, A.~Papoutsi, Illuminating dendritic function with computational models, Nature Reviews Neuroscience 21 (2020) 303--321.
+
+\bibitem{zhou2026audit}
+R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated protection for continual learning, Preprint, Zenodo, version 2, doi:10.5281/zenodo.23602281, code: \url{https://github.com/zhouranxi/delp-audit} (2026).
+
+\bibitem{zhou2026repair}
+R.~Zhou, Repair headroom, not dying gates: When an own-segment bias helps continual learning --- and when it silently reverses, Preprint, 2026, companion paper (S3), submission-ready; code and raw records in \url{https://github.com/zhouranxi/delp-anchor-budget} (2026).
+
+\end{thebibliography}

@@ -6,7 +6,7 @@
   \def\href#1#2{#2} \def\path#1{#1}\fi
 
 \bibitem{zhou2026delpS1}
-R.~Zhou, Segment specialization audits and a dose--response repair in active-dendrite continual learning, Preprint (companion paper, S1), 2026, code: \url{https://github.com/zhouranxi/delp-anchor-budget}.
+R.~Zhou, Segment specialization in active-dendrite continual learning: An audit, an artifact, and a causal repair, Preprint, Zenodo, version 1, doi:10.5281/zenodo.23637973, code: \url{https://github.com/zhouranxi/delp-anchor-budget} (2026).
 
 \bibitem{iyer2022}
 A.~Iyer, K.~Grewal, A.~Velu, L.~Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).

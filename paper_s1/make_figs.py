@@ -10,7 +10,17 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RES = os.path.join(HERE, '..', 'delp-anchor-budget', 'bench', 'results')
+# Works from two layouts: workspace (paper_s1 as sibling of delp-anchor-budget)
+# and repo (paper_s1 inside delp-anchor-budget).
+RES = FIG = None
+for _cand in (os.path.join(HERE, '..', 'delp-anchor-budget', 'bench', 'results'),
+              os.path.join(HERE, '..', 'bench', 'results'),
+              os.path.join(HERE, 'results')):
+    if os.path.isdir(_cand):
+        RES = _cand
+        break
+if RES is None:
+    sys.exit('results dir not found relative to %s' % HERE)
 FIG = os.path.join(HERE, 'figs')
 os.makedirs(FIG, exist_ok=True)
 

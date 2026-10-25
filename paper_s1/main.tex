@@ -149,8 +149,8 @@ failure of the previous one:
 \item \textbf{A causal repair (Sec.~\ref{sec:causal}).} If missing
       specialization is load-bearing rather than cosmetic, restoring it
       should help. It does: adding a constant bias $b$ to the own-segment
-      dendritic input during training, evaluation, and usage measurement
-      raises the learning term in every cell of a
+      dendritic input during training, evaluation, and anchor
+      construction raises the learning term in every cell of a
       $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid ---
       $\Delta\ell$ positive in $20/20$ dose cells, significant in $18/20$
       ($n{=}10$ paired) --- with final accuracy significant simultaneously
@@ -468,12 +468,17 @@ with.
 
 If the missing specialization is load-bearing, causally restoring it should
 improve the trade-off in Eq.~\eqref{eq:identity}. We add a constant bias $b$
-to the own-segment dendritic input, applied identically in training,
-evaluation, and usage measurement: $u_{j,t} \mathrel{+}= b$ whenever the
-context selects task $t$. The intervention is deliberately dumb --- no
-learned parameters, no schedule, no per-neuron structure --- so that any
-effect is attributable to the routing prior alone. Doses $b \in \{0, 1, 3,
-10\}$; all comparisons paired against $b{=}0$ on identical seeds.
+to the own-segment dendritic input: $u_{j,t} \mathrel{+}= b$ whenever the
+context selects task $t$. The bias is active in training, evaluation, and
+anchor construction (the Fisher measurement that drives usage-localized
+protection); the dominant-segment win-rate instrument deliberately reads
+the raw, bias-free gates, so that every routing statistic in this paper
+describes what the network itself encodes rather than what the bias
+forces (Sec.~\ref{sec:compensation}). The intervention is deliberately
+dumb --- no learned parameters, no schedule, no per-neuron structure ---
+so that any effect is attributable to the routing prior alone. Doses
+$b \in \{0, 1, 3, 10\}$; all comparisons paired against $b{=}0$ on
+identical seeds.
 
 \subsection{Result: the learning term and accuracy improve everywhere}
 
@@ -491,6 +496,19 @@ significantly positive in $8/12$ cells, and in all six MNIST cells), and
 partially trades back at $T{=}20$, where $3/8$ cells show a significant
 mild BWT cost ($-0.66$ to $-0.95$) and the remaining five are
 statistically indistinguishable from baseline.
+
+Two robustness notes. First, the $20/20$ sign uniformity of $\Delta\ell$
+is itself the strongest guard against multiplicity: a sign test gives
+$p = 2^{-20}$, orders of magnitude below any family-wise correction over
+the grid. Second, the intervention also reduces neuron mortality ---
+measured on the raw, bias-free network, the mean dead fraction drops by
+$3.9$pp (MNIST) and $2.3$pp (Fashion) at $T{=}10$ --- and per-run
+$\Delta\ell$ correlates with the mortality reduction ($r{=}-0.49$ and
+$-0.68$). We read this as one causal chain rather than a confound:
+raising the own-segment gate raises $\mathrm{sigmoid}(u)$ during
+training, which increases kWTA survival, so forcing the routing prior is
+also what keeps neurons alive; the routing and capacity channels are two
+faces of a single intervention, not competing explanations.
 
 \begin{table}[t]
 \centering\small

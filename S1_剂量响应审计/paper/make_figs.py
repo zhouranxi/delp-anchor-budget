@@ -13,7 +13,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # Works from two layouts: workspace (paper_s1 as sibling of delp-anchor-budget)
 # and repo (paper_s1 inside delp-anchor-budget).
 RES = FIG = None
-for _cand in (os.path.join(HERE, '..', 'delp-anchor-budget', 'bench', 'results'),
+for _cand in (os.path.join(HERE, '..', 'results'),                    # self-contained
+              os.path.join(HERE, '..', 'delp-anchor-budget', 'bench', 'results'),
               os.path.join(HERE, '..', 'bench', 'results'),
               os.path.join(HERE, 'results')):
     if os.path.isdir(_cand):
@@ -135,7 +136,7 @@ for pidx, ax in zip(range(3), axes):
             # S3 E2: T20 b=1/3 stored in c2_{ds}_b{1,3}.json (no .part*)
             if T == 20:
                 for bfill in (1, 3):
-                    fp = os.path.join(RES, f'c2_{ds}_b{bfill}.json')
+                    fp = os.path.join(RES, f's3e2_t20_{ds}_b{bfill}.json')
                     if os.path.isfile(fp):
                         for r in json.load(open(fp))['results']:
                             if 'error' not in r and r.get('kind') == 'gran':

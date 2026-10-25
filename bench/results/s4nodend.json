@@ -1,0 +1,184 @@
+{
+ "results": [
+  {
+   "kind": "nodend",
+   "seed": 0,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -20.0,
+   "final_avg": 66.99
+  },
+  {
+   "kind": "nodend",
+   "seed": 1,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -20.22,
+   "final_avg": 67.03
+  },
+  {
+   "kind": "nodend",
+   "seed": 2,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -17.7,
+   "final_avg": 68.38
+  },
+  {
+   "kind": "nodend",
+   "seed": 3,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -21.25,
+   "final_avg": 65.15
+  },
+  {
+   "kind": "nodend",
+   "seed": 4,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -21.79,
+   "final_avg": 64.48
+  },
+  {
+   "kind": "nodend",
+   "seed": 5,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -18.21,
+   "final_avg": 67.7
+  },
+  {
+   "kind": "nodend",
+   "seed": 6,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -19.42,
+   "final_avg": 67.02
+  },
+  {
+   "kind": "nodend",
+   "seed": 7,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -17.4,
+   "final_avg": 68.46
+  },
+  {
+   "kind": "nodend",
+   "seed": 8,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -24.97,
+   "final_avg": 61.61
+  },
+  {
+   "kind": "nodend",
+   "seed": 9,
+   "dataset": "mnist",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -22.45,
+   "final_avg": 64.44
+  },
+  {
+   "kind": "nodend",
+   "seed": 0,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -15.86,
+   "final_avg": 46.96
+  },
+  {
+   "kind": "nodend",
+   "seed": 1,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -19.54,
+   "final_avg": 47.54
+  },
+  {
+   "kind": "nodend",
+   "seed": 2,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -14.6,
+   "final_avg": 50.28
+  },
+  {
+   "kind": "nodend",
+   "seed": 3,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -9.6,
+   "final_avg": 53.91
+  },
+  {
+   "kind": "nodend",
+   "seed": 4,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -17.95,
+   "final_avg": 47.61
+  },
+  {
+   "kind": "nodend",
+   "seed": 5,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -16.57,
+   "final_avg": 45.81
+  },
+  {
+   "kind": "nodend",
+   "seed": 6,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -12.43,
+   "final_avg": 50.37
+  },
+  {
+   "kind": "nodend",
+   "seed": 7,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -16.54,
+   "final_avg": 47.87
+  },
+  {
+   "kind": "nodend",
+   "seed": 8,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -17.19,
+   "final_avg": 46.73
+  },
+  {
+   "kind": "nodend",
+   "seed": 9,
+   "dataset": "fashion",
+   "ntask": 10,
+   "lam": 1000.0,
+   "bwt": -15.24,
+   "final_avg": 48.71
+  }
+ ]
+}

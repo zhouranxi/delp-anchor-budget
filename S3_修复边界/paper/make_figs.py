@@ -26,7 +26,7 @@ os.makedirs(FIG, exist_ok=True)
 plt.rcParams.update({'font.size': 9, 'axes.spines.top': False,
                      'axes.spines.right': False, 'figure.dpi': 150})
 
-CFGS = [('bare-MLP', 'c2', '#4878d0', 'o'),
+CFGS = [('bare-MLP', 's3ref_c2', '#4878d0', 'o'),
         ('GN-MLP', 's5bgn', '#ee854a', 's'),
         ('ConvADNet', 'cnnc2', '#6acc64', '^')]
 

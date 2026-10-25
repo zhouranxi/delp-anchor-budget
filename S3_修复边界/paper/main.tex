@@ -166,7 +166,11 @@ simultaneously in $17/20$ cells.
 \paragraph{Pre-registered criteria (fixed before any data).}
 G1 (repair generalizes): $\ge 15/20$ dose cells with paired
 $\Delta\ell > 0$ significant, $\ge 18/20$ sign-consistent, with a
-saturation guard ($\ell_0 > 90$ cells excluded). G2 (artifact
+saturation guard ($\ell_0 > 90$ cells excluded). The pre-registration
+template carried S1's ``$20$ cells'' denominator over verbatim; the
+conv grid is $2$ datasets $\times$ $2$ depths $\times$ $3$ doses
+$= 12$ cells (no saturated cells arose), and all criteria are
+evaluated against $12$. G2 (artifact
 replicates): untrained-naive share exceeds active share by
 $\ge 0.05$. E4 (dying-gate control): confirms if GN mortality
 $\le 0.10$ \emph{and} the repair vanishes; refutes if mortality
@@ -252,11 +256,24 @@ per-phase instrumentation: ConvADNet's dead-gate fraction is
 \emph{exactly $0.000$ in every phase of every run}, against the bare
 MLP's $0.572$ \cite{zhou2026delpS1}. GroupNorm's affine output keeps
 $|u| > 0$; there are no argmax ties over dead gates because there are
-no dead gates (Fig.~\ref{fig:mortality}). The artifact is thus
-\textbf{architecture-bound, not
-instrument-bound}: the same instrument that S1 showed contaminated
-reads clean here, for reasons that have nothing to do with the
-instrument.
+no dead gates (Fig.~\ref{fig:mortality}).
+
+A measurement caveat we state explicitly: the two configurations
+report mortality under \emph{different} zero-conditions. The MLP
+instrument (inherited unchanged from S1) marks a neuron dead if its
+post-kWTA activity is never positive across the usage window ---
+mortality there means ``never wins the top-$k$ competition''. The
+conv instrument marks a neuron dead if its gate row is identically
+zero. Both are the natural operationalizations in their families,
+but they are not the same statistic, and the conv family's
+post-kWTA ``never wins'' rate was not measured. What the comparison
+supports is therefore the narrower claim we make: the S1
+\emph{artifact mechanism} (argmax ties over exactly-zero gates) has
+no substrate on the conv configuration --- its precondition
+(numerically zero gates) never occurs. The artifact is thus
+\textbf{architecture-bound, not instrument-bound}: the same reading
+instrument that S1 showed contaminated reads clean here, for reasons
+that have nothing to do with the instrument.
 
 \begin{figure}[t]
 \centering
@@ -292,9 +309,15 @@ mortality should fall and the repair should weaken accordingly.
 
 The prediction fails in both halves (Table~\ref{tab:three}, middle
 rows). Mortality \emph{rises} ($0.765$/$0.855$ vs.\ bare's
-$0.572$/$0.603$): GroupNorm rescales the features $t$, but mortality
-is a property of the gate $u$'s zero set, which the norm layer never
-touches. Meanwhile the repair gain \emph{collapses anyway}: to
+$0.572$/$0.603$), for a reason the architecture makes plain:
+GroupNorm rescales the features $t$ symmetrically about zero, and the
+kWTA competition keeps the $64$ \emph{largest} values of $t \odot
+\sigma(d)$ --- so every neuron whose normalized feature is
+predominantly negative can never enter the top-$k$ and counts as
+dead under the usage instrument. GroupNorm does not touch the gate
+zero-set $u$; it manufactures post-kWTA death through the feature
+sign structure instead. Meanwhile the repair gain \emph{collapses
+anyway}: to
 $+0.57$ (retention $17\%$ of the bare-MLP gain) on MNIST and $+0.36$
 ($26\%$) on Fashion. And final accuracy reverses on both datasets
 ($\Delta\mathrm{avg} = -3.88$, $t{=}-5.3$; $-6.55$, $t{=}-4.4$).

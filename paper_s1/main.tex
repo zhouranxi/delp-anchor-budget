@@ -221,7 +221,7 @@ paired $t$-statistics over $n{=}10$ seeds sharing permutation streams.
 \subsection{Protocol}
 \label{sec:protocol}
 
-Benchmarks are Permuted-MNIST and Permuted-Fashion \cite{parisi2019} with
+Benchmarks are Permuted-MNIST and Permuted-Fashion \cite{parisi2019,xiao2017} with
 $T\in\{10,20\}$ tasks, one hidden layer of $2000$ neurons, $15$ epochs per
 task, Adam (lr $10^{-3}$), Fisher/usage samples of $300$/$500$ examples, and
 $\lambda \in \{1000, 5000\}$ calibrated in prior work. Seeds are paired
@@ -305,14 +305,19 @@ $T{=}20$ & branch & 29.35 & 24.14 & $-5.49$ & $+0.01$ & $+0.17$ & $+0.17$ \\
 \end{tabular}
 \end{table}
 
-Single-anchor references (Table~\ref{tab:refs}) frame the arms: plain EWC
-buys $\ell$ at $3$--$5\times$ the forgetting, SI is over-stable (its
-$\ell{=}13$ at $T{=}10$ shows it barely learns later tasks at all), and MAS
-at its grid-selected $\lambda{=}1$ maximizes the learning term ($\ell
-\ge 87$, the highest of all arms) yet posts catastrophic BWT ($-32.6$) ---
-the
-regime-dependence of warrant documented in our companion work extends from
-Split-CIFAR-100 to the MLP setting.
+Single-anchor references (Table~\ref{tab:refs}) frame the arms; their
+$\lambda$ values are the calibration carried over from our companion
+pipeline, not re-tuned per benchmark. Plain EWC buys $\ell$ at
+$3$--$5\times$ the forgetting; SI ($\lambda{=}100$) is over-stable (its
+$\ell{=}13$ at $T{=}10$ shows it barely learns later tasks at all); MAS
+($\lambda{=}1$) maximizes the learning term ($\ell \ge 87$, the highest
+of all arms) yet posts catastrophic BWT ($-32.6$ at $T{=}20$) --- the
+regime-dependence of warrant documented in our companion work extends
+from Split-CIFAR-100 to the MLP setting. One comparison the table makes
+possible is worth stating explicitly: at $T{=}10$, the repaired
+\mbox{DeLP} arm ($b{=}10$; avg $68.7$, BWT $-9.9$) dominates MAS (avg
+$66.6$, BWT $-21.2$) on both summary terms --- MAS buys its higher
+learning term with exactly the forgetting that the repair removes.
 
 \begin{table}[t]
 \centering\small
@@ -560,7 +565,8 @@ Fashion & branch ($10$) & $+2.18^{*}$ & $+1.96^{*}$ & $-0.24$ & 0.13 \\
 paired means vs.\ $b{=}0$). The learning term (left) and final accuracy
 (middle) improve at every dose, dataset, and depth; BWT (right) improves
 at $T{=}10$ and is mildly negative at $T{=}20$ on MNIST. Note the
-saturating shape: $b{=}1$ captures most of the effect of $b{=}10$.}
+saturating shape: $b{=}3$ alone already captures most of the $b{=}10$
+effect ($81$--$113\%$ across datasets and depths).}
 \label{fig:dose}
 \end{figure}
 

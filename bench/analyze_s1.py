@@ -1,9 +1,17 @@
 # -*- coding: utf-8 -*-
 """S1 (Branch-DeLP) 配对分析：branch/neuron/plain 三臂，逐 (dataset, T, lam) 组合配对 t 检验。"""
-import json, math, itertools, sys, io
+import json, math, os, itertools, sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-BASE = r'D:/WorkBuddy/2026-10-17-14-29-40/delp-anchor-budget/bench/results'
+def _resolve_base():
+    """Locate results/: bench/results (committed) -> CWD/results (server scratch) -> legacy path."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    for cand in (os.path.join(here, "results"), "results"):
+        if os.path.isdir(cand):
+            return cand
+    return r'D:/WorkBuddy/2026-10-17-14-29-40/delp-anchor-budget/bench/results'
+
+BASE = _resolve_base()
 FILES = ['s1_mnist.json', 's1_fashion.json', 's1_refs.json', 's1_l1000_t10.json', 's1_l1000_t20.json']
 
 records, seen = [], set()

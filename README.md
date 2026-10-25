@@ -97,8 +97,33 @@ bench/
   launch_r7.sh            4-GPU launch for the R7 arms (EWC / CIFAR λ=0 /
                           Fashion n=10 extension)
   results/                raw per-seed JSON records (all runs, all seeds)
+                          -- key committed inputs to the S2 figure/analysis
+                          --   pipeline (S1 records co-live here, prefixed
+                          --      c2_*/q8*/gevo_*/signeddrift/s1_*):
+                          --   anchor_budget_all.json  (Fig 1-3 main data)
+                          --   s2r4_d1_local.json      (Fig 4 stack traces:
+                          --                              T=20 M=2 seed0-2,
+                          --                              fifo/redun/agew2/merge)
+                          --   s2r6_b_t*.json.part*    (Fig 5 CIFAR stack traces)
 figs/                     paper figures (PDF + PNG)
 ```
+
+## Shared base modules (vendored)
+
+`exp4_branch_protection.py` and `exp6_baselines.py` are the shared
+architecture + protocol base that every S1/S2 training script imports
+(`ADNet`, `permute`, `kwta`, and the constants `SEEDS/EPOCHS/BS/NTRAIN/NH/
+LR/DEV` plus `get_perms/flat_params/eval_model/finish/fisher_usage`). They
+are **not** developed in this repository: they are vendored, byte-identical,
+from the frozen DeLP-audit base
+
+- upstream: `zhouranxi/delp-audit` @ `dendritic-lab/`,
+  commit `ea83e26185aedf98471eff9c129e9b98dcaf6da6` (main),
+  preprint Zenodo doi:10.5281/zenodo.23572226.
+
+Both files carry a `VENDORED ... do not edit here` header pinning that
+commit. If the audit is ever re-frozen, bump the two headers and re-sync
+the copies here — do not diverge them.
 
 ## Protocols
 
@@ -138,6 +163,16 @@ Raw records: `bench/results/`. Every JSON record carries `bwt`, `final_avg`,
 main grid) the anchor-stack `survivor_history` that underlies the trace
 figures. The CIFAR decomposition check is exact on all 260 records
 (max deviation 5×10⁻³, i.e. two-decimal rounding).
+
+Fig 4's stack-trace input `s2r4_d1_local.json` (Permuted-MNIST, T=20,
+M=2, the four bounded policies × seeds 0–2, each carrying a 20-phase
+`survivor_history`) is committed under `bench/results/` alongside the
+other records — it is a genuine server-side run artifact, not a scratch
+placeholder, so a clean clone reproduces Figs 1–5 without staging
+anything. S1's co-living records (`c2_*`, `q8*`, `gevo_*`,
+`signeddrift.json`, `s1_*`, `diag_*`) are inert to the S2 pipeline: the
+S2 figure/analysis scripts read only the fixed S2 files above, so
+adding S1 records here cannot perturb S2 figures.
 
 ## Citation
 

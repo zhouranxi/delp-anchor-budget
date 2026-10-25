@@ -1,15 +1,26 @@
 # -*- coding: utf-8 -*-
 """Aggregate s2r6 (Split-CIFAR-100) results: main table + paired stats vs unbounded
 + key policy contrasts + survivor-history stack composition. Writes markdown report."""
-import json, math, collections
+import json, math, collections, os
 
 FILES = ["s2r6_b_t20.json.part0", "s2r6_b_t20.json.part1",
          "s2r6_b_t10.json.part0", "s2r6_b_t10.json.part1",
          "s2r6_b_t10u.json.part0", "s2r6_b_t10u.json.part1"]
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+def _find(fname):
+    """bench/ (server scratch) -> bench/results/ (committed archive) -> CWD."""
+    for cand in (os.path.join(HERE, fname),
+                 os.path.join(HERE, "results", fname),
+                 fname):
+        if os.path.exists(cand):
+            return cand
+    raise FileNotFoundError(f"{fname} not found in {HERE}, {HERE}/results or CWD")
+
 recs = []
 for f in FILES:
-    recs += json.load(open(f))["results"]
+    recs += json.load(open(_find(f)))["results"]
 print(f"total records: {len(recs)}")
 
 def key(r): return (r["ntask"], r["policy"], r["M"], r["seed"])

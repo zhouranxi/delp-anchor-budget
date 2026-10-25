@@ -31,8 +31,28 @@ plt.rcParams.update({
     "axes.spines.top": False, "axes.spines.right": False,
 })
 
-allr = json.load(open(os.path.join(HERE, "anchor_budget_all.json")))["results"]
-tr = json.load(open(os.path.join(HERE, "s2r4_d1_local.json")))
+def _find(fname):
+    """Resolve a data file: bench/ -> bench/results/ -> CWD.
+    Server runs stage scratch json next to the script (bench/); the committed
+    archive keeps them under bench/results/. Both layouts work."""
+    for cand in (os.path.join(HERE, fname),
+                 os.path.join(HERE, "results", fname),
+                 fname):
+        if os.path.exists(cand):
+            return cand
+    return None
+
+allr_path = _find("anchor_budget_all.json")
+assert allr_path, "anchor_budget_all.json not found (bench/ or bench/results/)"
+allr = json.load(open(allr_path))["results"]
+
+tr_path = _find("s2r4_d1_local.json")
+if tr_path is None:
+    print("WARNING: s2r4_d1_local.json not found (bench/ or bench/results/); "
+          "Fig 4 (stack traces) will be skipped. Stage it from the server scratch dir.")
+    tr = None
+else:
+    tr = json.load(open(tr_path))
 
 
 def arms(ds="mnist", lam=5000.0):
@@ -181,6 +201,9 @@ def fig_criteria():
 
 # ------------------------------------------------ fig 4: stack composition
 def fig_stacktrace():
+    if tr is None:
+        print("skip Fig 4 (no s2r4_d1_local.json)")
+        return
     fig, axes = plt.subplots(1, 4, figsize=(6.8, 2.3), sharey=True)
     for ax, pol in zip(axes, ("fifo", "redun", "agew2", "merge")):
         rec = [r for r in tr if r["policy"] == pol and r["seed"] == 0][0]

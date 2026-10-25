@@ -1,0 +1,39 @@
+# S1 复现数据/依赖清单 (s1_repro/manifest.txt)
+
+# 数据源: bench/results/；共享基座 exp6/exp4 + S1/S2 训练脚本: bench/ 顶层。
+
+## bench/analyze_s1.py → results/s1_paired_stats.json
+  [OK] results/s1_mnist.json
+  [OK] results/s1_fashion.json
+  [OK] results/s1_refs.json
+  [OK] results/s1_l1000_t10.json
+  [OK] results/s1_l1000_t20.json
+
+## paper_s1/make_figs.py → fig_evolution/deadfrac/artifact/dose
+  [OK] results/gevo_mnist_t10.json
+  [OK] results/gevo_mnist_t20.json
+  [OK] results/gevo_fashion_t10.json
+  [OK] results/untrained_probe.json
+  [OK] results/c2_mnist_b*.json*
+  [OK] results/c2_fashion_b*.json*
+  [OK] results/diag_b*.json
+
+## bench/branch_delp.py（训练 c2_* 剂量-因果）
+  [OK] bench/exp6_baselines.py
+  [OK] bench/exp4_branch_protection.py
+  [OK] bench/anchor_budget.py
+  [OK] bench/branch_delp.py
+
+## bench/signed_drift.py（训练 signeddrift.json）
+  [OK] bench/exp6_baselines.py
+  [OK] bench/exp4_branch_protection.py
+  [OK] bench/branch_delp.py
+  [OK] bench/signed_drift.py
+
+## bench/gating_evolution.py（训练 gevo_*）
+  [OK] bench/exp6_baselines.py
+  [OK] bench/exp4_branch_protection.py
+  [OK] bench/branch_delp.py
+  [OK] bench/gating_evolution.py
+
+=== 完整性: 全部齐备 ✔  S1 分析链可跑 ===

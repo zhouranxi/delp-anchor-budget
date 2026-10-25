@@ -16,11 +16,20 @@ plt.rcParams.update({
     "axes.spines.top": False, "axes.spines.right": False,
 })
 
+def _find(fname):
+    """bench/ (server scratch) -> bench/results/ (committed archive) -> CWD."""
+    for cand in (os.path.join(HERE, fname),
+                 os.path.join(HERE, "results", fname),
+                 fname):
+        if os.path.exists(cand):
+            return cand
+    raise FileNotFoundError(f"{fname} not found in {HERE}, {HERE}/results or CWD")
+
 recs = []
 for f in ["s2r6_b_t20.json.part0", "s2r6_b_t20.json.part1",
           "s2r6_b_t10.json.part0", "s2r6_b_t10.json.part1",
           "s2r6_b_t10u.json.part0", "s2r6_b_t10u.json.part1"]:
-    recs += json.load(open(os.path.join(HERE, f)))["results"]
+    recs += json.load(open(_find(f)))["results"]
 
 # ---- fig 5: stack traces, T=20 M=2 seed 0, all six bounded policies ----
 pols = ["fifo", "redun", "agew", "agew2", "merge", "random"]

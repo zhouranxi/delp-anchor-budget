@@ -36,6 +36,13 @@ from branch_delp import (BiasADNet, flat_params,
 from exp6_baselines import EPOCHS, BS, NTRAIN, LR, DEV, eval_model, finish, get_perms
 from anchor_budget import load_data
 
+# 固定实验常量（S3 预注册）
+NTASK = 10
+LAM   = 1000.0
+SEEDS = list(range(10))
+DOSES = [0.0, 1.0, 3.0, 10.0]
+GRANS = ["neuron", "branch"]
+
 # 任务结构（10 个任务，组序固定）：H=high digit/parity, M=parity, L=count, O=random
 # 4 组 × 重复，每组在两个连续任务位置出现一次，保证每个 (seed,gran,b) 臂内
 # 四个组各占 2 任务，判据为组内相对均值（H 组 vs L 组 vs O 组）。
@@ -53,24 +60,16 @@ _SCHEDULE = [
 ]
 # 每组对应任务索引（用于组间均值对比）
 _GROUP_IDX = {"high": [0, 1, 4, 7], "low": [2, 5, 9], "out": [3, 6, 8]}
-_RAND_GEN = [torch.Generator().manual_seed(1001),
-             torch.Generator().manual_seed(1002)]
-
-# 固定实验常量（不复制数值，全部来自共享模块）
-NTASK = 10
-LAM = 1000.0
-SEEDS = list(range(10))
-DOSES = [0.0, 1.0, 3.0, 10.0]
-GRANS = ["neuron", "branch"]
+_RAND_SEED = [1001, 1002]
 
 
 def task_labels(phase, ytr):
-    """本 phase 的训练标签。digit 无转换；parity/count 为确定性函数；
-    random 用 phase%2 选流（两独立生成器），跨 seed 确定、无状态。"""
+    """本 phase 的训练/评估标签。digit 无转换；parity/count 为确定性函数；
+    random 用固定 seed 重置生成器后取 randint（每次调用重置，保证确定性）。"""
     name, level, fn = _SCHEDULE[phase]
     if name == "random":
-        return torch.randint(0, 10, (eb.NTRAIN,),
-                             generator=_RAND_GEN[phase % 2])
+        gen = torch.Generator().manual_seed(_RAND_SEED[phase % 2])
+        return torch.randint(0, 10, (eb.NTRAIN,), generator=gen)
     if fn is not None:
         return fn(ytr[:eb.NTRAIN])
     return ytr[:eb.NTRAIN]
@@ -132,7 +131,17 @@ def run_corr(seed, data, perms, lam, gran, own_bias):
             seg_mass_all.append(anchors[-1]["seg_mass"])
         dom_all.append({k: anchors[-1][k] for k in
                         ("dom_hist", "dom_hist_active", "dead_frac")})
-        a = eb.eval_model(model, xte, yte, perms, phase, NTASK, True)
+        # 评估：用转换后标签（与训练标签同分布），对 parity/count/random 任务
+        # 测真实任务精度。digit 任务直接用 yte（原始测试标签）。
+        name, level, fn = _SCHEDULE[phase]
+        if name == "random":
+            gen = torch.Generator().manual_seed(_RAND_SEED[phase % 2])
+            yte_eval = torch.randint(0, 10, (len(yte),), generator=gen)
+        elif fn is not None:
+            yte_eval = fn(yte)
+        else:
+            yte_eval = yte
+        a = eval_model(model, xte, yte_eval, perms, phase, NTASK, True)
         acc.update(a)
     bwt, favg = eb.finish(acc, NTASK)
     ell = sum(acc[(t, t)] for t in range(NTASK)) / NTASK

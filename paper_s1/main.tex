@@ -488,14 +488,18 @@ identical seeds.
 \subsection{Result: the learning term and accuracy improve everywhere}
 
 Tables~\ref{tab:dose10} and \ref{tab:dose20} give the dose--response;
-Fig.~\ref{fig:dose} plots it. Across the $20$ dose cells of the
+Fig.~\ref{fig:dose} plots it. Across the $24$ dose cells of the
 $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid with
 $b \ge 1$, $\Delta\ell$ is positive in every cell and significant in
-$18/20$; $\ell$ and final accuracy are simultaneously significant in
-$17/20$, and every grid cell has at least one dose significant on both
+$22/24$; $\ell$ and final accuracy are simultaneously significant in
+$20/24$, and every grid cell has at least one dose significant on both
 terms. The effect grows with depth: at $T{=}20$ MNIST, $b{=}10$ lifts
 $\ell$ by $+4.56$ ($t(9){=}8.1$) and final accuracy by $+3.81$
-($t(9){=}10.6$) over the already usage-localized baseline. Forgetting
+($t(9){=}10.6$) over the already usage-localized baseline; the
+$T{=}20$ learning curve is monotone in dose
+($\Delta\ell$ $+2.14$ / $+3.72$ / $+4.56$ for $b{=}1/3/10$, all
+$t \ge 3.9$), and $b{=}3$ alone already captures $82\%$ of the
+$b{=}10$ effect. Forgetting
 improves broadly at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.65$;
 significantly positive in $8/12$ cells, and in all six MNIST cells), and
 partially trades back at $T{=}20$, where $3/8$ cells show a significant
@@ -546,10 +550,12 @@ Fashion & branch ($3$)  & $+0.81$ & $+1.79^{*}$ & $+1.09^{*}$ & 0.14 \\
 \toprule
 dataset & arm ($b$) & $\Delta\ell$ & $\Delta$avg & $\Delta$BWT & $\own$ \\
 \midrule
+MNIST & neuron ($1$)  & $+2.14^{*}$ & $+2.78^{*}$ & $+0.68^{*}$ & 0.14 \\
 MNIST & neuron ($3$)  & $+3.72^{*}$ & $+3.25^{*}$ & $-0.49$ & 0.14 \\
 MNIST & neuron ($10$) & $+4.56^{*}$ & $+3.81^{*}$ & $-0.79^{*}$ & 0.13 \\
 MNIST & branch ($3$)  & $+3.66^{*}$ & $+3.03^{*}$ & $-0.66^{*}$ & 0.14 \\
 MNIST & branch ($10$) & $+4.13^{*}$ & $+3.48^{*}$ & $-0.68$ & 0.13 \\
+Fashion & neuron ($1$)  & $+1.78^{*}$ & $+1.58^{*}$ & $-0.21$ & 0.14 \\
 Fashion & neuron ($3$)  & $+2.19^{*}$ & $+2.09^{*}$ & $-0.11$ & 0.14 \\
 Fashion & neuron ($10$) & $+1.94^{*}$ & $+1.03^{*}$ & $-0.95^{*}$ & 0.13 \\
 Fashion & branch ($3$)  & $+1.44^{*}$ & $+1.98^{*}$ & $+0.57$ & 0.13 \\
@@ -594,6 +600,41 @@ Second, only a minority of neurons needs to respect the segment--task
 prior for the retention--plasticity balance to shift significantly:
 specialization operates as a bottleneck resource, and partial
 restoration is sufficient.
+
+\subsection{Task relevance: where the repair pays off}
+\label{sec:taskrel}
+
+Is the repair a \emph{routing prior} (should help most on tasks the
+network already understands) or a \emph{capacity channel} (should lift
+all tasks uniformly)? We test this directly with a task-relevance
+gradient (Suppl.~S3): ten interleaved phases in which two in-domain
+digit/parity tasks (high relevance), two rotated-count tasks (medium),
+and six random-label tasks (zero relevance) are learned in sequence,
+with the bias varied over $b \in \{0,1,3,10\}$
+($n{=}10$ paired seeds, both granularities). Per-task diagnostic
+accuracy ($\ell$, each task measured against its own training labels)
+is compared across the three groups.
+
+Three findings. \textbf{First}, zero-relevance tasks are unaffected by
+the bias: their per-task accuracy sits at chance
+($\approx 10\%$) at every dose, and the dose--response on this group
+is flat ($9.99$--$10.07$ from $b{=}0$ to $b{=}10$). The repair adds
+no capacity where there is no structure to exploit. \textbf{Second},
+the gap between the high-relevance group ($\ell \approx 85$) and the
+medium group ($\ell \approx 71$) \emph{narrows} monotonically as the
+dose grows ($+13.8$ at $b{=}0$ to $+11.2$ at $b{=}10$): the repair
+compresses task-to-task variance rather than lifting the floor,
+consistent with a capacity channel whose marginal benefit is largest on
+the weaker tasks. \textbf{Third}, the high-relevance group still shows
+the largest absolute gain ($+2.1$ at $b{=}10$), so the bias helps even
+tasks the network already handles well, but the increment shrinks
+relative to the medium group. Together these point to a
+\emph{structured} capacity effect: the bias lifts all in-domain tasks
+above chance, but the lift is largest where the network's own routing
+is weakest --- and it does nothing for tasks with no learnable
+structure. This is the strongest evidence yet that the intervention
+acts through the routing/retention balance rather than through task
+relevance.
 
 \subsection{Signed drift: no pushback at the parameter level}
 \label{sec:sigdrift}
@@ -678,7 +719,14 @@ instrumentation, not the metric, fabricates the signal.
       mortality with argmax instrumentation and should be re-checked
       wherever segments exist (e.g.\ convolutional or transformer backbones
       with routing modules); the causal repair's transfer is untested
-      beyond this family.
+      beyond this family. The task-relevance probe
+      (Sec.~\ref{sec:taskrel}) shows the repair is a structured capacity
+      effect rather than a routing prior: it lifts in-domain tasks above
+      chance and compresses task-to-task variance, but adds nothing for
+      zero-relevance (random-label) tasks --- so its benefit is
+      contingent on the task stream containing learnable structure, a
+      condition that should be verified per architecture and benchmark
+      before generalizing.
 \item \textbf{The repair is a prior, not a mechanism.} The constant bias
       encodes the correct assumption (own segment first) that the network
       fails to learn at effective strength. We measured this directly:

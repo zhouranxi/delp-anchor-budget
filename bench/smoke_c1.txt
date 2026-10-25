@@ -1,0 +1,51 @@
+[shard 0/1] 7/7 jobs
+  s0 neuron T0: t0=70
+  s0 neuron T1: t0=73 t1=61
+  s0 neuron T2: t0=74 t1=69 t2=49
+  s0 neuron T3: t0=73 t1=68 t2=50 t3=37
+  gran neuron T4 s0 lam5000: bwt=3.38 avg=56.83 ell=54.29
+  s0 branch T0: t0=70
+  s0 branch T1: t0=73 t1=61
+  s0 branch T2: t0=74 t1=69 t2=49
+  s0 branch T3: t0=74 t1=68 t2=51 t3=36
+  gran branch T4 s0 lam5000: bwt=4.26 avg=57.31 ell=54.12
+  s0 plain T0: t0=70
+  s0 plain T1: t0=73 t1=61
+  s0 plain T2: t0=73 t1=70 t2=54
+  s0 plain T3: t0=73 t1=67 t2=54 t3=41
+  gran plain T4 s0 lam5000: bwt=3.01 avg=58.73 ell=56.47
+  s0 si T0: t0=71
+  s0 si T1: t0=70 t1=65
+  s0 si T2: t0=69 t1=66 t2=58
+  s0 si T3: t0=67 t1=65 t2=61 t3=57
+  si si T4 s0 lam100: bwt=-0.44 avg=62.48 ell=None
+  s0 mas T0: t0=71
+  s0 mas T1: t0=70 t1=65
+  s0 mas T2: t0=68 t1=65 t2=57
+  s0 mas T3: t0=64 t1=62 t2=58 t3=57
+  mas mas T4 s0 lam1: bwt=-2.91 avg=60.35 ell=None
+  s0 neuron T0: t0=70
+  s0 neuron T1: t0=73 t1=61
+  s0 neuron T2: t0=74 t1=69 t2=49
+  s0 neuron T3: t0=73 t1=68 t2=50 t3=37
+  bfifo neuronM10 T4 s0 lam5000: bwt=3.38 avg=56.83 ell=54.29
+  s0 branch T0: t0=70
+  s0 branch T1: t0=73 t1=61
+  s0 branch T2: t0=74 t1=69 t2=49
+  s0 branch T3: t0=74 t1=69 t2=53 t3=38
+  bfifo branchM2 T4 s0 lam5000: bwt=4.99 avg=58.37 ell=54.62
+  s0 unbounded2 T0: t0=70
+  s0 unbounded2 T1: t0=73 t1=61
+  s0 unbounded2 T2: t0=74 t1=69 t2=49
+  s0 unbounded2 T3: t0=73 t1=68 t2=50 t3=37
+
+EQUIVALENCE neuron-vs-original: PASS
+EQUIVALENCE bfifo(M=10,no-evict)-vs-gran: PASS
+WROTE smoke_c2base.json in 4.1s
+
+==== aggregate (mean±sd over seeds) ====
+branch|M2|lam5000|T4  BWT    4.99±0.00  acc  58.37±0.00  ell  54.62
+branch|unb|lam5000|T4  BWT    4.26±0.00  acc  57.31±0.00  ell  54.12
+neuron|M10|lam5000|T4  BWT    3.38±0.00  acc  56.83±0.00  ell  54.29
+neuron|unb|lam5000|T4  BWT    3.38±0.00  acc  56.83±0.00  ell  54.29
+plain|unb|lam5000|T4  BWT    3.01±0.00  acc  58.73±0.00  ell  56.47

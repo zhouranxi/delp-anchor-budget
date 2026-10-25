@@ -735,9 +735,18 @@ instrumentation, not the metric, fabricates the signal.
       ($+0.113 \pm 0.031$ MNIST, $+0.083 \pm 0.025$ Fashion; $n{=}7$
       runs each, $t(6) \ge 8.7$) --- the raw-gate scale, an order of
       magnitude below the smallest effective dose --- and its accuracy
-      matches the unbiased baseline. A learned or annealed intervention
-      might avoid the depth trade-off (Sec.~\ref{sec:depthbwt}); we
-      deliberately did not tune one, to keep the causal claim clean.
+      matches the unbiased baseline. We also tested scheduled variants
+      (Suppl.~S4): an annealed bias ($b_p = 10(1-p/T)$) retains
+      $91$--$103\%$ of the constant-bias learning gain at $T{=}20$ but
+      does not reliably remove the BWT cost (significant improvement in
+      one of two datasets only), while a ramped bias ($b_p = 10p/(T{-}1)$)
+      \emph{exceeds} the constant gain everywhere ($123$--$197\%$
+      retention, $t \ge 2.6$) at an equally or more negative BWT cost.
+      Scheduling moves along the retention--plasticity frontier ---
+      tracking cumulative bias exposure, not timing --- but does not
+      move the frontier itself; separating gain from cost appears to
+      require a mechanism (e.g.\ task-staggered protection), not a
+      schedule.
 \item \textbf{Depth-dependent forgetting trade-off.} At $T{=}20$ the BWT
       cost of the bias is small but real: $3/8$ cells significantly
       negative ($-0.66$ to $-0.95$), the rest indistinguishable from

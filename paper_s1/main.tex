@@ -162,9 +162,10 @@ failure of the previous one:
       saturated and nontrivially mediated: the own-segment win rate
       saturates at $13$--$19\%$ regardless of dose. Signed-drift
       measurement shows this is not adversarial compensation --- the
-      network never drifts against the bias --- but a scale effect: any
-      dose $b \ge 1$ dominates the raw gates ($|u| \le 0.16$) and forces
-      the same training-time routing, so only a minority of neuron-tasks
+      network never drifts against the bias --- but a scale effect: the
+      raw own gate spans $|u| \le 0.32$, at least three times below any
+      tested dose, so the bias forces the same training-time routing at
+      every dose, so only a minority of neuron-tasks
       flip to the own-segment pathway --- and that partial restoration
       already yields most of the gain.
 \end{enumerate}
@@ -553,13 +554,13 @@ The mediation of the effect is as informative as its size. The bias does
 $\approx 0.08$ to a saturated $0.13$--$0.19$, and is nearly insensitive
 to a tenfold dose increase ($b{=}1$: $0.19$; $b{=}3$: $0.17$; $b{=}10$:
 $0.16$). The dose-invariance has a scale explanation rather than an
-adversarial one. The raw gating activations that the win-rate instrument
-reads live on a $|u| \lesssim 0.16$ scale (Sec.~\ref{sec:sigdrift}); any
-dose $b \ge 1$ therefore dominates the gate computation completely, so
-the training-time segment winner --- the causal channel through which the
-bias acts --- is forced identically at every tested dose. Identical
-forcing produces an identical parameter-level trace, and hence a
-dose-invariant measured win rate. Signed-drift measurement
+adversarial one. The raw own-segment gate that the win-rate instrument
+reads stays within $|u| \le 0.32$ across all seeds and phases (seed
+means within $\pm 0.16$; Sec.~\ref{sec:sigdrift}); every tested dose is
+at least three times this range, so the bias, not the raw gate,
+determines the own segment's training-time advantage. The resulting
+parameter-level trace is dose-invariant, and hence so is the measured
+win rate. Signed-drift measurement
 (Sec.~\ref{sec:sigdrift}) confirms that the network never counteracts
 the bias at the parameter level: the own gating column drifts
 \emph{positive}, not negative, under the imposed bias. Two conclusions
@@ -583,9 +584,10 @@ Under $b{=}10$ the own-segment entries drift \emph{positive} in all ten
 phases (one-sample $t$ over seeds: $223$, $37$, $17$, $17$, $8$, $11$,
 $9$, $5.1$, $4.4$, $4.5$; per-phase mean displacement decaying from
 $+0.027$ to $+0.004$), versus $\le +0.004$ under $b{=}0$, significant
-only in the first two phases. The raw gate itself stays within
-$|u| \le 0.16$ in both arms --- two orders of magnitude below the
-imposed bias --- so the offset remains fully in effect throughout
+only in the first two phases. The raw own gate stays within
+$|u| \le 0.32$ across all seeds and phases (seed means within
+$\pm 0.16$) --- thirty times below the imposed $b{=}10$ and three times
+below even $b{=}1$ --- so the offset remains fully in effect throughout
 training. The network absorbs the intervention instead of opposing it:
 task training reinforces the forced own-segment routing slightly, and
 the ceiling of the measured win rate is a property of the raw-gate

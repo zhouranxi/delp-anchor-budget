@@ -15,7 +15,7 @@ M.~London, M.~H{\"a}usser, Dendritic computation, Annual Review of Neuroscience 
 P.~Poirazi, A.~Papoutsi, Illuminating dendritic function with computational models, Nature Reviews Neuroscience 21 (2020) 303--321.
 
 \bibitem{iyer2022}
-A.~Iyer, K.~Grewal, A.~Velu, L.~Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
+A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
 
 \bibitem{zhou2026delp}
 R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated protection for continual learning, Zenodo, version 2, doi:10.5281/zenodo.23602281, code: \url{https://github.com/zhouranxi/delp-audit} (2026).

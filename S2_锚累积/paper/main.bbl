@@ -1,0 +1,36 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{kirkpatrick2017}
+J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al., Overcoming catastrophic forgetting in neural networks, Proceedings of the National Academy of Sciences 114~(13) (2017) 3521--3526.
+
+\bibitem{zhou2026delp}
+R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated protection for continual learning, Preprint, doi:10.5281/zenodo.23572226, code: \url{https://github.com/zhouranxi/delp-audit} (2026).
+
+\bibitem{zenke2017}
+F.~Zenke, B.~Poole, S.~Ganguli, Continual learning through synaptic intelligence, in: Proc. Int. Conf. on Machine Learning (ICML), 2017, pp. 3987--3995.
+
+\bibitem{aljundi2018}
+R.~Aljundi, F.~Babiloni, M.~Elhoseiny, M.~Rohrbach, T.~Tuytelaars, Memory aware synapses: Learning what (not) to forget, in: Proc. European Conf. on Computer Vision (ECCV), 2018, pp. 144--161.
+
+\bibitem{chaudhry2018}
+A.~Chaudhry, P.~K. Dokania, T.~Ajanthan, P.~H.~S. Torr, Riemannian walk for incremental learning: Understanding forgetting and intransigence, in: Proceedings of the European Conference on Computer Vision (ECCV), 2018, pp. 556--572.
+
+\bibitem{mallya2018}
+A.~Mallya, S.~Lazebnik, {PackNet}: Adding multiple tasks to a single network by iterative pruning, in: Proc. IEEE Conf. on Computer Vision and Pattern Recognition (CVPR), 2018, pp. 7765--7773.
+
+\bibitem{serra2018}
+J.~Serra, D.~Sur{\'i}s, M.~Miron, A.~Karatzoglou, Overcoming catastrophic forgetting with hard attention to the task, in: Proc. Int. Conf. on Machine Learning (ICML), 2018, pp. 4548--4557.
+
+\bibitem{iyer2022}
+A.~Iyer, K.~Grewal, A.~Velu, L.~Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
+
+\bibitem{onasch2026}
+S.~Onasch, C.~Miehl, M.~M. Mi{\k{e}}kus, J.~Gjorgjieva, Assembly-based computations through contextual dendritic gating of plasticity, Neuron (2026).
+\newblock \href {https://doi.org/10.1016/j.neuron.2026.07.028} {\path{doi:10.1016/j.neuron.2026.07.028}}.
+
+\end{thebibliography}

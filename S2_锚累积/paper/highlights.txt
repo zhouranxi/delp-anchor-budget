@@ -1,0 +1,7 @@
+Highlights (each <= 85 characters, incl. spaces)
+
+- Anchor accumulation drives plasticity loss in usage-localized EWC
+- A FIFO anchor budget recovers +4.5/+9.0 points on Permuted-MNIST
+- Budget and lambda are distinct knobs: age structure vs amount of forgetting
+- Soft (discount) and hard (window) bounds obey one log-linear mass law
+- Bounding anchor mass, not the mechanism, is the active ingredient

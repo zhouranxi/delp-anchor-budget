@@ -5,7 +5,22 @@ Usage-Localized Elastic Weight Consolidation**
 
 Code and raw per-seed records for the S2 study. Companion repository to the
 DeLP audit ([`zhouranxi/delp-audit`](https://github.com/zhouranxi/delp-audit),
-preprint DOI [10.5281/zenodo.23572226](https://doi.org/10.5281/zenodo.23572226)).
+preprint DOI [10.5281/zenodo.23602281](https://doi.org/10.5281/zenodo.23602281)).
+
+## Papers in this repository
+
+Each paper ships as a **self-contained folder** (paper sources + code + raw
+per-run records + preregistration/collection reports), independently
+verifiable:
+
+| Folder | Paper | Status |
+|---|---|---|
+| `S1_剂量响应审计/` | *Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair* — dead-neuron measurement artifact, anti-specialization, one-parameter dose–response repair | Preprint [doi:10.5281/zenodo.23637973](https://doi.org/10.5281/zenodo.23637973); submitted to Neural Networks |
+| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Preprint [doi:10.5281/zenodo.23602281](https://doi.org/10.5281/zenodo.23602281) |
+| `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Submission-ready |
+
+The descriptions below refer to the S2 study (this repository's original
+scope).
 
 DeLP appends one elastic anchor set (posterior mean + Fisher diagonal) per
 task, so the protection penalty grows with sequence length. The audit showed
@@ -119,7 +134,7 @@ from the frozen DeLP-audit base
 
 - upstream: `zhouranxi/delp-audit` @ `dendritic-lab/`,
   commit `ea83e26185aedf98471eff9c129e9b98dcaf6da6` (main),
-  preprint Zenodo doi:10.5281/zenodo.23572226.
+  preprint Zenodo doi:10.5281/zenodo.23602281.
 
 Both files carry a `VENDORED ... do not edit here` header pinning that
 commit. If the audit is ever re-frozen, bump the two headers and re-sync

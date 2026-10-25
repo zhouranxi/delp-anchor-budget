@@ -143,9 +143,11 @@ gate $u = W_d\,\mathrm{ctx}$ reshaped to $(n_{\mathrm{seg}}, n_h)$, a
 winning segment per neuron $d = \max_{\mathrm{seg}} u$, hidden
 activity $h = \mathrm{kWTA}(t \odot \sigma(d))$ with $k{=}64$, and a
 linear readout. Gradients of the gate are protected: only the current
-task's segment trains. Protection is usage-localized EWC on the
-feature and readout blocks ($\lambda{=}1000$). Tasks are
-Permuted-MNIST and Permuted-Fashion at $T \in \{10, 20\}$.
+task's segment trains. Protection is usage-localized EWC
+\cite{kirkpatrick2017} on the
+feature and readout blocks ($\lambda{=}1000$); the protected-gradient
+and context-gating design follows \cite{iyer2022,masse2018}. Tasks are
+Permuted-MNIST and Permuted-Fashion \cite{parisi2019} at $T \in \{10, 20\}$.
 
 The S1 findings under test:
 
@@ -360,7 +362,7 @@ no significant gain. Headroom is necessary-looking, not sufficient.}
 We stress what the data do \emph{not} support. A quantitative
 headroom law fails: across the six configuration$\times$dataset
 cells the Pearson correlation between HR$_\ell$ and $\Delta\ell$ is
-$r = 0.38$ (cell means; pooled per-seed $r = -0.17$), and the
+$r = 0.38$ (cell means; pooled per-seed $r = 0.31$), and the
  clearest counterexample is ConvADNet on Fashion --- $24.7$ points of
 $\ell$-headroom, gain $+0.36$ ($t{=}1.4$, not significant). Headroom
 is thus \textbf{necessary-looking but not sufficient}: a strong
@@ -409,7 +411,7 @@ the bias will not buy learning --- but will still charge retention
 significant in $3/4$).
 \item \textbf{Protection strength does not transfer.} $\lambda$
 calibrated on one parameter scale left the conv baseline with
-$4$--$5\times$ the MLP's forgetting. Any cross-architecture
+$2$--$4.4\times$ the MLP's forgetting. Any cross-architecture
 comparison of protection methods must re-calibrate or report the
 uncalibrated gap explicitly.
 \end{itemize}

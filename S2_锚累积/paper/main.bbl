@@ -9,7 +9,7 @@
 J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al., Overcoming catastrophic forgetting in neural networks, Proceedings of the National Academy of Sciences 114~(13) (2017) 3521--3526.
 
 \bibitem{zhou2026delp}
-R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated protection for continual learning, Preprint, doi:10.5281/zenodo.23572226, code: \url{https://github.com/zhouranxi/delp-audit} (2026).
+R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated protection for continual learning, Preprint, Zenodo, version 2, doi:10.5281/zenodo.23602281, code: \url{https://github.com/zhouranxi/delp-audit} (2026).
 
 \bibitem{zenke2017}
 F.~Zenke, B.~Poole, S.~Ganguli, Continual learning through synaptic intelligence, in: Proc. Int. Conf. on Machine Learning (ICML), 2017, pp. 3987--3995.
@@ -27,7 +27,7 @@ A.~Mallya, S.~Lazebnik, {PackNet}: Adding multiple tasks to a single network by 
 J.~Serra, D.~Sur{\'i}s, M.~Miron, A.~Karatzoglou, Overcoming catastrophic forgetting with hard attention to the task, in: Proc. Int. Conf. on Machine Learning (ICML), 2018, pp. 4548--4557.
 
 \bibitem{iyer2022}
-A.~Iyer, K.~Grewal, A.~Velu, L.~Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
+A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
 
 \bibitem{onasch2026}
 S.~Onasch, C.~Miehl, M.~M. Mi{\k{e}}kus, J.~Gjorgjieva, Assembly-based computations through contextual dendritic gating of plasticity, Neuron (2026).

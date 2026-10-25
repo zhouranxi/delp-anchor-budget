@@ -16,7 +16,7 @@ verifiable:
 | Folder | Paper | Status |
 |---|---|---|
 | `S1_剂量响应审计/` | *Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair* — dead-neuron measurement artifact, anti-specialization, one-parameter dose–response repair | Preprint [doi:10.5281/zenodo.23637973](https://doi.org/10.5281/zenodo.23637973); submitted to Neural Networks |
-| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Preprint [doi:10.5281/zenodo.23602281](https://doi.org/10.5281/zenodo.23602281) |
+| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Manuscript |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Submission-ready |
 
 The descriptions below refer to the S2 study (this repository's original

@@ -4,7 +4,7 @@
 
 **Article type:** Research paper
 **Corresponding author:** Ranxi Zhou (Hunan University of Chinese Medicine, Changsha, China)
-**Preprint:** doi:10.5281/zenodo.23572226 (precursor audit study)
+**Preprint:** doi:10.5281/zenodo.23602281 (precursor audit study, version 2)
 
 ---
 
@@ -26,7 +26,7 @@ The manuscript makes the following contributions:
 
 We believe this work fits the scope of *Neurocomputing*'s coverage of learning systems and continual learning. Because the manuscript reports single-anchor and no-protection references alongside the budgeted mechanism — and a γ-sweep that turns our own repair's loss into the mechanism-level law above — practitioners get not only a repair but also the boundary conditions telling them when protection — and therefore bounding — is worth deploying at all.
 
-**Declarations.** This manuscript is original, has not been published previously, and is not under consideration by any other journal. A precursor audit study by the same author is archived as a Zenodo preprint (doi:10.5281/zenodo.23572226) and is cited and clearly distinguished from the present work; all experiments, analysis, and text in this manuscript are new. The author declares no competing interests. All code and complete per-run result records are publicly available in the project repository linked in the manuscript.
+**Declarations.** This manuscript is original, has not been published previously, and is not under consideration by any other journal. A precursor audit study by the same author is archived as a Zenodo preprint (doi:10.5281/zenodo.23602281, version 2) and is cited and clearly distinguished from the present work; all experiments, analysis, and text in this manuscript are new. The author declares no competing interests. All code and complete per-run result records are publicly available in the project repository linked in the manuscript.
 
 Sincerely,
 Ranxi Zhou

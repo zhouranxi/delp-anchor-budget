@@ -1,0 +1,7 @@
+# Core (analysis + figure reproduction)
+torch>=2.0
+torchvision
+numpy
+matplotlib
+# Standard library only: json, math, statistics, argparse, zipfile
+# Test environment: Python 3.13, torch 2.x CUDA (RTX 3090)

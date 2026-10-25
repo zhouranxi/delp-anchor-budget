@@ -6,24 +6,36 @@ across plain EWC (h=1), online EWC with gamma in {0.5, 0.9} (h ~= 1/(1-gamma)),
 DeLP-fifo M=5 (h=5) and unbounded DeLP (h=T), the learning term ell is
 log-linear in the protected-mass horizon at T=20, lambda=1000, n=10 seeds.
 
-Usage: run from bench/ with the raw JSON records in results/.
+Usage: run from anywhere; resolves records relative to this file
+(bench/results/ in the committed layout, results/ next to the script in
+the server scratch layout).
 """
-import json, math, statistics as st
+import json, math, os, statistics as st
 from collections import defaultdict
 
 LAM, T, SEEDS = 1000.0, 20, 10
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
+def _p(fname):
+    """Resolve a records file under both layouts (repo vs server scratch)."""
+    for c in (os.path.join(_HERE, 'results', fname),   # repo layout
+              os.path.join(_HERE, fname)):             # server scratch
+        if os.path.isfile(c):
+            return c
+    raise FileNotFoundError(fname)
+
 def load_ewc():
     recs = []
-    for f in ['results/r8_gamma05.json', 'results/r8_gamma09.json']:
-        recs += [r for r in json.load(open(f))['results'] if 'error' not in r]
-    for f in ['results/r7_ewc.json.part0', 'results/r7_ewc.json.part1']:
-        recs += [r for r in json.load(open(f))['results'] if 'error' not in r]
+    for f in ['r8_gamma05.json', 'r8_gamma09.json']:
+        recs += [r for r in json.load(open(_p(f)))['results'] if 'error' not in r]
+    for f in ['r7_ewc.json.part0', 'r7_ewc.json.part1']:
+        recs += [r for r in json.load(open(_p(f)))['results'] if 'error' not in r]
     return recs
 
 def main():
     ewc = load_ewc()
-    mn = json.load(open('results/anchor_budget_all.json'))['results']
+    mn = json.load(open(_p('anchor_budget_all.json')))['results']
 
     arms = {}
     arms['plain EWC (h=1)'] = {r['seed']: r for r in ewc

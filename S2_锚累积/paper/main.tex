@@ -54,15 +54,19 @@ keyed to an anchor's current constraint mass fail catastrophically
 (``grandfathering'') and evict anchors at birth, losing $-34.5$ BWT ---
 whereas age-first criteria are immune; trace instrumentation of anchor
 stacks shows the mechanism directly; and (iv) merging anchors removes exactly the redundant inter-anchor
-cross terms --- the penalty drops one-sidedly by up to $64\%$ while
+cross terms --- the penalty \emph{value} drops one-sidedly by up to
+$64\%$ (gradient unchanged; only a parameter-independent constant
+shifts, which has zero effect on SGD) while
 the accuracy trajectory remains indistinguishable from unbounded ---
 separating the memory axis ($T \to M$ storage) from the plasticity
 axis. A budget of $M{=}2$ raises final accuracy to
-68.2\% at $T{=}10$, $+13.0$ points over unbounded \delp{}, and the effect
-replicates on Fashion-MNIST at $n{=}10$ paired seeds ($+13.6$ points,
+$66.7\%$ at $T{=}10$, $+12.3$ points over unbounded \delp{}
+(fifo, $n{=}10$ paired seeds, $t(9){=}39.6$), and the effect
+replicates on Fashion-MNIST ($+13.6$ points,
 $t(9){=}18.3$) and on Split-CIFAR-100
-with a ResNet-18 backbone, where at $T{=}20$ every bounded policy
-outperforms unbounded stacking (up to $+5.0$ points, $t(9){=}7.1$) and
+with a ResNet-18 backbone, where at $T{=}20$ five of the six bounded
+policies outperform unbounded stacking (up to $+5.0$ points, $t(9){=}7.1$;
+merge, which trades a small BWT reduction for storage, is the exception) and
 anchor-stack traces replicate the age-versus-mass mechanism
 bit-for-bit. Single-anchor references bound the claim: plain EWC
 maximizes the learning term at $3$--$5\times$ the forgetting, and
@@ -136,11 +140,12 @@ policies for anchor stacks and show that a FIFO budget recovers
 $+4.5/+9.0$ points of final accuracy at $T{=}10/20$ over unbounded
 \delp{} ($n{=}10$ paired seeds, $t(9){=}21.4/19.1$), by recovering
 $+5.4/+15.2$ points of the learning term (Eq.~\ref{eq:decomp}).
-A budget of $M{=}2$ reaches $68.2\%$ at $T{=}10$ ($+13.0$ over
-unbounded), and the effect replicates on Fashion-MNIST ($+13.6$,
+A budget of $M{=}2$ reaches $66.7\%$ at $T{=}10$ ($+12.3$ over
+unbounded, $n{=}10$ paired seeds), and the effect replicates on Fashion-MNIST ($+13.6$,
 $n{=}10$ paired seeds) and
-Split-CIFAR-100 (ResNet-18; at $T{=}20$ all six bounded policies beat
-unbounded, up to $+5.0$ points, $t(9){=}7.1$).
+Split-CIFAR-100 (ResNet-18; at $T{=}20$ five of the six bounded policies beat
+unbounded, up to $+5.0$ points, $t(9){=}7.1$; merge, which trades a small BWT
+reduction for storage, is the exception).
 \item \textbf{Two orthogonal knobs.} Through per-task accuracy
 profiles we show the budget controls the \emph{age structure} of
 forgetting (which tasks degrade) while $\lambda$ controls its total
@@ -165,6 +170,16 @@ the budget on accuracy at matched forgetting, and that soft (discount)
 and hard (window) bounds collapse onto one log-linear law between the
 learning term and the protected-mass horizon: bounding accumulated
 anchor mass is the active ingredient.
+\item \textbf{An auditable, policy-selectable protection set.} Because
+the budget is a \emph{set} of named anchors rather than a scalar
+discount, the protected mass is inspectable: which tasks are still
+protected, which were evicted, and by which policy, are all readable
+directly from the stack trace. A tuned online-EWC discount achieves the
+same accuracy level but hides this structure inside a single decay
+factor. The contribution is therefore a \emph{measurable mechanism}
+(budget, not discount, is the active ingredient) and a \emph{knob}
+(age structure vs.\ total mass), not a drop-in accuracy win over a
+tuned baseline.
 \end{enumerate}
 
 % ============================================================
@@ -225,8 +240,10 @@ $\mathcal{A}_1, \dots, \mathcal{A}_{t-1}$: the penalty is
 Following~\cite{zhou2026delp}, average retention decomposes as
 Eq.~\ref{eq:decomp}. % cite numbers: at T=10 unbounded DeLP:
 % acc 55.3, BWT -5.5, ell 60.2; at T=20: 33.7 / -4.4 / 37.9
-At $T{=}10$ the learning term of unbounded \delp{} sits $5.4$ points
-below its $T{=}5$ value, and the gap widens with $T$;
+At fixed $\lambda{=}5000$ the learning term of unbounded \delp{}
+falls from $59.2$ at $T{=}10$ to $37.7$ at $T{=}20$ --- a
+$21.5$-point drop that compounds with sequence length, exactly the
+signature of drag that accumulates with every finished task;
 anchored identity Eq.~\ref{eq:decomp} attributes the gap to $\ell$,
 not BWT. We call this the \emph{anchor accumulation problem}.
 
@@ -416,7 +433,9 @@ horizon $h$ ($h{=}1$ plain, $h{=}2$ for $\gamma{=}0.5$, $h{=}5$ for
 the window, $h{=}10$ for $\gamma{=}0.9$, $h{=}20$ unbounded):
 $\ell \approx 84 - 11\ln h$ with $R^2{=}0.99$ --- a fit that holds for
 every seed individually (per-seed $R^2 \geq 0.98$, slope
-$-10.9\pm0.6$), replicates at $T{=}10$ ($R^2{=}1.00$), and whose
+$-10.9\pm0.6$), replicates at $T{=}10$ ($R^2{=}0.998$ on the same
+four-arm fit excluding $\gamma{=}0.9$, whose $\ell$ sits $1.1$ below
+the line), and whose
 ordering is monotone at every grid $\lambda$ (mean-fit $R^2$
 $0.99/0.94/0.80$ as $\lambda$ tightens). Bounding accumulated anchor
 mass --- not
@@ -441,12 +460,12 @@ interaction.
 \paragraph{Dose--response.}
 A seven-point sweep at $T{=}20$, $\lambda{=}5000$ ($n{=}10$) shows the
 budget's effect is monotone across the whole interior, not an artifact
-of two extreme points: final accuracy $52.6, 49.0, 44.7, 42.0, 40.1,
-36.3, 35.1$ for $M{=}2,3,4,5,6,8,10$, with BWT recovering
-$-24.3 \to -5.2$ as the window widens toward $M{=}10$; every $M$
-remains significantly above unbounded ($38.6$; paired $t(9)$ from
-$27.2$ at $M{=}2$ down to $8.0$ at $M{=}10$, approaching the window's
-own limit).
+of two extreme points: final accuracy $52.4, 48.9, 45.0, 42.4, 40.2,
+36.5, 35.1$ for $M{=}2,3,4,5,6,8,10$, with BWT recovering
+$-24.5 \to -5.2$ as the window widens toward $M{=}10$; every $M$
+remains significantly above unbounded at the same
+$\lambda{=}5000$ ($33.4$; paired $t(9)$ from $36.0$ at $M{=}2$ down
+to $9.1$ at $M{=}10$, approaching the window's own limit).
 
 \begin{figure}[t]
 \centering
@@ -494,10 +513,10 @@ but they are not re-parameterizations of one another. At matched
 plasticity recovery, the two knobs produce \emph{different age
 structures} of forgetting (Fig.~\ref{fig:age}):
 $\lambda{=}1000$ scales down protection uniformly --- the profile
-keeps its steep age gradient ($38.5$-point spread, oldest tasks at
-65--83\%, newest at 45--51\%) --- while fifo $M{=}2$
+keeps its steep age gradient ($41.8$-point spread, oldest tasks at
+66--83\%, newest at 41--50\%) --- while fifo $M{=}2$
 redistributes forgetting onto the oldest tasks, flattening the
-profile ($25.7$-point spread).
+profile ($22.1$-point spread).
 No value of $\lambda$ produces the flat profile, and no value of $M$
 produces the uniform scaling.
 
@@ -595,11 +614,15 @@ the newest; merge partially grandfather-protects.}
 Merging the most Fisher-similar pair removes exactly the cross term
 between the merged anchors. Penalty instrumentation over $40$ runs
 ($T \in \{10,20\}$, $M \in \{2,5\}$, $n{=}10$; exactly $T{-}M$ merges
-per run) makes the change quantitative: the penalty decreases
+per run) makes the change quantitative: the penalty's \emph{value} drops
 one-sidedly --- never increases --- with per-run maximum relative
 drops of $43$--$45\%$ at $M{=}2$ (worst case $64\%$) and $18$--$34\%$
-at $M{=}5$, and $77\%$ of individual merges move the penalty at all.
-The removed mass is precisely the redundancy the merge detected; the
+at $M{=}5$, and $77\%$ of individual merges change that value. The
+change is \emph{value-level only}: merging preserves the first-order
+quadratic regularizer (the gradient $\nabla_\theta$ of the penalty is
+unchanged), shifting only the parameter-independent constant, which
+has zero effect on SGD. The removed mass is precisely the redundancy
+the merge detected; the
 accuracy trajectory nonetheless remains indistinguishable from
 unbounded at every $M$ (Table~\ref{tab:grid}) while storing
 $M \ll T$ anchors ($-75\%$ at $T{=}20$, $M{=}5$).
@@ -619,13 +642,16 @@ effect replicates and amplifies as the budget shrinks.
 \label{sec:exp-cifar}
 
 \paragraph{Protocol.}
-Split-CIFAR-100, $T \in \{10, 20\}$ (10 classes per task), ResNet-18
+Split-CIFAR-100, $T \in \{10, 20\}$: the 100 classes are split into
+$T$ contiguous slices of $100/T$ classes each ($10$ classes/task at
+$T{=}10$, $5$ classes/task at $T{=}20$; the code partitions a
+random permutation of the 100 classes into $T$ blocks), ResNet-18
 adapted to $32{\times}32$ inputs with GroupNorm in place of BatchNorm
 --- running statistics are buffers that drift under later tasks and
 silently destroy protected tasks while the anchored weights themselves
 are held fixed, so they are excluded by design. Evaluation and training
 are task-incremental with a masked softmax head: each task computes its
-loss only over its own 10 classes, so head rows of past tasks receive
+loss only over its own $100/T$ classes, so head rows of past tasks receive
 no gradient and are protected by construction; anchors therefore cover
 the backbone only, and forgetting can propagate exclusively through
 the shared trunk --- exactly the pathway the anchor stack governs.
@@ -676,9 +702,11 @@ agew2  & $23.7\pm2.6$ ($+0.4$) & $22.3\pm3.3$ ($-1.0$) &
 
 \begin{sloppypar}
 \paragraph{The budget effect strengthens with $T$ on natural images.}
-At $T{=}20$ every bounded policy outperforms unbounded stacking
-(Table~\ref{tab:cifar}): fifo $+5.0$ ($t(9){=}7.1$), agew $+4.2$
-($t{=}7.3$), random $+3.6$ ($t{=}9.2$), redun $+3.4$ ($t{=}4.0$);
+At $T{=}20$ five of the six bounded policies outperform unbounded
+stacking (Table~\ref{tab:cifar}): fifo $+5.0$ ($t(9){=}7.1$), agew $+4.2$
+($t{=}7.3$), random $+3.6$ ($t{=}9.2$), redun $+3.4$ ($t{=}4.0$),
+agew2 $+1.3$; merge, which removes redundancy and recovers no plasticity,
+is the one policy that does not ($-0.5$).
 at $T{=}10$ the effect is marginal, about $+1.5$ points at
 $t(9)\approx 2$.
 The dose--response matches the mechanism: anchor drag accumulates
@@ -843,12 +871,14 @@ ResNet-18 adapted for $32{\times}32$ inputs ($3{\times}3$ stem,
 stride 1, no max-pool) with all BatchNorm layers replaced by GroupNorm
 (32 groups). SGD, momentum 0.9, weight decay $5{\times}10^{-4}$, lr
 $0.05$, batch 128, five epochs per task. Masked cross-entropy over the
-task's 10 classes; task-incremental evaluation over the same classes.
+task's $100/T$ classes; task-incremental evaluation over the same classes.
 EWC penalty over backbone parameters only, $\lambda{=}0.1$; diagonal
 Fisher estimated from 50 single-sample draws of the squared gradient
 of the max log-softmax on the finished task, rescaled to unit global
-mean; gradient clipping at max norm 5. Tasks are contiguous 10-class
-blocks of the standard class order; seeds $0$--$9$ control init,
+mean; gradient clipping at max norm 5. Tasks are contiguous
+$100/T$-class blocks of a fixed random permutation of the 100 classes
+(generator seed $100{+}\mathrm{seed}$, matching the released code);
+seeds $0$--$9$ control init,
 shuffle, and eviction randomness. Per-job crash-safe checkpoints and
 the full JSON records (including \texttt{survivor\_history} and
 \texttt{acc\_matrix}) are released with the code.

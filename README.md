@@ -16,7 +16,7 @@ verifiable:
 | Folder | Paper | Status |
 |---|---|---|
 | `S1_剂量响应审计/` | *Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair* — dead-neuron measurement artifact, anti-specialization, one-parameter dose–response repair | Preprint [doi:10.5281/zenodo.23637973](https://doi.org/10.5281/zenodo.23637973); submitted to Neural Networks |
-| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Manuscript |
+| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Revised manuscript (post-Neurocomputing; protocol description corrected, all headline numbers re-derived from the raw records — see `S2_锚累积/rejection_fix/`) |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Submission-ready |
 
 The descriptions below refer to the S2 study (this repository's original
@@ -36,21 +36,23 @@ what stability cost, (Q2) whether the budget is a knob distinct from λ, and
 |---|---|---|---|
 | Permuted-MNIST T=10 | fifo M=5 vs unbounded (n=10 seeds) | **+4.51 ± 0.67** | t(9)=21.4 |
 | Permuted-MNIST T=20 | fifo M=5 vs unbounded (n=10 seeds) | **+8.98 ± 1.49** | t(9)=19.1 |
-| Permuted-MNIST T=10 | fifo M=2 vs unbounded | +13.0 | — |
+| Permuted-MNIST T=10 | fifo M=2 vs unbounded (n=10 paired) | **+12.3** | t(9)=39.6 |
 | Fashion-MNIST T=10  | fifo M=2 vs unbounded (n=10 paired) | +13.6 | t(9)=18.3 |
 | Fashion-MNIST T=10  | fifo M=5 vs unbounded (n=10 paired) | +2.9 | t(9)=11.5 |
-| Split-CIFAR-100 T=20 | every bounded policy vs unbounded (n=10) | up to **+5.0** (fifo) | t(9)=7.1 |
+| Split-CIFAR-100 T=20 | five of six bounded policies vs unbounded (n=10; merge −0.5 is the exception) | up to **+5.0** (fifo) | t(9)=7.1 |
 
 Mass-keyed eviction (redun) collapses via *grandfathering* — it freezes the
 first M anchors and evicts every later anchor at birth (BWT −34.5 at T=20);
 age-first criteria are immune. Fisher-cosine *merge* compresses the stack to
-M entries with a bit-near-identical trajectory, separating the memory axis
-from the plasticity axis.
+M entries while the accuracy trajectory stays indistinguishable from
+unbounded (the penalty *value* drops one-sidedly, but its gradient is
+unchanged — merging shifts only a parameter-independent constant), separating
+the memory axis from the plasticity axis.
 
 **Single-anchor references (R7, n=10, same protocol & λ grid).** Plain EWC
 (keep only the previous task's anchor) posts the highest final accuracy of
-any arm on Permuted-MNIST (68.3–71.1 at T=10, 56.4–59.4 at T=20) by
-maximizing the learning term (ℓ 81–85) — at 3–5× the forgetting of
+any arm on Permuted-MNIST (68.3–71.1 at T=10, 56.4–59.3 at T=20) by
+maximizing the learning term (ℓ 80.7–85.3) — at 3–5× the forgetting of
 unbounded DeLP (BWT −15.8/−25.7).
 
 **Soft bound beats hard bound, and they obey one law (R8, n=10).**
@@ -71,21 +73,25 @@ term is log-linear in the protected-mass horizon h:
 
 ℓ ≈ 84 − 11·ln h, **R² = 0.99** (`analyze_soft_hard_bound.py`). Robustness:
 the fit holds per-seed (every seed individually R² ≥ 0.98, slope −10.9±0.6),
-replicates at T=10 (R² = 1.00), and the ordering is monotone at every grid λ
+replicates at T=10 (R² = 0.998 on the four-arm fit excluding γ=0.9), and
+the ordering is monotone at every grid λ
 (mean-fit R² 0.99/0.94/0.80 as λ tightens). Bounding
 accumulated anchor mass — not the eviction mechanism — is the active
 ingredient; the explicit window's residual is an auditable, discrete,
 policy-selectable protection set.
 
 **Merge, measured (R8 instrumentation, 40 runs).** Merge removes exactly
-the inter-anchor cross terms: the stack penalty drops one-sidedly (per-run
-maxima 43–45% at M=2, worst 64%; 18–34% at M=5; 77% of individual merges
-move the penalty at all), while the accuracy trajectory remains
+the inter-anchor cross terms: the stack penalty *value* drops one-sidedly
+(per-run maxima 43–45% at M=2, worst 64%; 18–34% at M=5; 77% of individual
+merges change that value) while the penalty *gradient* is unchanged —
+merging shifts only a parameter-independent constant, which has zero effect
+on SGD — and the accuracy trajectory remains
 indistinguishable from unbounded.
 
 **Budget dose–response (R8, T=20, λ=5000, n=10).** M = 2,3,4,5,6,8,10 →
-accuracy 52.6, 49.0, 44.7, 42.0, 40.1, 36.3, 35.1 (BWT −24.3 → −5.2);
-every M significantly above unbounded (38.6; paired t(9) 27.2 → 8.0).
+accuracy 52.4, 48.9, 45.0, 42.4, 40.2, 36.5, 35.1 (BWT −24.5 → −5.2);
+every M significantly above unbounded at the same λ=5000 (33.4; paired
+t(9) 36.0 → 9.1).
 
 **No-protection reference (R7, Split-CIFAR-100, n=10).** λ=0 (plain SGD)
 reaches 27.0±1.7 (T=10) and 36.9±3.4 (T=20) — above every DeLP arm.
@@ -148,8 +154,12 @@ task; λ_DeLP = 5000; paired arms share seeds 0–9; permutations drawn once per
 seed and shared by all arms. Full details: `anchor_budget.py` docstring.
 
 **Split-CIFAR-100.** ResNet-18 (32×32 variant) with GroupNorm (BN running
-stats are buffers that drift under later tasks and are excluded by design);
-masked cross-entropy over each task's own 10 classes (task-incremental), so
+stats are buffers that drift under later tasks and are excluded by design).
+The 100 classes are split into T contiguous slices of 100/T classes each
+(10 classes/task at T=10, 5 classes/task at T=20; the code partitions a
+random permutation of the 100 classes, generator seed 100+seed, into T
+blocks); masked cross-entropy over each task's own 100/T classes
+(task-incremental), so
 head rows of past tasks are protected by construction and anchors cover the
 backbone only; Fisher rescaled to unit global mean, λ = 0.1 (calibrated on
 unbounded DeLP only), grad clip 5; SGD lr 0.05, 5 epochs per task; T ∈ {10,20},

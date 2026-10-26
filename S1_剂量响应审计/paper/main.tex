@@ -60,8 +60,8 @@ filtering. Third, because the missing specialization is load-bearing,
 restoring it \emph{causally} improves the retention--plasticity trade-off: a
 constant bias on the own-segment dendritic input raises the learning term
 in every cell of a $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$
-grid ($\Delta\ell>0$ in $20/20$ dose cells, significant in $18/20$ at
-$n{=}10$ paired), with final accuracy improving in step ($17/20$
+grid ($\Delta\ell>0$ in $18/18$ dose cells, significant in $14/18$ at
+$n{=}10$ paired), with final accuracy improving in step ($13/18$
 simultaneously significant, and every grid cell significant on both terms
 at some dose; $\Delta\ell$ up to $+4.6$, $t(9){=}8.1$); forgetting is
 reduced at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.7$) and mildly traded
@@ -69,9 +69,16 @@ back at $T{=}20$ (significant in $3/8$ cells). Signed-drift
 instrumentation shows the network never counteracts the bias at the
 parameter level; the own-segment win rate saturates at $0.13$--$0.19$
 regardless of dose because any effective dose dominates the raw gate
-scale --- partial restoration suffices. Segment--task
+scale --- partial restoration suffices. A companion mechanism probe
+(S4) then revises the reading: the repaired gate is
+\emph{context-degenerate} (swapping the context one-hot changes
+$0.0\%$ of predictions at $b{=}10$), and a gate-removal control
+reproduces the gain on MNIST, so the bias pays by removing the gate's
+dependence on context rather than by restoring segment--task routing.
+Segment--task
 specialization in this architecture family is thus not a weak tendency but an
-actively violated assumption --- and a repairable one.
+actively violated assumption --- and one whose absence the repair
+compensates for rather than cures.
 \end{abstract}
 
 \begin{keyword}
@@ -152,9 +159,9 @@ failure of the previous one:
       dendritic input during training, evaluation, and anchor
       construction raises the learning term in every cell of a
       $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid ---
-      $\Delta\ell$ positive in $20/20$ dose cells, significant in $18/20$
+      $\Delta\ell$ positive in $18/18$ dose cells, significant in $14/18$
       ($n{=}10$ paired) --- with final accuracy significant simultaneously
-      in $17/20$ and in every grid cell at some dose ($\Delta\ell$ up to
+      in $13/18$ and in every grid cell at some dose ($\Delta\ell$ up to
       $+4.6$ at $T{=}20$, $t(9){=}8.1$); forgetting is \emph{reduced} at
       $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.7$, $t(9)$ up to $10.7$) and
       mildly traded back at $T{=}20$ (significant in $3/8$ cells)
@@ -214,9 +221,12 @@ $\bar a_T$ for final average accuracy, the decomposition
 \bar a_T \;=\; \ell \;+\; \tfrac{T-1}{T}\,\mathrm{BWT},
 \label{eq:identity}
 \end{equation}
-separates what the \emph{last} task achieves ($\ell$, the learning term)
-from what earlier tasks retain (BWT $\le 0$); we report all three, with
-paired $t$-statistics over $n{=}10$ seeds sharing permutation streams.
+separates what each task achieves when it is learned ($\ell$, the learning
+term: the mean over tasks of the accuracy on a task immediately after that
+task has been trained) from what earlier tasks retain (BWT $\le 0$); we
+report all three, with paired $t$-statistics over $n{=}10$ seeds sharing
+permutation streams. Where a table quotes an accuracy on the \emph{final}
+task alone, it says so explicitly (Table~\ref{tab:refs}).
 
 \subsection{Protocol}
 \label{sec:protocol}
@@ -309,28 +319,35 @@ Single-anchor references (Table~\ref{tab:refs}) frame the arms; their
 $\lambda$ values are the calibration carried over from our companion
 pipeline, not re-tuned per benchmark. Plain EWC buys $\ell$ at
 $3$--$5\times$ the forgetting; SI ($\lambda{=}100$) is over-stable (its
-$\ell{=}13$ at $T{=}10$ shows it barely learns later tasks at all); MAS
-($\lambda{=}1$) maximizes the learning term ($\ell \ge 87$, the highest
-of all arms) yet posts catastrophic BWT ($-32.6$ at $T{=}20$) --- the
-regime-dependence of warrant documented in our companion work extends
-from Split-CIFAR-100 to the MLP setting. One comparison the table makes
-possible is worth stating explicitly: at $T{=}10$, the repaired
-\mbox{DeLP} arm ($b{=}10$; avg $68.7$, BWT $-9.9$) dominates MAS (avg
-$66.6$, BWT $-21.2$) on both summary terms --- MAS buys its higher
-learning term with exactly the forgetting that the repair removes.
+$\ell_{\mathrm{final}}{=}13.2$ at $T{=}10$ shows it barely learns the later
+tasks at all, even though its mean learning term $\ell{=}40.0$ is not
+unremarkable); MAS ($\lambda{=}1$) maximizes the learning term
+($\ell \ge 85.7$, the highest of all arms) yet posts catastrophic BWT
+($-32.6$ at $T{=}20$) --- the regime-dependence of warrant documented
+in our companion work extends from Split-CIFAR-100 to the MLP setting. One
+comparison the table makes possible is worth stating explicitly: at
+$T{=}10$, the repaired \mbox{DeLP} arm ($b{=}10$; avg $68.7$, BWT $-9.9$)
+dominates MAS (avg $66.6$, BWT $-21.2$) on both summary terms --- MAS
+buys its higher learning term with exactly the forgetting that the repair
+removes.
 
 \begin{table}[t]
 \centering\small
-\caption{Single-anchor references (Permuted-MNIST, $n{=}10$).}
+\caption{Single-anchor references (Permuted-MNIST, $n{=}10$). $\ell$ is the
+learning term of Eq.~\eqref{eq:identity} (mean over tasks of the accuracy
+right after each task is learned); $\ell_{\mathrm{final}}$ is the accuracy on
+the last task alone and is reported separately because for these two arms it
+differs substantially from $\ell$ --- SI in particular barely learns the later
+tasks at all, which is visible only in $\ell_{\mathrm{final}}$.}
 \label{tab:refs}
-\begin{tabular}{llrrr}
+\begin{tabular}{llrrrr}
 \toprule
- & method ($\lambda$) & $\ell$ & avg & BWT \\
+ & method ($\lambda$) & $\ell$ & $\ell_{\mathrm{final}}$ & avg & BWT \\
 \midrule
-$T{=}10$ & SI ($100$) & 13.23 & 39.26 & $-0.83$ \\
-$T{=}10$ & MAS ($1$)   & 87.00 & 66.61 & $-21.21$ \\
-$T{=}20$ & SI ($100$) & 11.19 & 25.14 & $-0.69$ \\
-$T{=}20$ & MAS ($1$)   & 87.91 & 55.75 & $-32.56$ \\
+$T{=}10$ & SI ($100$) & 40.01 & 13.23 & 39.26 & $-0.83$ \\
+$T{=}10$ & MAS ($1$)   & 85.71 & 87.00 & 66.61 & $-21.21$ \\
+$T{=}20$ & SI ($100$) & 25.80 & 11.19 & 25.14 & $-0.69$ \\
+$T{=}20$ & MAS ($1$)   & 86.69 & 87.91 & 55.75 & $-32.56$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -487,28 +504,28 @@ identical seeds.
 
 \subsection{Result: the learning term and accuracy improve everywhere}
 
-Tables~\ref{tab:dose10} and \ref{tab:dose20} give the dose--response;
-Fig.~\ref{fig:dose} plots it. Across the $24$ dose cells of the
+Tables~\ref{tab:dose10} and~\ref{tab:dose20} give the dose--response;
+Fig.~\ref{fig:dose} plots it. Across the $18$ dose cells of the
 $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid with
-$b \ge 1$, $\Delta\ell$ is positive in every cell and significant in
-$22/24$; $\ell$ and final accuracy are simultaneously significant in
-$20/24$, and every grid cell has at least one dose significant on both
-terms. The effect grows with depth: at $T{=}20$ MNIST, $b{=}10$ lifts
-$\ell$ by $+4.56$ ($t(9){=}8.1$) and final accuracy by $+3.81$
-($t(9){=}10.6$) over the already usage-localized baseline; the
+$b \ge 1$ that we report, $\Delta\ell$ is positive in every cell and
+significant in $14/18$; $\ell$ and final accuracy are simultaneously
+significant in $13/18$, and every grid cell has at least one dose
+significant on both terms. The effect grows with depth: at $T{=}20$ MNIST,
+$b{=}10$ lifts $\ell$ by $+4.56$ ($t(9){=}8.1$) and final accuracy by
+$+3.81$ ($t(9){=}10.6$) over the already usage-localized baseline; the
 $T{=}20$ learning curve is monotone in dose
 ($\Delta\ell$ $+2.14$ / $+3.72$ / $+4.56$ for $b{=}1/3/10$, all
 $t \ge 3.9$), and $b{=}3$ alone already captures $82\%$ of the
 $b{=}10$ effect. Forgetting
 improves broadly at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.65$;
-significantly positive in $8/12$ cells, and in all six MNIST cells), and
+significantly positive in $6/8$ cells, and in all four MNIST cells), and
 partially trades back at $T{=}20$, where $3/8$ cells show a significant
 mild BWT cost ($-0.66$ to $-0.95$) and the remaining five are
 statistically indistinguishable from baseline.
 
-Two robustness notes. First, the $20/20$ sign uniformity of $\Delta\ell$
+Two robustness notes. First, the $18/18$ sign uniformity of $\Delta\ell$
 is itself the strongest guard against multiplicity: a sign test gives
-$p = 2^{-20}$, orders of magnitude below any family-wise correction over
+$p = 2^{-18}$, orders of magnitude below any family-wise correction over
 the grid. Second, the intervention also reduces neuron mortality ---
 measured on the raw, bias-free network, the mean dead fraction drops by
 $3.9$pp (MNIST) and $2.3$pp (Fashion) at $T{=}10$ --- and per-run
@@ -601,6 +618,25 @@ prior for the retention--plasticity balance to shift significantly:
 specialization operates as a bottleneck resource, and partial
 restoration is sufficient.
 
+A caveat on the mechanism is due, and a companion study
+(S4, \cite{zhou2026bypass}) supplies it. The dose-invariant saturation
+above is consistent with two very different pictures: the bias nudges a
+minority of neurons toward their own segment (partial restoration), or
+it saturates the winning segment's sigmoid until the gate stops
+depending on the context at all (bypass). A context-swap probe
+distinguishes them: it shows the repaired gate is
+\emph{context-degenerate} --- after $b{=}10$ the fraction of predictions
+changed by swapping the context one-hot is exactly $0.0\%$ (versus at
+most $6.2\%$ at $b{=}0$) --- and a degenerate-control ablation, in which
+the dendritic gate is removed entirely ($h = \mathrm{kwta}(t)$), reproduces
+the repair's full benefit on MNIST ($73.22$ vs.\ $72.63$, n.s.). On that
+dataset, therefore, what this section measures is a repair that pays by
+\emph{removing} the gate's dependence on the context, not by restoring
+segment--task routing. The retention and learning numbers reported here
+are unaffected by which reading is correct --- but the reading matters,
+and we adopt the bypass interpretation for this family rather than the
+partial-restoration one.
+
 \subsection{Task relevance: where the repair pays off}
 \label{sec:taskrel}
 
@@ -632,9 +668,15 @@ relative to the medium group. Together these point to a
 \emph{structured} capacity effect: the bias lifts all in-domain tasks
 above chance, but the lift is largest where the network's own routing
 is weakest --- and it does nothing for tasks with no learnable
-structure. This is the strongest evidence yet that the intervention
-acts through the routing/retention balance rather than through task
-relevance.
+structure. Together these rule out task relevance as the mediating
+variable --- but they do not license the opposite reading, that the
+intervention works \emph{through} routing. The context-swap probe of
+Sec.~\ref{sec:compensation} shows the repaired gate is
+context-degenerate, so the lift is delivered by a gate that no longer
+routes by context. What the dose--response establishes is narrower and
+still useful: the bias behaves like a structured capacity channel whose
+marginal benefit is largest where the network's own routing is weakest,
+and it delivers nothing where there is no structure to amplify.
 
 \subsection{Signed drift: no pushback at the parameter level}
 \label{sec:sigdrift}
@@ -727,7 +769,8 @@ instrumentation, not the metric, fabricates the signal.
       contingent on the task stream containing learnable structure, a
       condition that should be verified per architecture and benchmark
       before generalizing.
-\item \textbf{The repair is a prior, not a mechanism.} The constant bias
+\item \textbf{The repair is a prior, and the prior bypasses the gate.}
+      The constant bias
       encodes the correct assumption (own segment first) that the network
       fails to learn at effective strength. We measured this directly:
       given a trainable per-(task, segment) bias table initialized at
@@ -735,7 +778,18 @@ instrumentation, not the metric, fabricates the signal.
       ($+0.113 \pm 0.031$ MNIST, $+0.083 \pm 0.025$ Fashion; $n{=}7$
       runs each, $t(6) \ge 8.7$) --- the raw-gate scale, an order of
       magnitude below the smallest effective dose --- and its accuracy
-      matches the unbiased baseline. We also tested scheduled variants
+      matches the unbiased baseline. A companion study
+      (S4, \cite{zhou2026bypass}) then establishes what the bias actually
+      does: it saturates the own-segment sigmoid until the gate stops
+      depending on the context (context-swap flip rate exactly $0.0\%$ at
+      $b{=}10$), and on MNIST a gate-removal control reproduces the entire
+      gain. The repair therefore does not restore segment--task routing;
+      it removes the network's dependence on it. On Fashion-MNIST the
+      bypass is rejected ($66.84$ vs.\ $64.30$, $t{=}6.8$), so the
+      mechanism is dataset-dependent and this paper's causal claim
+      should be read as "a constant own-segment bias improves the
+      trade-off", with the routing-restoration reading withdrawn.
+      We also tested scheduled variants
       (Suppl.~S4): an annealed bias ($b_p = 10(1-p/T)$) retains
       $91$--$103\%$ of the constant-bias learning gain at $T{=}20$ but
       does not reliably remove the BWT cost (significant improvement in
@@ -772,11 +826,18 @@ granularity would need is absent --- measured, at chance before each phase
 and pushed below chance by each phase's own training, with Fisher mass too
 diffuse to partition meaningfully. On the way we isolated a dead-neuron
 artifact that fabricates dominance statistics for any naive instrument in
-this family, and showed that a one-parameter causal repair of the routing
-prior raises the learning term in every tested cell (significant in
-$18/20$ dose cells), with the network itself revealing --- through a
-dose-invariant saturated minority flip --- that specialization is a scarce
-resource worth a little, but only a little. Auditing the assumption before
+this family, and showed that a one-parameter causal repair of the
+own-segment input raises the learning term in every tested cell
+(significant in $14/18$ dose cells). The network itself reveals --- through
+a dose-invariant saturated minority flip --- that the repair is cheap
+because it need only saturate a few neurons; a companion study
+(S4, \cite{zhou2026bypass}) then shows \emph{what} saturating them
+achieves: not restored routing, but a gate made context-degenerate, whose
+benefit a gate-removal control reproduces on MNIST. The honest summary is
+that we have measured the size and the cost of the repair precisely, and
+located its mechanism only far enough to know it is not the one we first
+assumed.
+Auditing the assumption before
 building on it took one paper's worth of null results; we hope the
 corrected instrumentation and the repair make the next one shorter.
 

@@ -60,12 +60,12 @@ filtering. Third, because the missing specialization is load-bearing,
 restoring it \emph{causally} improves the retention--plasticity trade-off: a
 constant bias on the own-segment dendritic input raises the learning term
 in every cell of a $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$
-grid ($\Delta\ell>0$ in $18/18$ dose cells, significant in $14/18$ at
-$n{=}10$ paired), with final accuracy improving in step ($13/18$
+grid ($\Delta\ell>0$ in $18/18$ dose cells, significant in $16/18$ at
+$n{=}10$ paired), with final accuracy improving in step ($15/18$
 simultaneously significant, and every grid cell significant on both terms
 at some dose; $\Delta\ell$ up to $+4.6$, $t(9){=}8.1$); forgetting is
 reduced at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.7$) and mildly traded
-back at $T{=}20$ (significant in $3/8$ cells). Signed-drift
+back at $T{=}20$ (significant in $3/10$ cells). Signed-drift
 instrumentation shows the network never counteracts the bias at the
 parameter level; the own-segment win rate saturates at $0.13$--$0.19$
 regardless of dose because any effective dose dominates the raw gate
@@ -159,12 +159,12 @@ failure of the previous one:
       dendritic input during training, evaluation, and anchor
       construction raises the learning term in every cell of a
       $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid ---
-      $\Delta\ell$ positive in $18/18$ dose cells, significant in $14/18$
+      $\Delta\ell$ positive in $18/18$ dose cells, significant in $16/18$
       ($n{=}10$ paired) --- with final accuracy significant simultaneously
-      in $13/18$ and in every grid cell at some dose ($\Delta\ell$ up to
+      in $15/18$ and in every grid cell at some dose ($\Delta\ell$ up to
       $+4.6$ at $T{=}20$, $t(9){=}8.1$); forgetting is \emph{reduced} at
       $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.7$, $t(9)$ up to $10.7$) and
-      mildly traded back at $T{=}20$ (significant in $3/8$ cells)
+      mildly traded back at $T{=}20$ (significant in $3/10$ cells)
       (Sec.~\ref{sec:causal}). The response is
       saturated and nontrivially mediated: the own-segment win rate
       saturates at $13$--$19\%$ regardless of dose. Signed-drift
@@ -505,22 +505,25 @@ identical seeds.
 \subsection{Result: the learning term and accuracy improve everywhere}
 
 Tables~\ref{tab:dose10} and~\ref{tab:dose20} give the dose--response;
-Fig.~\ref{fig:dose} plots it. Across the $18$ dose cells of the
-$\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid with
-$b \ge 1$ that we report, $\Delta\ell$ is positive in every cell and
-significant in $14/18$; $\ell$ and final accuracy are simultaneously
-significant in $13/18$, and every grid cell has at least one dose
+Fig.~\ref{fig:dose} plots it. The full grid is
+$2$ datasets $\times$ $2$ depths $\times$ $2$ granularities $\times$
+$3$ doses $=24$ cells; $22$ of them are reported here (the two
+$T{=}20$ branch cells at $b{=}1$ were not collected), and across the $18$
+cells we do report, $\Delta\ell$ is positive in every cell and
+significant in $16/18$; $\ell$ and final accuracy are simultaneously
+significant in $15/18$, and every grid cell has at least one dose
 significant on both terms. The effect grows with depth: at $T{=}20$ MNIST,
 $b{=}10$ lifts $\ell$ by $+4.56$ ($t(9){=}8.1$) and final accuracy by
 $+3.81$ ($t(9){=}10.6$) over the already usage-localized baseline; the
 $T{=}20$ learning curve is monotone in dose
 ($\Delta\ell$ $+2.14$ / $+3.72$ / $+4.56$ for $b{=}1/3/10$, all
-$t \ge 3.9$), and $b{=}3$ alone already captures $82\%$ of the
-$b{=}10$ effect. Forgetting
+$t \ge 3.9$), and $b{=}3$ alone already captures $81\%$ of the
+$b{=}10$ effect there ($81$--$113\%$ across the six dataset/depth/granularity
+arms we ran at all three doses). Forgetting
 improves broadly at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.65$;
 significantly positive in $6/8$ cells, and in all four MNIST cells), and
-partially trades back at $T{=}20$, where $3/8$ cells show a significant
-mild BWT cost ($-0.66$ to $-0.95$) and the remaining five are
+partially trades back at $T{=}20$, where $3/10$ cells show a significant
+mild BWT cost ($-0.66$ to $-0.95$) and the remaining seven are
 statistically indistinguishable from baseline.
 
 Two robustness notes. First, the $18/18$ sign uniformity of $\Delta\ell$
@@ -530,7 +533,9 @@ the grid. Second, the intervention also reduces neuron mortality ---
 measured on the raw, bias-free network, the mean dead fraction drops by
 $3.9$pp (MNIST) and $2.3$pp (Fashion) at $T{=}10$ --- and per-run
 $\Delta\ell$ correlates with the mortality reduction ($r{=}-0.49$ and
-$-0.68$). We read this as one causal chain rather than a confound:
+$-0.68$; both correlations are computed on the ten paired seeds of the
+$T{=}10$ neuron arm at $b{=}10$, the same cell in which the dead-fraction
+shift is quoted). We read this as one causal chain rather than a confound:
 raising the own-segment gate raises $\mathrm{sigmoid}(u)$ during
 training, which increases kWTA survival, so forcing the routing prior is
 also what keeps neurons alive; the routing and capacity channels are two
@@ -540,7 +545,8 @@ faces of a single intervention, not competing explanations.
 \centering\small
 \caption{Causal probe, $T{=}10$, $\lambda{=}1000$: paired differences vs.\
 $b{=}0$ ($n{=}10$; $^{*}$: $|t|>2$). $\own$ is the own-segment win rate
-over active neurons, averaged over phases.}
+over active neurons, computed per phase and averaged over phases. The two
+$T{=}20$ branch cells at $b{=}1$ were not collected.}
 \label{tab:dose10}
 \begin{tabular}{llrrrr r}
 \toprule
@@ -549,11 +555,15 @@ dataset & arm ($b$) & $\Delta\ell$ & $\Delta$avg & $\Delta$BWT & $\own$ \\
 MNIST & neuron ($1$)  & $+1.99^{*}$ & $+3.40^{*}$ & $+1.56^{*}$ & 0.19 \\
 MNIST & neuron ($3$)  & $+2.68^{*}$ & $+4.08^{*}$ & $+1.56^{*}$ & 0.17 \\
 MNIST & neuron ($10$) & $+3.32^{*}$ & $+4.80^{*}$ & $+1.65^{*}$ & 0.16 \\
+MNIST & branch ($1$)  & $+2.18^{*}$ & $+3.29^{*}$ & $+1.23^{*}$ & 0.19 \\
+MNIST & branch ($3$)  & $+2.90^{*}$ & $+4.30^{*}$ & $+1.57^{*}$ & 0.17 \\
 MNIST & branch ($10$) & $+3.16^{*}$ & $+4.17^{*}$ & $+1.13^{*}$ & 0.16 \\
 Fashion & neuron ($1$)  & $+0.87$ & $+1.03$ & $+0.18$ & 0.15 \\
 Fashion & neuron ($3$)  & $+1.23^{*}$ & $+2.56^{*}$ & $+1.48^{*}$ & 0.14 \\
 Fashion & neuron ($10$) & $+1.39^{*}$ & $+0.69$ & $-0.77$ & 0.13 \\
+Fashion & branch ($1$)  & $+0.94^{*}$ & $+2.08^{*}$ & $+1.26$ & 0.15 \\
 Fashion & branch ($3$)  & $+0.81$ & $+1.79^{*}$ & $+1.09^{*}$ & 0.14 \\
+Fashion & branch ($10$) & $+0.97^{*}$ & $+1.03^{*}$ & $+0.06$ & 0.13 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -561,7 +571,9 @@ Fashion & branch ($3$)  & $+0.81$ & $+1.79^{*}$ & $+1.09^{*}$ & 0.14 \\
 \begin{table}[t]
 \centering\small
 \caption{Causal probe, $T{=}20$: paired differences vs.\ $b{=}0$
-($n{=}10$; $^{*}$: $|t|>2$).}
+($n{=}10$; $^{*}$: $|t|>2$). $\own$ is the own-segment win rate over
+active neurons, computed per phase and averaged over phases. The two
+$T{=}20$ branch cells at $b{=}1$ were not collected.}
 \label{tab:dose20}
 \begin{tabular}{llrrrr r}
 \toprule
@@ -802,7 +814,7 @@ instrumentation, not the metric, fabricates the signal.
       require a mechanism (e.g.\ task-staggered protection), not a
       schedule.
 \item \textbf{Depth-dependent forgetting trade-off.} At $T{=}20$ the BWT
-      cost of the bias is small but real: $3/8$ cells significantly
+      cost of the bias is small but real: $3/10$ cells significantly
       negative ($-0.66$ to $-0.95$), the rest indistinguishable from
       baseline. We
       report it rather than select it away; the identity
@@ -828,7 +840,7 @@ diffuse to partition meaningfully. On the way we isolated a dead-neuron
 artifact that fabricates dominance statistics for any naive instrument in
 this family, and showed that a one-parameter causal repair of the
 own-segment input raises the learning term in every tested cell
-(significant in $14/18$ dose cells). The network itself reveals --- through
+(significant in $16/18$ dose cells). The network itself reveals --- through
 a dose-invariant saturated minority flip --- that the repair is cheap
 because it need only saturate a few neurons; a companion study
 (S4, \cite{zhou2026bypass}) then shows \emph{what} saturating them

@@ -60,8 +60,8 @@ filtering. Third, because the missing specialization is load-bearing,
 restoring it \emph{causally} improves the retention--plasticity trade-off: a
 constant bias on the own-segment dendritic input raises the learning term
 in every cell of a $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$
-grid ($\Delta\ell>0$ in $18/18$ dose cells, significant in $16/18$ at
-$n{=}10$ paired), with final accuracy improving in step ($15/18$
+grid ($\Delta\ell>0$ in $22/22$ dose cells, significant in $20/22$ at
+$n{=}10$ paired), with final accuracy improving in step ($19/22$
 simultaneously significant, and every grid cell significant on both terms
 at some dose; $\Delta\ell$ up to $+4.6$, $t(9){=}8.1$); forgetting is
 reduced at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.7$) and mildly traded
@@ -159,9 +159,9 @@ failure of the previous one:
       dendritic input during training, evaluation, and anchor
       construction raises the learning term in every cell of a
       $\{$dataset$\}\times\{$depth$\}\times\{$granularity$\}$ grid ---
-      $\Delta\ell$ positive in $18/18$ dose cells, significant in $16/18$
+      $\Delta\ell$ positive in $22/22$ dose cells, significant in $20/22$
       ($n{=}10$ paired) --- with final accuracy significant simultaneously
-      in $15/18$ and in every grid cell at some dose ($\Delta\ell$ up to
+      in $19/22$ and in every grid cell at some dose ($\Delta\ell$ up to
       $+4.6$ at $T{=}20$, $t(9){=}8.1$); forgetting is \emph{reduced} at
       $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.7$, $t(9)$ up to $10.7$) and
       mildly traded back at $T{=}20$ (significant in $3/10$ cells)
@@ -515,10 +515,10 @@ Tables~\ref{tab:dose10} and~\ref{tab:dose20} give the dose--response;
 Fig.~\ref{fig:dose} plots it. The full grid is
 $2$ datasets $\times$ $2$ depths $\times$ $2$ granularities $\times$
 $3$ doses $=24$ cells; $22$ of them are reported here (the two
-$T{=}20$ branch cells at $b{=}1$ were not collected), and across the $18$
+$T{=}20$ branch cells at $b{=}1$ were not collected), and across the $22$
 cells we do report, $\Delta\ell$ is positive in every cell and
-significant in $16/18$; $\ell$ and final accuracy are simultaneously
-significant in $15/18$, and every grid cell has at least one dose
+significant in $20/22$; $\ell$ and final accuracy are simultaneously
+significant in $19/22$, and every grid cell has at least one dose
 significant on both terms. The effect grows with depth: at $T{=}20$ MNIST,
 $b{=}10$ lifts $\ell$ by $+4.56$ ($t(9){=}8.1$) and final accuracy by
 $+3.81$ ($t(9){=}10.6$) over the already usage-localized baseline; the
@@ -528,14 +528,14 @@ $t \ge 3.9$), and $b{=}3$ alone already captures $81\%$ of the
 $b{=}10$ effect there ($81$--$113\%$ across the six dataset/depth/granularity
 arms we ran at all three doses). Forgetting
 improves broadly at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.65$;
-significantly positive in $6/8$ cells, and in all four MNIST cells), and
+significantly positive in $8/12$ cells, and in all six MNIST cells), and
 partially trades back at $T{=}20$, where $3/10$ cells show a significant
 mild BWT cost ($-0.66$ to $-0.95$) and the remaining seven are
 statistically indistinguishable from baseline.
 
-Two robustness notes. First, the $18/18$ sign uniformity of $\Delta\ell$
+Two robustness notes. First, the $22/22$ sign uniformity of $\Delta\ell$
 is itself the strongest guard against multiplicity: a sign test gives
-$p = 2^{-18}$, orders of magnitude below any family-wise correction over
+$p = 2^{-22}$, orders of magnitude below any family-wise correction over
 the grid. Second, the intervention also reduces neuron mortality ---
 measured on the raw, bias-free network, the mean dead fraction drops by
 $3.9$pp (MNIST) and $2.3$pp (Fashion) at $T{=}10$ --- and per-run
@@ -847,7 +847,7 @@ diffuse to partition meaningfully. On the way we isolated a dead-neuron
 artifact that fabricates dominance statistics for any naive instrument in
 this family, and showed that a one-parameter causal repair of the
 own-segment input raises the learning term in every tested cell
-(significant in $16/18$ dose cells). The network itself reveals --- through
+(significant in $20/22$ dose cells). The network itself reveals --- through
 a dose-invariant saturated minority flip --- that the repair is cheap
 because it need only saturate a few neurons; a companion study
 (S4, \cite{zhou2026bypass}) then shows \emph{what} saturating them

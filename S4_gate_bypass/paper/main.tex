@@ -27,7 +27,7 @@ context one-hot flipped to a uniformly random other task with probability
 $\rho$), the answer is: everything, at every noise level.
 Final accuracy moves by less than $0.05$ points at $\rho \le 0.4$ for both
 the base system and the repaired one; the repair's paired gain is retained
-at 98--101\% ($+1.22 \to +1.23$ on MNIST, $+0.45 \to +0.42$ on
+at 94--101\% ($+1.22 \to +1.23$ on MNIST, $+0.45 \to +0.42$ on
 Fashion-MNIST). Zero noise sensitivity is not robustness --- it is a
 symptom. Mechanism probes show why: the trained dendritic gate is
 \emph{context-degenerate}. Swapping the context one-hot changes at most
@@ -189,8 +189,9 @@ no survival claim (multiple-comparison hygiene).
 \end{itemize}
 
 The noise stream is fixed per seed (a dedicated generator), so paired
-comparisons share corruption patterns exactly. 80 runs for E1+E2, 20 for
-E3.
+comparisons share corruption patterns exactly. 40 runs for E1+E2
+($2$ datasets $\times$ $2$ arms $\times$ $10$ seeds; each run evaluates
+all four $\rho$ levels), 20 for E3.
 
 \section{Results: nothing degrades, at any noise level}
 \label{sec:results}
@@ -214,13 +215,17 @@ Fashion  & repaired ($b{=}10$) & 66.84 & 66.84 & 66.84 & 66.84 \\
 
 Table~\ref{tab:main} is the entire empirical content of E1 and E2.
 Both preregistered survival criteria pass, with margins that make the
-criteria look quaint: the largest degradation anywhere is $0.03$ points
-(MNIST base, $\rho{=}0.4$), where the criterion allowed $10$. The
+criteria look quaint: the largest movement anywhere is $0.03$ points
+(Fashion base, $\rho{=}0.4$, and it is \emph{upward}), the largest
+degradation is $0.01$ points (MNIST base, $\rho{=}0.4$), where the
+criterion allowed $10$. The
 repair's paired gain is $+1.22$ ($t{=}3.8$) at $\rho{=}0$ and $+1.23$
 ($t{=}3.8$) at $\rho{=}0.4$ on MNIST; $+0.45$ and $+0.42$ on
 Fashion-MNIST ($t{=}0.6$, n.s.\ throughout --- consistent with S3's
 finding that Fashion gains from the repair are small at $T{=}10$
-\cite{zhou2026repair}). Retention: 100.8\% and 97.8\%. E3's soft
+\cite{zhou2026repair}). Retention of the repair's gain at $\rho{=}0.4$
+is $100.7\%$ on MNIST and $93.8\%$ on Fashion-MNIST (at $\rho{=}0.1$:
+$100.5\%$ and $97.6\%$). E3's soft
 mixture moves nothing ($|\Delta| \le 0.02$, all n.s.), which will make
 sense shortly.
 
@@ -240,7 +245,7 @@ Three probes, each applied to fully trained networks. The headline
 numbers below are MNIST seed 0; the pattern replicates on Fashion-MNIST
 seed 0 and MNIST seed 1 (all numbers in the artifact): flip rates
 $6.2$--$6.9\%$ mean / $14.9$--$19.0\%$ worst at $b{=}0$, exactly $0.0$
-at $b{=}10$, gate own/other identical to four decimals, and column
+at $b{=}10$, gate own/other identical to four decimals, and mean column
 cosines in $[0.001, 0.003]$ in every case.
 
 \paragraph{Prediction flip rate.} For each task $c$ and each alternative
@@ -260,9 +265,11 @@ segment wins, but not \emph{how much} it gates.
 
 \paragraph{Column geometry.} The dendritic weights projected onto the
 $T$ context columns remain mutually orthogonal after training: mean
-pairwise cosine $0.003$ (min $-0.034$), indistinguishable from their
-random initialization. Training, with per-task gradient protection,
-leaves the context channel of the gate bank essentially at its prior.
+pairwise cosine $0.003$ (per-model mean in $[0.001, 0.003]$; the most
+negative single pair over the three models is $-0.055$), indistinguishable
+from their random initialization. Training, with per-task gradient
+protection, leaves the context channel of the gate bank essentially at
+its prior.
 
 Together: the architecture's context pathway is present, trainable in
 principle, protected per task --- and unused. The max over segments is

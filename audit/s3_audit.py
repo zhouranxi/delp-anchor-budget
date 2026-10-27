@@ -3,8 +3,21 @@
 import json, glob, os, math, sys
 from statistics import mean, pstdev, stdev
 
-R = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
-                 'papers', 's3_zenodo', 'S3_repair_headroom', 'results')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.join(_HERE, '..')
+
+def _find_results():
+    """在仓库内定位 S3 的 results 目录（兼容两种布局）"""
+    cands = [
+        os.path.join(_REPO, 'S3_修复边界', 'results'),
+        os.path.join(_REPO, 'papers', 's3_zenodo', 'S3_repair_headroom', 'results'),
+    ]
+    for c in cands:
+        if os.path.isdir(c):
+            return c
+    raise SystemExit('results dir not found; looked in: %r' % cands)
+
+R = _find_results()
 
 def load(f):
     p = os.path.join(R, f)

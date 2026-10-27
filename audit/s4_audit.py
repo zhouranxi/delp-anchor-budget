@@ -3,8 +3,20 @@
 import json, glob, os, math
 from statistics import mean, stdev
 
-ROOT = r'C:/Users/Lance/WorkBuddy/2026-10-25-10-08-27'
-R = os.path.join(ROOT, 'papers/s4_zenodo/S4_repair_bypasses_gate/results')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.join(_HERE, '..')
+
+def _find_results():
+    cands = [
+        os.path.join(_REPO, 'S4_gate_bypass', 'results'),
+        os.path.join(_REPO, 'papers/s4_zenodo/S4_repair_bypasses_gate/results'),
+    ]
+    for c in cands:
+        if os.path.isdir(c):
+            return c
+    raise SystemExit('results dir not found; looked in: %r' % cands)
+
+R = _find_results()
 
 def load(pat):
     out = []

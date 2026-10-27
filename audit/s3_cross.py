@@ -4,9 +4,14 @@
 import re, os, json, glob, math
 from statistics import mean, stdev
 
-ROOT = r'C:/Users/Lance/WorkBuddy/2026-10-25-10-08-27'
-S1TEX = os.path.join(ROOT, 'dab_t/delp-anchor-budget-main/S1_剂量响应审计/paper/main.tex')
-RES = os.path.join(ROOT, 'dab_t/delp-anchor-budget-main/bench/results')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(_HERE, '..'))
+_REPO = os.path.join(ROOT, 'dab_t/delp-anchor-budget-main')
+if not os.path.isdir(_REPO):
+    _REPO = os.path.join(_HERE, '..')
+S1TEX = os.path.join(_REPO, 'S1_剂量响应审计', 'paper', 'main.tex')
+RES = os.path.join(_REPO, 'bench', 'results')
+RES2 = os.path.join(_REPO, 'S1_剂量响应审计', 'results')
 
 src = open(S1TEX, encoding='utf-8').read()
 lines = src.split('\n')
@@ -71,11 +76,12 @@ print('\n' + '=' * 78)
 print('B. 从原始数据重算 S1 剂量格（确认表格本身无误）')
 print('=' * 78)
 
-def load(pat):
+def load(pat, base=None):
     out = []
-    for f in sorted(glob.glob(os.path.join(RES, pat))):
-        d = json.load(open(f))
-        out += d['results'] if isinstance(d, dict) else d
+    for b_ in ([base] if base else [RES, RES2]):
+        for f in sorted(glob.glob(os.path.join(b_, pat))):
+            d = json.load(open(f))
+            out += d['results'] if isinstance(d, dict) else d
     return out
 
 def own_bias(x):

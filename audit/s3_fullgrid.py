@@ -3,9 +3,13 @@
 import json, glob, os, math
 from statistics import mean, stdev
 
-ROOT = r'C:/Users/Lance/WorkBuddy/2026-10-25-10-08-27'
-RES = os.path.join(ROOT, 'dab_t/delp-anchor-budget-main/bench/results')
-RES2 = os.path.join(ROOT, 'dab_t/delp-anchor-budget-main/S1_剂量响应审计/results')
+_HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(_HERE, '..'))
+_REPO = os.path.join(ROOT, 'dab_t/delp-anchor-budget-main')
+if not os.path.isdir(_REPO):
+    _REPO = os.path.join(_HERE, '..')
+RES = os.path.join(_REPO, 'bench', 'results')
+RES2 = os.path.join(_REPO, 'S1_剂量响应审计', 'results')
 
 def load(pat, base=RES):
     out = []

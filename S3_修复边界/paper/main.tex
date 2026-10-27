@@ -31,7 +31,7 @@ informative.} On a convolutional active-dendrite network
 (4-layer conv trunk + GroupNorm + global average pooling feeding the
 identical dendritic gate; $160$ runs, $10$ seeds per cell), the
 repair collapses to noise ($\Delta\ell$ significant in $4/12$ dose
-cells; largest effect $+1.46$ vs.\ the MLP's $+1.4$ to $+4.6$) and
+cells; largest effect $+1.46$ vs.\ the MLP's $+0.8$ to $+4.6$) and
 \emph{final accuracy reverses} ($\Delta\mathrm{avg}$ down to $-2.29$,
 $t{=}-3.1$). The dead-neuron artifact disappears entirely --- not
 because the instrument improved, but because conv+GroupNorm mortality
@@ -70,7 +70,7 @@ one-hidden-layer active-dendrite network (ADNet
 because dead neurons fall to segment~0 by argmax convention;
 (3) a constant bias $b$ on the own-segment dendritic input causally
 repairs the learning term with a clean dose--response
-($20/20$ dose cells positive, $18/20$ significant at $T \le 20$).
+($22/22$ dose cells positive, $20/22$ significant at $T \le 20$).
 
 S1's own limitations section asks the question this paper answers:
 \emph{does the chain transfer beyond the bare-MLP family?} The question
@@ -158,9 +158,10 @@ chance ($1/T$) throughout training.
 is inflated $0.62$ vs.\ $0.11$ (active) by argmax ties over dead
 gates; mortality at $T{=}10$ is $57.2\%$.
 \item \textbf{Repair.} Adding $b \in \{1,3,10\}$ to the own-segment
-gate entry lifts the learning term $\Delta\ell = +1.4$ to $+4.6$
-(all paired $t \ge 2.4$), with final accuracy improving
-simultaneously in $17/20$ cells.
+gate entry lifts the learning term $\Delta\ell = +0.8$ to $+4.6$
+($\Delta\ell>0$ in $22/22$ dose cells, significant in $20/22$; paired
+$|t|$ up to $14.7$), with final accuracy improving
+simultaneously in $19/22$ cells.
 \end{enumerate}
 
 \paragraph{Pre-registered criteria (fixed before any data).}
@@ -203,8 +204,9 @@ $\lambda{=}1000$, seeds $0$--$9$ per cell). $160$ runs total
 Table~\ref{tab:convdose} reports paired differences against $b{=}0$.
 Against the pre-registered bar ($\ge 15/20$ cells significant), the
 result is unambiguous: \textbf{$4/12$ cells} significant, largest
-effect $+1.46$ ($t{=}2.1$), sign-consistency $11/12$. The MLP's
-effects were $3$--$30\times$ larger with $t$ up to $26$
+effect $+1.46$ ($t{=}2.1$), sign-consistency $11/12$. In the five
+conv cells with a matched bare-MLP counterpart, the MLP's effects were
+$4$--$56\times$ larger with paired $|t|$ up to $14.7$
 (Table~\ref{tab:three}, column $\Delta\ell$). Worse, final accuracy
 \emph{reverses}: at fashion $T{=}10$, $b{=}10$ costs
 $\Delta\mathrm{avg} = -2.29$ ($t{=}-3.1$) --- the repair buys a
@@ -385,7 +387,9 @@ no significant gain. Headroom is necessary-looking, not sufficient.}
 We stress what the data do \emph{not} support. A quantitative
 headroom law fails: across the six configuration$\times$dataset
 cells the Pearson correlation between HR$_\ell$ and $\Delta\ell$ is
-$r = 0.38$ (cell means; pooled per-seed $r = 0.31$), and the
+$r = 0.38$ (cell means; pooled over per-seed differences, using each
+cell's mean HR$_\ell$, $r = 0.27$; using each seed's own
+$100-\ell_0$ gives $r = 0.31$), and the
  clearest counterexample is ConvADNet on Fashion --- $24.7$ points of
 $\ell$-headroom, gain $+0.36$ ($t{=}1.4$, not significant). Headroom
 is thus \textbf{necessary-looking but not sufficient}: a strong

@@ -18,7 +18,7 @@ verifiable:
 | `S1_剂量响应审计/` | *Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair* — dead-neuron measurement artifact, anti-specialization, one-parameter dose–response repair | Preprint [doi:10.5281/zenodo.23685865](https://doi.org/10.5281/zenodo.23685865); submitted to Neural Networks |
 | `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Preprint [doi:10.5281/zenodo.23685906](https://doi.org/10.5281/zenodo.23685906) — revised after the Neurocomputing decision (protocol description corrected, all headline numbers re-derived; see `S2_锚累积/rejection_fix/`) |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Preprint [doi:10.5281/zenodo.23685385](https://doi.org/10.5281/zenodo.23685385) — includes the 2×2 width × normalization scan (320 runs) separating the GroupNorm effect from the width effect |
-| `S4_gate_bypass/` | *The Repair Saturates the Gate* — context noise as a degeneracy diagnostic; four-arm control (base / repaired / constant-gate / no-gate, 80 runs) | Preprint [doi:10.5281/zenodo.23686085](https://doi.org/10.5281/zenodo.23686085) — **conclusion reversed after the audit**: the repair does not bypass the gate, it saturates it (σ(10+u) ≈ 1) |
+| `S4_gate_bypass/` | *The Repair Saturates the Gate* — context noise as a degeneracy diagnostic; four-arm control (base / repaired / constant-gate / no-gate, 80 runs) | Preprint [doi:10.5281/zenodo.23686689](https://doi.org/10.5281/zenodo.23686689) — **conclusion reversed after the audit**: the repair does not bypass the gate, it saturates it (σ(10+u) ≈ 1) |
 
 ### Archival records (all six, cross-linked)
 
@@ -28,7 +28,7 @@ verifiable:
 | S1 — Segment Specialization | [10.5281/zenodo.23685865](https://doi.org/10.5281/zenodo.23685865) | 10.5281/zenodo.23637972 |
 | S2 — The Anchor Accumulation Problem | [10.5281/zenodo.23685906](https://doi.org/10.5281/zenodo.23685906) | 10.5281/zenodo.23668522 |
 | S3 — Repair Headroom, Not Dying Gates | [10.5281/zenodo.23685385](https://doi.org/10.5281/zenodo.23685385) | 10.5281/zenodo.23685384 |
-| S4 — The Repair Saturates the Gate | [10.5281/zenodo.23686085](https://doi.org/10.5281/zenodo.23686085) | 10.5281/zenodo.23685276 |
+| S4 — The Repair Saturates the Gate | [10.5281/zenodo.23686689](https://doi.org/10.5281/zenodo.23686689) | 10.5281/zenodo.23685276 |
 | Data & code (software) | [10.5281/zenodo.23685822](https://doi.org/10.5281/zenodo.23685822) | 10.5281/zenodo.23639561 |
 
 > **S3/S4 记录已作废的数字**：审计发现两处缺陷——弹性锚惩罚漏乘系数 λ，以及

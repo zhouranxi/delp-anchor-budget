@@ -13,17 +13,17 @@ if D is None:
 rows = []
 for f in sorted(glob.glob(os.path.join(D, 's4diag_*.log'))):
     for o in re.findall(r'\{[^{}]*\}', open(f).read(), re.S):
-        rows.append((os.path.basename(f), json.loads(o)))
+        rows.append(json.loads(o))
 
 print('=== 全部诊断记录 ===')
-for f, d in rows:
-    print(f'  {f:<22} ds={d["ds"]:<8} seed={d["seed"]} b={d["bias"]:<5} '
+for d in rows:
+    print(f'  {'log':<22} ds={d["ds"]:<8} seed={d["seed"]} b={d["bias"]:<5} '
           f'flip_mean={d["pred_flip_rate_mean"]*100:.3f}% flip_max={d["pred_flip_rate_max"]*100:.3f}% '
           f'gate={d["gate_mean_own"]:.6f}/{d["gate_mean_other"]:.6f} '
           f'cos_mean={d["dend_col_cosine_mean"]:.6f} cos_min={d["dend_col_cosine_min"]:.6f}')
 
-b0 = [d for f, d in rows if d['bias'] == 0.0]
-b10 = [d for f, d in rows if d['bias'] == 10.0]
+b0 = [d for d in rows if d['bias'] == 0.0]
+b10 = [d for d in rows if d['bias'] == 10.0]
 print()
 print('b=0  flip mean 范围: %.2f%% .. %.2f%%   论文称 6.2--6.9%%' % (
     min(d['pred_flip_rate_mean'] for d in b0) * 100,
@@ -44,7 +44,7 @@ print('cos_min  范围: %.6f .. %.6f   论文称 min -0.034' % (
     max(d['dend_col_cosine_min'] for d in rows)))
 print()
 print('mnist seed0 (论文头条):')
-m0 = [d for f, d in rows if d['ds'] == 'mnist' and d['seed'] == 0 and d['bias'] == 0.0]
+m0 = [d for d in rows if d['ds'] == 'mnist' and d['seed'] == 0 and d['bias'] == 0.0]
 if m0:
     d = m0[0]
     print(f'  flip_mean={d["pred_flip_rate_mean"]*100:.2f}% (论文 6.2%) '

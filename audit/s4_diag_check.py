@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 import json, re, glob, os
-D = r'C:/Users/Lance/WorkBuddy/2026-10-25-10-08-27/papers/s4_zenodo/S4_repair_bypasses_gate/results'
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.join(_HERE, '..')
+_D = None
+for _c in (os.path.join(_REPO, 'S4_gate_bypass', 'results'),
+           os.path.join(_REPO, 'papers/s4_zenodo/S4_repair_bypasses_gate/results')):
+    if os.path.isdir(_c):
+        D = _c
+        break
+if D is None:
+    raise SystemExit('results dir not found')
 rows = []
 for f in sorted(glob.glob(os.path.join(D, 's4diag_*.log'))):
     for o in re.findall(r'\{[^{}]*\}', open(f).read(), re.S):

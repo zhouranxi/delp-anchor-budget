@@ -1,0 +1,245 @@
+[
+ {
+  "id": 1,
+  "raw": "Iyer, Abhiram and Grewal, Karan and Velu, Akash and Souza, Lucas Oliveira and Forest, Jeremy and Ahmad, Subutai. Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments. Frontiers in Neurorobotics 16 (2022). doi:10.3389/fnbot.2022.846219",
+  "claim": "S3 背景：ADNet 架构来源；S4 架构描述与保护梯度设计来源",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments",
+   "authors": "Abhiram Iyer; Karan Grewal; Akash Velu; Lucas Oliveira Souza; Jeremy Forest; Subutai Ahmad",
+   "publisher": "Frontiers in Neurorobotics",
+   "date": "2022",
+   "url": "",
+   "doi": "10.3389/fnbot.2022.846219"
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 2,
+  "raw": "Boahen, Kwabena. Dendrocentric learning for synthetic intelligence. Nature 612, 43-50 (2022)",
+  "claim": "S3/S4：树突计算文献支撑 'artifact mechanism should exist wherever segments and hard routing coexist'",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Dendrocentric learning for synthetic intelligence",
+   "authors": "Kwabena Boahen",
+   "publisher": "Nature",
+   "date": "2022",
+   "url": "",
+   "doi": ""
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 3,
+  "raw": "Poirazi, Panayiota and Papoutsi, Athanasia. Illuminating dendritic function with computational models. Nature Reviews Neuroscience 21, 303-321 (2020)",
+  "claim": "S3/S4：树突计算文献支撑",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Illuminating dendritic function with computational models",
+   "authors": "Panayiota Poirazi; Athanasia Papoutsi",
+   "publisher": "Nature Reviews Neuroscience",
+   "date": "2020",
+   "url": "",
+   "doi": ""
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 4,
+  "raw": "Masse, Nicolas Y. and Grant, Gregory D. and Freedman, David J.. Alleviating catastrophic forgetting using context-dependent gating and synaptic stabilization. PNAS 115(44), E10467-E10475 (2018)",
+  "claim": "S3：protected-gradient 与 context-gating 设计来源",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Alleviating catastrophic forgetting using context-dependent gating and synaptic stabilization",
+   "authors": "Nicolas Y. Masse; Gregory D. Grant; David J. Freedman",
+   "publisher": "Proceedings of the National Academy of Sciences",
+   "date": "2018",
+   "url": "",
+   "doi": ""
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 5,
+  "raw": "Kirkpatrick, James and Pascanu, Razvan and Rabinowitz, Neil and others. Overcoming catastrophic forgetting in neural networks. PNAS 114(13), 3521-3526 (2017)",
+  "claim": "S3/S4：EWC 来源",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Overcoming catastrophic forgetting in neural networks",
+   "authors": "James Kirkpatrick; Razvan Pascanu; Neil Rabinowitz; et al.",
+   "publisher": "Proceedings of the National Academy of Sciences",
+   "date": "2017",
+   "url": "",
+   "doi": ""
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 6,
+  "raw": "Parisi, German I. and Kemker, Ronald and Part, Jose L. and Kanan, Christopher and Wermter, Stefan. Continual lifelong learning with neural networks: A review. Neural Networks 113, 54-71 (2019)",
+  "claim": "S3：Permuted-MNIST / Permuted-Fashion 数据集来源",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Continual lifelong learning with neural networks: A review",
+   "authors": "German I. Parisi; Ronald Kemker; Jose L. Part; Christopher Kanan; Stefan Wermter",
+   "publisher": "Neural Networks",
+   "date": "2019",
+   "url": "",
+   "doi": ""
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 7,
+  "raw": "Zhou, Ranxi. Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair. Preprint, Zenodo, version 1, doi:10.5281/zenodo.23637973 (2026)",
+  "claim": "S3/S4：S1 伴生论文（本次已修订并重新发布为 version 2）",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair",
+   "authors": "Ranxi Zhou",
+   "publisher": "Zenodo",
+   "date": "2026",
+   "url": "https://doi.org/10.5281/zenodo.23637973",
+   "doi": "10.5281/zenodo.23637973"
+  },
+  "_paper": "S3"
+ },
+ {
+  "id": 8,
+  "raw": "Zhou, Ranxi. Repair Headroom, Not Dying Gates: When an Own-Segment Bias Helps Continual Learning --- and When It Silently Reverses. Preprint, 2026",
+  "claim": "S4：S3 伴生论文，尚未发表",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Repair Headroom, Not Dying Gates: When an Own-Segment Bias Helps Continual Learning --- and When It Silently Reverses",
+   "authors": "Ranxi Zhou",
+   "publisher": "Preprint",
+   "date": "2026",
+   "url": "https://github.com/zhouranxi/delp-anchor-budget",
+   "doi": ""
+  },
+  "_paper": "S4"
+ },
+ {
+  "id": 9,
+  "raw": "Zhou, Ranxi. Where Do the Gains Come From? An Audit of Dendritic Context-Gated Protection for Continual Learning. Preprint, Zenodo, version 2, doi:10.5281/zenodo.23602281 (2026)",
+  "claim": "S4：前身审计论文（DeLP 方法的被审计对象）",
+  "triage": "verifiable",
+  "famous": false,
+  "broken_url_only": false,
+  "components": {
+   "title": "unknown",
+   "authors": "unknown",
+   "publisher": "unknown",
+   "date": "unknown",
+   "url": "unknown",
+   "doi": "unknown"
+  },
+  "best_source": "",
+  "note": "",
+  "_seed": {
+   "title": "Where Do the Gains Come From? An Audit of Dendritic Context-Gated Protection for Continual Learning",
+   "authors": "Ranxi Zhou",
+   "publisher": "Zenodo",
+   "date": "2026",
+   "url": "https://doi.org/10.5281/zenodo.23602281",
+   "doi": "10.5281/zenodo.23602281"
+  },
+  "_paper": "S4"
+ }
+]

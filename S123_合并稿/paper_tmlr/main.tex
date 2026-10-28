@@ -244,7 +244,8 @@ significant uncorrected, $0/12$ after Holm correction) and final accuracy \emph{
       We then trace the cause to the protection protocol rather than to
       the argmax: its per-task gradient mask leaves every off-diagonal
       block of the gate matrix at exactly its random initialization
-      ($0.0$ relative displacement in all 90 blocks, every seed), while
+      ($0.0$ relative displacement in all 90 blocks, every seed; $n=5$
+      seeds per dataset, independently re-run on a second machine), while
       the forward pass reads whole columns, so $90\%$ of the context
       pathway never receives a gradient at all. At
       $b{=}10$ the own segment always wins with $\sigma(10+u)\approx 1$,
@@ -1406,7 +1407,9 @@ trained network against a snapshot of its own initialization, the
 relative displacement of the 90 off-diagonal blocks is
 $0.0$ --- not small, but exactly zero --- in every seed on both
 datasets, while the 10 diagonal blocks move by $6$--$10\%$; the trained
-column agrees with its initialization to a cosine of $0.9995$. The
+column agrees with its initialization to a cosine of $0.9995$. All
+measurements in this section use $n=5$ seeds per dataset and were
+reproduced on an independent machine to within $0.002$. The
 weight matrix that the gate actually reads is, to five significant
 figures, the weight matrix the network was born with.
 
@@ -1417,15 +1420,18 @@ task--segment specialization were an artefact of this mask, then
 removing the mask should produce specialization. It does not: with the
 mask switched off and the off-diagonal blocks free to move (they
 displace by $7$--$11\%$), the own segment still wins only
-$9.9\%$ of the neuron--sample slots on MNIST and $10.0\%$ on
-Fashion-MNIST, against $10.0\%$ and $10.0\%$ in the untrained network.
+$10.1\%$ of the neuron--sample slots on MNIST and $10.2\%$ on
+Fashion-MNIST, against $10.1\%$ on both datasets in the untrained network
+($n=5$ seeds per dataset, re-run on an independent machine).
 The architecture does not learn task--segment routing under either
 protocol, so the negative result is a property of the architecture.
 
 Second, the constant gate value is not a training outcome. A freshly
 initialized, untrained network already has a winning-segment gate value
 of $0.5641$ on both datasets; after training it is $0.5646$
-(MNIST) and $0.5644$ (Fashion-MNIST). The number the previous version of
+(MNIST) and $0.5644$ (Fashion-MNIST). These are $n=5$ seeds per dataset;
+an independent re-run on a different machine reproduced every value in this
+section to within $0.002$. The number the previous version of
 this manuscript called "a constant of the training run" is a constant of
 the \emph{initialization}, and it follows from the initialization
 analytically: the winning row of a column is the maximum of

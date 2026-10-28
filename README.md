@@ -19,7 +19,7 @@ verifiable:
 | `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Preprint [doi:10.5281/zenodo.23685906](https://doi.org/10.5281/zenodo.23685906) — revised after the Neurocomputing decision (protocol description corrected, all headline numbers re-derived; see `S2_锚累积/rejection_fix/`) |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Preprint [doi:10.5281/zenodo.23685385](https://doi.org/10.5281/zenodo.23685385) — includes the 2×2 width × normalization scan (320 runs) separating the GroupNorm effect from the width effect |
 | `S4_gate_bypass/` | *The Repair Saturates the Gate* — context noise as a degeneracy diagnostic; four-arm control (base / repaired / constant-gate / no-gate, 80 runs) | Preprint [doi:10.5281/zenodo.23686689](https://doi.org/10.5281/zenodo.23686689) — **conclusion reversed after the audit**: the repair does not bypass the gate, it saturates it (σ(10+u) ≈ 1) |
-| **`S123_合并稿/`** | **What an Active-Dendrite Continual Learner Actually Learns: A Dead-Neuron Artifact, a Granularity Result That Did Not Survive Its Own Controls, and a Repair That Is a Damping Factor** — the combined manuscript of S1 + S3 + S4, with the controls added after the first review | **Current submission version** — preprint [doi:10.5281/zenodo.23726912](https://doi.org/10.5281/zenodo.23726912). Submitted to TMLR. 71 pp Elsevier format + 30 pp TMLR format + 7 pp supplementary, 11 tables, 8 figures. All statistics Holm-corrected with CIs and effect sizes; equivalence testing (TOST) replaces reliance on failure to reject. Supersedes the three separate records above, which are retained as the individually-published versions of record and now cross-link here |
+| **`S123_合并稿/`** | **What an Active-Dendrite Continual Learner Actually Learns: A Dead-Neuron Artifact, a Granularity Result That Did Not Survive Its Own Controls, and a Repair That Is a Damping Factor** — the combined manuscript of S1 + S3 + S4, with the controls added after the first review | **Current submission version** — preprint [doi:10.5281/zenodo.23729840](https://doi.org/10.5281/zenodo.23729840). Submitted to TMLR. 74 pp Elsevier format + 31 pp TMLR format + 7 pp supplementary, 11 tables, 8 figures. All statistics Holm-corrected with CIs and effect sizes; equivalence testing (TOST) replaces reliance on failure to reject. Supersedes the three separate records above, which are retained as the individually-published versions of record and now cross-link here |
 
 ### Why the three were merged
 
@@ -69,7 +69,21 @@ reflect what they showed:
 The task-relevance probe was also re-run (`bench/s5_task_relevance.py`,
 40 runs), because the original run's script and per-seed records were not
 in the artifact; the reproduced numbers replace the earlier ones in the
-text. The raw per-seed records for all five controls are in
+text.
+
+6. **Attribution of the mechanism measurements**
+   (`bench/s5_gate_attribution.py`, `bench/s5_flip_attribution.py`,
+   `bench/s5_gate_analytic.py`). The winning-segment gate value and the
+   own-segment win rate were reported as properties of a *trained* network.
+   They are in fact properties of the *initialization*: an untrained
+   network already reads 0.5641 where the trained one reads 0.5646. The
+   cause is the per-task gradient mask, which is applied to blocks while
+   the forward pass reads whole columns, so 90% of the gate matrix
+   receives no gradient in any phase (measured relative displacement
+   exactly 0.0 in all 90 off-diagonal blocks, every seed). Removing the
+   mask frees those blocks but still produces no task-segment
+   specialization, so the negative result stands and the mechanism
+   attribution is corrected. The raw per-seed records for all five controls are in
 `bench/results_s5/`.
 
 

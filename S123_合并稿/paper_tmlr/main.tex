@@ -65,9 +65,13 @@ $17\%$/$26\%$ of its bare-MLP value), and a $2\times 2$ width $\times$
 normalization scan ($320$ runs) confirms the attribution --- normalization
 collapses the gain at both widths, while widening the trunk $7.8\times$
 \emph{increases} it. \textbf{Fifth}, a mechanism probe re-qualifies what the
-repair does: the winning segment's gate value is a constant of the training run
-($0.565$), identical under every alternative context, so the context pathway is
-present but unused as a modulator; at $b{=}10$ the own segment always wins with
+repair does: the winning segment's gate value is a constant of the
+initialization ($0.565$, already $0.564$ before any training), identical under
+every alternative context; and we trace why the context pathway is unused to a
+defect in the protection protocol itself, whose per-task gradient mask freezes
+$90\%$ of the gate matrix at its random initialization while the forward pass
+reads whole columns --- so the context pathway is not merely unused but
+untrainable; at $b{=}10$ the own segment always wins with
 $\sigma(10+u)\approx 1$, making the network context-degenerate, and a
 four-arm control (base / constant-gate / repaired / gate-deleted) shows that
 gate \emph{deletion} recovers most of the gain on MNIST ($76\%$, against an
@@ -231,11 +235,18 @@ significant uncorrected, $0/12$ after Holm correction) and final accuracy \emph{
       \emph{increases} it.
 \item \textbf{What the repair actually repairs (Sec.~\ref{sec:mech}).} A
       mechanism probe re-qualifies the third contribution. The winning
-      segment's gate value is a constant of the training run ($0.565$),
-      identical to four decimals under every alternative context, and the
-      dendritic columns stay mutually orthogonal at their random
-      initialization (mean pairwise cosine $0.003$): the context pathway
-      is present, protected per task, and \emph{unused as a modulator}. At
+      segment's gate value is a constant of the initialization ($0.565$,
+      already $0.564$ before training), identical to four decimals under
+      every alternative context, and the dendritic columns stay mutually
+      orthogonal at their random initialization (mean pairwise cosine
+      $0.003$, cosine to the initialization $0.9995$): the context pathway
+      is present, protected per task, and \emph{unused as a modulator}.
+      We then trace the cause to the protection protocol rather than to
+      the argmax: its per-task gradient mask leaves every off-diagonal
+      block of the gate matrix at exactly its random initialization
+      ($0.0$ relative displacement in all 90 blocks, every seed), while
+      the forward pass reads whole columns, so $90\%$ of the context
+      pathway never receives a gradient at all. At
       $b{=}10$ the own segment always wins with $\sigma(10+u)\approx 1$,
       which makes the network context-degenerate (swapping the context
       one-hot changes $0.007$--$0.021\%$ of predictions, against
@@ -1350,25 +1361,97 @@ $\sigma(d)$ has mean $0.565$ under the correct context and $0.565$
 under every alternative --- identical to four decimal places, in both
 the base ($0.5651$) and repaired ($0.5652$) networks. The context
 one-hot selects \emph{which} segment wins, but not \emph{how much} it
-gates: the gate's value is a constant of the training run, not a
-function of the context.
+gates. As the control below shows, this value is not produced by
+training either: it is already $0.564$ in the untrained network, so the
+correct description is that the gate's value is a constant of the
+\emph{initialization} of the gate bank, and a function of neither the
+context nor the learning.
 
 \paragraph{Column geometry.} The dendritic weights projected onto the
 $T$ context columns remain mutually orthogonal after training: mean
 pairwise cosine $0.003$ (per-model mean in $[0.001, 0.003]$; the most
-negative single pair over the three models is $-0.056$), indistinguishable
-from their random initialization. Training, with per-task gradient
-protection, leaves the context channel of the gate bank essentially at
-its prior.
+negative single pair over the three models is $-0.056$). The columns are
+in fact orthogonal \emph{before} training as well, and training barely
+moves them: the cosine between each trained column and its own
+initialization is $0.9995$ on MNIST and $0.9997$ on Fashion-MNIST
+($n=3$ seeds). The orthogonality is therefore not something training
+preserved; it is what the network started with.
 
-Together: the architecture's context pathway is present, trainable in
-principle, protected per task --- and unused as a \emph{modulator}. The
-max over segments is won by whichever row the (orthogonal, near-random)
-columns happen to favor, the gate value is the same constant
-($\approx 0.565$) no matter which segment wins, and the repair adds a
-constant so large ($b{=}10$ against $|u| \lesssim 1$) that the own
-segment always wins with $\sigma(10 + u) \approx 1$: a context-free
-gain of one. Equation~\ref{eq:adnet} degenerates, in both arms, to a
+\paragraph{Why the context pathway is unused: the gradient mask, not the
+argmax.} We have been describing the constant gate value and the
+orthogonal columns as properties of a trained network, and in the
+previous version of this manuscript we attributed them to training. That
+attribution was wrong, and the reason is worth stating precisely because
+it is a defect of the architecture and its protection protocol rather
+than of the learning problem.
+
+The gate bank is a single matrix $W$ of shape
+$(\text{nseg}\cdot\text{nh}) \times T$, laid out so that block
+$(s, h)$ holds the row that segment $s$ uses for neuron $h$ and context
+$t$. The forward pass computes $u = W\,\mathrm{ctx}$, and since
+$\mathrm{ctx}$ is a one-hot, the value seen by task $t$ is
+\emph{column} $t$ of $W$, in its entirety: all $\text{nseg}$ blocks of
+it. The per-task gradient protection, however, is applied to the
+\emph{blocks}: during the training of task $t$ only block $(t, \cdot)$ of
+$W$ is allowed to receive a gradient. Block $(s, h)$ with $s \ne t$ is
+therefore masked exactly when it is being read (it belongs to another
+task's column) and also masked when its own task is trained (because
+then block $(t,\cdot)$ is the one opened). The consequence is exact:
+every off-diagonal block $W[s, \cdot, t]$ with $s \ne t$ receives a zero
+gradient in every phase of the run and stays frozen at its random
+initialization for the entire training.
+
+We verified this directly rather than inferring it. Comparing each
+trained network against a snapshot of its own initialization, the
+relative displacement of the 90 off-diagonal blocks is
+$0.0$ --- not small, but exactly zero --- in every seed on both
+datasets, while the 10 diagonal blocks move by $6$--$10\%$; the trained
+column agrees with its initialization to a cosine of $0.9995$. The
+weight matrix that the gate actually reads is, to five significant
+figures, the weight matrix the network was born with.
+
+Three consequences follow, and we separate them because they point in
+different directions. First, the negative result of
+Sec.~\ref{sec:anti} survives and is strengthened. If the absence of
+task--segment specialization were an artefact of this mask, then
+removing the mask should produce specialization. It does not: with the
+mask switched off and the off-diagonal blocks free to move (they
+displace by $7$--$11\%$), the own segment still wins only
+$9.9\%$ of the neuron--sample slots on MNIST and $10.0\%$ on
+Fashion-MNIST, against $10.0\%$ and $10.0\%$ in the untrained network.
+The architecture does not learn task--segment routing under either
+protocol, so the negative result is a property of the architecture.
+
+Second, the constant gate value is not a training outcome. A freshly
+initialized, untrained network already has a winning-segment gate value
+of $0.5641$ on both datasets; after training it is $0.5646$
+(MNIST) and $0.5644$ (Fashion-MNIST). The number the previous version of
+this manuscript called "a constant of the training run" is a constant of
+the \emph{initialization}, and it follows from the initialization
+analytically: the winning row of a column is the maximum of
+$\text{nseg}$ near-independent entries, so with the Kaiming-uniform
+initialization of a bias-free $\text{fan}$-in-$T$ layer
+($\sigma = 0.183$ at $T = 10$) the expected maximum is
+$\mathbb{E}[\max_{s} z_s] \approx 0.28$, and
+$\sigma(0.28) = 0.570$, which is the value we measure.
+
+Third, and this is the uncomfortable one, the protection protocol is
+not protecting what the method needs. The gradient mask was introduced
+to keep each task's dendritic rows from drifting, and it does that
+perfectly --- but because the gate reads whole columns, it also freezes
+every entry of every column except one block, which is $90\%$ of the
+context pathway. The mechanism this paper set out to audit is not merely
+unused; it is, by construction, untrainable.
+
+Together: the architecture's context pathway is present, protected per
+task --- and, because the per-task gradient mask freezes $90\%$ of the
+gate matrix, in practice untrainable as well as unused as a
+\emph{modulator}. The max over segments is won by whichever row the
+(orthogonal, near-random) columns happen to favor, the gate value is the
+same constant ($\approx 0.565$, inherited from the initialization) no
+matter which segment wins, and the repair adds a constant so large
+($b{=}10$ against $|u| \lesssim 1$) that the own segment always wins
+with $\sigma(10 + u) \approx 1$: a context-free gain of one. Equation~\ref{eq:adnet} degenerates, in both arms, to a
 multiplication by a constant --- ${\approx}0.57$ in the base network,
 ${\approx}1.0$ in the repaired one. Which of those two constants
 matters, and why, is what the next section measures.
@@ -1475,18 +1558,23 @@ recovered) but distinguishable.
 \label{sec:pseudo}
 
 The mechanism section (Sec.~\ref{sec:mech}) reports that the winning
-segment's gate value is a constant of the training run: $0.565$ under the
+segment's gate value is a constant of the initialization: $0.565$ under the
 correct context and $0.565$ under every alternative, identical to four
 decimals in both the base and the repaired networks, with the dendritic
 columns remaining mutually orthogonal at their random initialization
-(mean pairwise cosine $0.003$). Taken literally, those measurements imply
+(mean pairwise cosine $0.003$), and with $90\%$ of the gate matrix never
+receiving a gradient at all. Taken literally, those measurements imply
 something uncomfortable for the first half of this paper, and we would
 rather state it than let a reviewer find it.
 
 If the gate's value does not depend on which segment wins, then the
 notion of a neuron's ``dominant segment'' is not a description of a
 routing decision --- it is a description of an argmax over rows that are
-nearly equal. Under that reading, the quantity we spent
+nearly equal. And as we now know, those rows are nearly equal because
+the protection protocol froze them: $90\%$ of the gate matrix never
+receives a gradient, so the argmax ranges over a matrix that is still
+essentially its random initialization. The near-degeneracy is not an
+accident of the learning problem; it is built in. Under that reading, the quantity we spent
 Sec.~\ref{sec:granularity} and Sec.~\ref{sec:audit} measuring --- the
 probability that a neuron's dominant segment is its own task's segment ---
 is a statistic of the \emph{instrumentation}, not of the network's
@@ -2106,9 +2194,16 @@ buys.
 
 And the mechanism is not the one we assumed. The context pathway in these
 networks is present, protected per task, and unused as a modulator: the
-winning segment's gate value is a constant of the training run, identical
-under every alternative context, and the dendritic columns remain orthogonal
-at their random initialization. At $b{=}10$ the own segment always wins with
+winning segment's gate value is a constant of the initialization ($0.564$
+before any training), identical under every alternative context, and the
+dendritic columns remain orthogonal at their random initialization. We
+further identify why: the per-task gradient mask freezes every
+off-diagonal block of the gate matrix at exactly its initial value, and
+because the forward pass reads whole columns rather than blocks, $90\%$
+of the context pathway never receives a gradient in the entire run. The
+pathway is therefore untrainable, not merely untrained --- although
+removing the mask does not make specialization appear, which is why the
+negative result stands either way. At $b{=}10$ the own segment always wins with
 $\sigma(10+u)\approx 1$, so the network becomes context-degenerate rather
 than better-routed. A four-arm control settles what the bias pays for:
 holding the gate at the base system's own measured constant reproduces the

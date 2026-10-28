@@ -36,7 +36,11 @@ from branch_delp import BiasADNet, anchor_penalty, load_data
 
 NFISHER, NUSAGE = 300, 500
 BIASES = [0.0, 10.0]
-SEEDS = [0, 1, 2]
+# The per-phase one-sample t values in the text are computed across seeds.
+# At n=3 they are extremely sensitive to float noise (the means agree
+# across machines to 1e-4 while the t values move by several units),
+# so the seed list is configurable and the published numbers use n=10.
+SEEDS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 NTASK = 10
 LAM = 1000.0
 
@@ -145,7 +149,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--seeds", type=str, default=None,
+                    help="comma-separated seed list; default = the module SEEDS")
     a = ap.parse_args()
+    seeds = ([int(x) for x in a.seeds.split(",")] if a.seeds
+             else list(SEEDS))
     if a.smoke:
         import exp6_baselines as eb
         import exp4_branch_protection as e4
@@ -158,7 +166,7 @@ def main():
     data = load_data("mnist")
     res, t0 = [], time.time()
     for bias in BIASES:
-        for seed in SEEDS:
+        for seed in seeds:
             print(f"bias={bias} seed={seed} ...", flush=True)
             r = run(seed, data, get_perms(seed, NTASK), bias)
             res.append(r)

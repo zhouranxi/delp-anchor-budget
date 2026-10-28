@@ -12,7 +12,7 @@
 \newcommand{\acc}{\mathrm{acc}}
 \newcommand{\own}{p_{\mathrm{own}}}
 
-\title{Segment--Task Specialization Does Not Emerge in Active-Dendrite Networks:\\ A Dead-Neuron Artifact, a Repair That Does Not Transfer, and What the Own-Segment Bias Actually Does}
+\title{What an Active-Dendrite Continual Learner Actually Learns: A Dead-Neuron Artifact, a Granularity Result That Did Not Survive Its Own Controls, and a Repair That Is a Damping Factor}
 \author{\name Anonymous Author \email anonymous@example.com \\ \addr Anonymous Institution}
 
 \begin{document}
@@ -27,21 +27,25 @@ per-neuron Fisher anchors with segment usage. Both mechanisms rest on an
 implicit assumption that has, to our knowledge, never been measured: that the
 segment--task mapping constitutes a \emph{specialization} that protection can
 leverage at sub-neuron granularity. We audit this assumption on
-Permuted-MNIST and Permuted-Fashion and report six findings, four of them
+Permuted-MNIST and Permuted-Fashion and report eight findings, five of them
 negative, that together invert the interpretation of a repair we had
 originally reported as causal. \textbf{First}, a granularity ladder of anchors
 (plain, neuron-resolved, segment-resolved with attribution-tracked reference
-states) shows that the entire benefit of usage localization is realized at
-neuron level: segment-resolved anchors are statistically indistinguishable from
-neuron-resolved anchors across every combination of two datasets, two task
-counts ($T{=}10,20$), and two elastic weights ($|\Delta\ell|\le 0.24$, all
+states) shows that the benefit of usage localization measured on the learning term is
+realized at neuron level in every cell we ran: segment-resolved anchors differ from
+neuron-resolved anchors by no more than the resolution of a 10-seed paired test
+across every combination of two datasets, two task
+counts ($T{=}10,20$), and two values of the elastic weight
+$\lambda$ ($|\Delta\ell|\le 0.24$, all
 $n{=}10$ paired tests n.s.), and remain so under FIFO anchor budgets
 ($|\Delta\ell|\le 0.44$ across eight budget cells). \textbf{Second}, the audit
-explains why: task-dominant gating is \emph{absent} --- among active neurons the
+explains why: no task-dominant gating is \emph{detectable} by the standard
 probability that a neuron's dominant segment is its own task's segment starts
 each phase at chance and is pushed \emph{below} chance by that phase's own
 training ($T{=}20$: $0.05 \to 0.01$), and Fisher mass is diffuse across
-segments (top-1 share $11$--$18\%$). The audit also uncovers a measurement
+segments (top-1 share $11$--$18\%$). Because that instrument is itself unreliable
+in this family (below), we read this as an absence of measurement rather than a
+measured absence. The audit also uncovers a measurement
 artifact relevant to the active-dendrite literature: under production sampling
 budgets $56$--$63\%$ of neurons are never activated, and naive argmax
 instrumentation over all neurons fabricates a strong ``segment-0 dominance''
@@ -54,7 +58,7 @@ paired; $\Delta\ell$ up to $+4.6$, $t(9){=}8.1$). \textbf{Fourth}, however, the
 repair does not transfer. On a convolutional active-dendrite backbone the
 dose--response collapses to noise ($0/12$ cells survive correction) and final accuracy
 reverses (down to $-2.29$, $t{=}-3.1$); a same-architecture control separates
-the candidate causes by showing that mortality and repair gain \emph{decouple}
+the candidate causes by showing that the predicted link between mortality and repair gain does not hold
 (GroupNorm raises mortality to $76.5\%$/$85.5\%$ while collapsing the gain to
 $17\%$/$26\%$ of its bare-MLP value), and a $2\times 2$ width $\times$
 normalization scan ($320$ runs) confirms the attribution --- normalization
@@ -65,8 +69,9 @@ repair does: the winning segment's gate value is a constant of the training run
 present but unused as a modulator; at $b{=}10$ the own segment always wins with
 $\sigma(10+u)\approx 1$, making the network context-degenerate, and a
 four-arm control (base / constant-gate / repaired / gate-deleted) shows that
-gate \emph{deletion} reproduces the gain on MNIST and outperforms the repair on
-Fashion-MNIST. The honest summary is that we measured the size, the cost, and
+gate \emph{deletion} recovers most of the gain on MNIST ($76\%$, against an
+anchor-weighting sensitivity of $\pm3.9$ points) and is numerically above the
+repair on Fashion-MNIST, a difference that is not significant at $n{=}10$. The honest summary is that we measured the size, the cost, and
 the boundary of the repair precisely, and located its mechanism only far enough
 to know that it is not the one we first assumed: the bias does not restore
 routing, it removes a constant damping factor that a never-used gate had left
@@ -82,13 +87,32 @@ weaker formulation that check licenses: we cannot claim that specialization
 is actively violated as a property of learned computation, only that no
 evidence of it is detectable by an instrument that is itself unreliable in
 this family. Segment--task specialization in this architecture family is
-therefore not a weak tendency but an assumption with no measurable support
---- and the absence it leaves is compensated for rather than cured.
+therefore not a weak tendency but an assumption with no support that survives
+an instrument we can trust --- and what the repair buys is not compensation for
+that absence but the removal of a constant damping factor. Seventh, the
+controls we added after the first review of this line of work change three of
+our claims. A positive control shows the dominant-segment instrument is
+sensitive: when specialization is forced by construction, the instrument reads
+$1.000$ against $0.055$ for the base network, so the negative readings are real.
+A specificity control shows the bias acts on whichever segment the network is
+using, not specifically on the task's own, and that a pure constant rescaling of
+the trunk does better still. And a construction-diversity control shows the
+granularity null was an artefact of our self-limiting reference rule: a
+refreshed-reference segment-resolved anchor gains about two points of learning
+term on MNIST while losing about twenty points of final accuracy, so we
+withdraw the general claim that sub-neuron granularity is worthless. Eighth, the
+method we audit is not competitive with contemporary alternatives: a replay buffer
+with logit distillation reaches $86.4$ against DeLP's $64.0$ on Permuted-MNIST
+and $75.3$ against $42.5$ on Permuted-Fashion, with markedly less forgetting in
+both, in all twelve paired comparisons significant at $p<10^{-6}$. This paper is
+therefore an argument that the dendritic-segment account of continual learning
+needs to be rethought from the trunk upward, not a defence of the method it audits.
 \end{abstract}
 
 \noindent\textbf{Keywords:} continual learning , elastic weight consolidation , active dendrites
 , dendritic segments , catastrophic forgetting , interpretability
-audit , reproducibility , negative results
+audit , reproducibility , negative results , experience replay
+, dark experience replay , equivalence testing
 
 \section{Introduction}
 \label{sec:intro}
@@ -124,38 +148,48 @@ invert the interpretation of the last one, and we report it in that order
 because the ordering is the finding: an apparent success in the fourth
 contribution below is not a success, and we say so.
 
-Our contributions are fivefold, and each arose from the failure of the
+Our contributions are sixfold, and each arose from the failure of the
 previous one:
 
 \begin{enumerate}
-\item \textbf{A granularity audit with a null result at segment level
-      (Sec.~\ref{sec:granularity}).} We implement segment-resolved anchors
+      \item A granularity audit with a null result at segment level
+      (Sec.~\ref{sec:granularity}). We implement segment-resolved anchors
       with \emph{attribution-tracked reference states} --- each anchor tracks
       where its own segment's parameters drift --- and compare a three-rung
       ladder (plain, neuron-resolved, segment-resolved) across two datasets,
-      two depths, and two elastic weights with $n{=}10$ paired seeds. The
+      two sequence lengths, and two values of $\lambda$ with $n{=}10$ paired seeds. The
       entire benefit of usage localization is realized in the
       plain$\to$neuron step ($\Delta\ell$ between $-2.8$ and $-5.4$,
       $|t(9)|$ up to $22$); the neuron$\to$segment step adds nothing
       ($|\Delta\ell|\le 0.24$, all n.s.), under unbounded stacks and under
-      FIFO anchor budgets alike. The null is mechanistically pinned, not
-      merely observed: attribution is \emph{self-limiting} (the anchor's own
+      FIFO anchor budgets alike. The null is consistent with two properties of the
+      construction we chose, rather than merely observed: attribution is
+      \emph{self-limiting} (the anchor's own
       penalty pins the weights, so the tracked reference never moves) and
       segment-level parameter ownership lacks a separable carrier.
-\item \textbf{A measurement artifact with literature-wide relevance
-      (Sec.~\ref{sec:audit}).} Auditing \emph{why} the null occurs, we find
+      \textbf{This null does not survive a construction that is not}
+      \textbf{self-limiting} (Sec.~\ref{sec:ctrl-anchor}): with refreshed
+      per-segment references the same segment-resolved anchor gains
+      about two points of learning term on MNIST, at a cost of roughly
+      twenty points of final accuracy. We therefore withdraw the general
+      claim that sub-neuron protection granularity is worthless: what the
+      control shows is that the direction of the effect is set by the
+      reference-update rule, not by the granularity itself.
+\item \textbf{A measurement artifact with literature-wide relevance}
+      (Sec.~\ref{sec:audit}). Auditing \emph{why the null occurs}, we find
       that under production sampling budgets $56$--$63\%$ of neurons are
       never activated, and that naive dominant-segment instrumentation
       (argmax over segment activations of \emph{all} neurons) attributes
       every dead neuron to segment 0 --- fabricating an apparent
       ``segment-0 dominance'' of $\approx 60\%$ that vanishes under
-      active-only filtering. Among active neurons the true picture is
-      \emph{anti-specialization}: each phase's own training pushes the
+      active-only filtering. Among active neurons the picture is
+      \emph{anti-specialization} \emph{as measured}: each phase's own training pushes the
       own-segment win rate from chance to below chance
       ($T{=}20$: $0.05 \to 0.01$), and anchor Fisher mass is diffuse across
       segments (top-1 share $11$--$18\%$). Any study that measures segment
-      routing with naive argmax --- including evaluations of segment
-      specialization claims --- is at risk of the same artifact.
+      dominance by argmax over segment activations \emph{and} does not filter
+      inactive units is at risk of the same artifact; we did not audit the
+      instrumentation used in other work on this architecture.
 \item \textbf{An apparent causal repair (Sec.~\ref{sec:causal}).} If missing
       specialization is load-bearing rather than cosmetic, restoring it
       should help. It does: adding a constant bias $b$ to the own-segment
@@ -177,17 +211,18 @@ previous one:
       training-time routing at every dose, so only a minority of neuron-tasks
       flip to the own-segment pathway --- and that partial restoration
       already yields most of the gain.
-\item \textbf{The repair does not transfer, and the reason is not gate death
-      (Sec.~\ref{sec:conv}).} The third contribution is the one we most
+      \item The repair does not transfer, and the reason is not gate death
+      (Sec.~\ref{sec:conv}). The third contribution is the one we most
       wanted to be wrong about. On a convolutional active-dendrite backbone
-      ($160$ runs) the dose--response collapses to noise ($4/12$ cells
+      ($160$ runs) the dose--response collapses to noise ($2/12$ cells
 significant uncorrected, $0/12$ after Holm correction) and final accuracy \emph{reverses} (Fashion $T{=}10$:
       $\Delta\mathrm{avg}=-2.29$, $t{=}-3.1$). The natural explanation ---
       the repair revived dying gates, and conv gates do not die --- is
       testable, and we test it: inserting GroupNorm into the MLP raises
       mortality to $76.5\%$/$85.5\%$ while collapsing the repair gain to
       $17\%$/$26\%$ of its bare-MLP value. Mortality and gain
-      \emph{decouple} in both directions (highest mortality with least gain;
+      do not track each other (the highest-mortality configuration has one of the
+      smallest gains;
       zero mortality with no gain), so gate death is neither necessary nor
       sufficient. A $2\times 2$ width $\times$ normalization scan
       ($320$ runs) removes the one confound we had to disclose: normalization
@@ -208,12 +243,13 @@ significant uncorrected, $0/12$ after Holm correction) and final accuracy \emph{
       what the bias buys: pinning the gate at the base system's measured
       constant reproduces the base system ($63.62$ vs.\ $63.86$ on MNIST,
       n.s.), while \emph{deleting} the gate reproduces most of the repair's
-      gain on MNIST ($67.50$ vs.\ $68.67$) and \emph{outperforms} it on
-      Fashion-MNIST ($44.27$ vs.\ $42.89$). The bias does not restore
+      gain on MNIST ($67.50$ vs.\ $68.67$) and is numerically above it on
+      Fashion-MNIST ($44.27$ vs.\ $42.89$, a difference that is not significant
+      at $n{=}10$). The bias does not restore
       routing; it removes a constant damping factor that a never-used gate
       had left in place.
-\item \textbf{A self-interrogation we should have run first
-      (Sec.~\ref{sec:pseudo}).} The mechanism result has an uncomfortable
+      \item A self-interrogation we should have run first
+      (Sec.~\ref{sec:pseudo}). The mechanism result has an uncomfortable
       implication for our own second contribution, and we state it rather
       than leave it for a reviewer: if the gate's value does not depend on
       which segment wins, then ``dominant segment'' is not a description
@@ -248,13 +284,16 @@ this paper is about \emph{what} there is to protect.
 
 Together the six results reframe segment specialization in this
 architecture family: not a weak tendency to be exploited, but an
-assumption with no measurable support under a corrected instrument --- and
+assumption with no support that survives a corrected instrument --- and
 whose absence a one-parameter intervention compensates for rather than
 cures. The last of these results is the one we would most like to have
 run first, and the reason we did not is worth stating: the apparent
 repair was strong, consistent, and saturating, and that is exactly what
-made it seem unnecessary to ask what the gate was doing. All experiments are on Permuted-MNIST and
-Permuted-Fashion at $T\in\{10,20\}$ with paired-seed statistics; code,
+made it seem unnecessary to ask what the gate was doing. All experiments are on
+Permuted-MNIST and
+Permuted-Fashion, on one-hidden-layer MLPs except for the convolutional and
+width-variant arms of Secs.~\ref{sec:conv}--\ref{sec:gnmlp}, at $T\in\{10,20\}$
+with paired-seed statistics; code,
 per-run records, analysis scripts, and the pre-registrations are public
 (Data Availability).
 
@@ -355,7 +394,8 @@ $+4.66$ ($t(9){=}22.3$); across all six cells of
 $\{$dataset$\}\times\{$depth$\}\times\{\lambda\}$, $\Delta\ell$ ranges from
 $-2.78$ to $-5.44$ in favor of neuron-level localization with
 $|t(9)| \in [10.4, 22.3]$. The neuron$\to$segment step is empty on the learning axis: the
-largest deviation across all twelve pairings is $|\Delta\ell| = 0.24$,
+largest deviation across all twelve pairings is $|\Delta\ell| = 0.24$ on the learning
+term and $|\Delta\mathrm{BWT}| = 0.43$ on forgetting,
 never significant (largest $|t| = 1.3$); BWT differences are within
 $0.43$ points. Two of those BWT differences are nominally significant
 (effect sizes below $0.5$ points, $|t| \le 4.0$) and we report them rather
@@ -638,7 +678,8 @@ $t \ge 3.9$), and $b{=}3$ alone already captures $81\%$ of the
 $b{=}10$ effect there ($81$--$113\%$ across the six dataset/depth/granularity
 arms we ran at all three doses). Forgetting
 improves broadly at $T{=}10$ ($\Delta\mathrm{BWT}$ up to $+1.65$;
-significantly positive in $8/12$ cells, and in all six MNIST cells), and
+significantly positive in $6/12$ cells --- all six MNIST cells --- with
+      no Fashion cell surviving correction), and
 partially trades back at $T{=}20$, where $3/10$ cells show a significant
 mild BWT cost ($-0.66$ to $-0.95$) and the remaining seven are
 statistically indistinguishable from baseline.
@@ -733,7 +774,7 @@ out the dying-gate explanation.
 
 \textbf{The network absorbs the intervention rather than opposing it.}
 Under per-phase signed instrumentation of the context-$t$ gating column
-($n=3$ seeds, $T{=}10$ MNIST), the own-segment entries drift
+($n=3$ seeds, $T{=}10$ MNIST), we saw the own-segment entries drift
 \emph{positive} in all ten phases under $b{=}10$ (one-sample $t$ over
 seeds: $223$, $37$, $17$, $17$, $8$, $11$, $9$, $5.1$, $4.4$, $4.5$;
 per-phase mean displacement decaying from $+0.027$ to $+0.004$), versus
@@ -817,7 +858,8 @@ $\lambda{=}1000$, seeds $0$--$9$ per cell). $160$ runs total
 \subsection{G1 fails: the dose--response collapses}
 \label{sec:convstat}
 
-\paragraph{Statistics.} Paired $t$-tests over $n=10$ seeds, with Holm correction applied within each metric family across the $12$ conv dose cells. Uncorrected, $2/12$ cells reach $p<0.05$ on $\Delta\ell$; after correction \emph{none} does. We report the corrected result as the primary one, because the pre-registered criterion was a count over cells and a count over uncorrected tests is the wrong statistic for it. The conclusion (G1 fails) is unchanged either way, and is in fact strengthened: the conv dose--response is not a weak effect that shrinks under correction but an effect that was never there.
+\paragraph{Statistics.} Paired $t$-tests over $n=10$ seeds, with Holm correction applied within each metric family across the $12$ conv dose cells. Uncorrected, $2/12$ cells reach $p<0.05$ on $\Delta\ell$; after correction \emph{none} does. We report the corrected result as the primary one, because the pre-registered criterion was a count over cells and a count over uncorrected tests is the wrong statistic for it. The conclusion (G1 fails) is unchanged either way, and is in fact strengthened: the conv dose--response is not a weak effect that shrinks under correction but an effect that is not detectable at this sample size, with 95\% CIs that in two
+cells admit effects up to $+3$ points.
 
 Table~\ref{tab:convdose} reports paired differences against $b{=}0$.
 Against the pre-registered bar ($\ge 15/20$ cells significant), the
@@ -952,7 +994,7 @@ $+0.57$ (retention $17\%$ of the bare-MLP gain) on MNIST and $+0.36$
 ($26\%$) on Fashion. And final accuracy reverses on both datasets
 ($\Delta\mathrm{avg} = -3.88$, $t{=}-5.3$; $-6.55$, $t{=}-4.4$).
 
-Mortality and gain are therefore \textbf{decoupled}: one configuration
+Mortality and gain therefore do not track each other: one configuration
 (GN-MLP) has the highest mortality and the least gain; another
 (ConvADNet) has zero mortality and no gain; the bare MLP has middle
 mortality and full gain. Whatever the repair feeds on, it is not gate
@@ -1049,7 +1091,8 @@ carried.
 If not mortality, what? Table~\ref{tab:three} orders the six cells by
 $\Delta\ell_{b=10}$: the bare MLPs lead on both datasets, the
 strong-baseline configurations trail, and within MNIST the ordering
-matches the unbiased baseline's learning-term weakness exactly
+broadly tracks the unbiased baseline's learning-term weakness, though not
+      monotonically
 ($\ell_0$ $74.3 \to 84.1 \to 93.5$ versus gain $+3.32 \to +0.07 \to
 +0.57$; Fig.~\ref{fig:headroom}). We call this loose regularity
 \emph{repair headroom}: the
@@ -1061,7 +1104,8 @@ leaves open.
 \includegraphics[width=0.72\linewidth]{fig_headroom.pdf}
 \caption{Repair gain at $b{=}10$ against the unbiased baseline's
 learning term. The qualitative regularity (weak baseline, larger
-gain) holds within MNIST and Fashion separately, but a quantitative
+gain) is visible within Fashion and is non-monotone within MNIST, where the
+convolutional arm has the weakest baseline and the smallest gain, but a quantitative
 law fails: ConvADNet-Fashion has $24.7$ points of $\ell$-headroom and
 no significant gain. Headroom is necessary-looking, not sufficient.}
 \label{fig:headroom}
@@ -1361,8 +1405,8 @@ mnist & nogate & $+2.61{*}$ & $0.000$ & $+2.46$ & $+3.64{*}$ & $0.000$ \\
 \end{table}
 
 
-\textbf{The constant-gate control reproduces the base system, not the
-repair.} Pinning the gate at $0.565$ lands at $63.62$ on MNIST (base:
+      The constant-gate control reproduces the base system, not the repair.
+      Pinning the gate at $0.565$ lands at $63.62$ on MNIST (base:
 $63.86$; paired difference $-0.25$, $t{=}-0.7$, n.s.) and $42.70$ on
 Fashion (base: $42.20$; $+0.49$, $t{=}0.7$, n.s.). Holding the gate
 constant buys nothing --- which is exactly what the mechanism section
@@ -1371,8 +1415,8 @@ that value. The entire difference between the base and repaired
 networks is the value of that constant: $0.57$ damps the trunk,
 $1.0$ does not.
 
-\textbf{Gate deletion recovers most of the repair --- and on
-Fashion-MNIST, more than the repair.} The no-gate control reaches
+      Gate deletion recovers most of the repair --- and on Fashion-MNIST, more
+      than the repair. The no-gate control reaches
 $67.50$ on MNIST, recovering $+3.64$ of the repair's $+4.80$-point gain
 ($76\%$) and falling short of the repaired network by $-1.16$
 ($t{=}-2.7$): keeping the (saturated) multiplicative structure is worth
@@ -1442,9 +1486,9 @@ question, and the answer is that a substantial part of the paper survives,
 while one specific claim does not. Three observations separate the
 conclusions.
 
-\textbf{The granularity ladder does not depend on the dominant-segment
-instrument.} Its comparisons are \emph{within-architecture} paired
-differences in the learning term $\ell$ and final accuracy between two
+      The granularity ladder does not depend on the dominant-segment
+      instrument. Its comparisons are \emph{within-architecture paired
+differences} in the learning term $\ell$ and final accuracy between two
 anchor constructions --- segment-resolved versus neuron-resolved --- under
 identical training, seeds, and evaluation. No routing statistic enters
 that comparison at all. The finding that segment-resolved anchors buy
@@ -1465,8 +1509,8 @@ without any claim about what the network learned, and its remedy
 broad class of measurements in this literature --- not only ours --- may be
 reading a tie-breaking artifact.
 
-\textbf{The mechanism and the ablation are about the gain, not about
-routing.} Sections~\ref{sec:mech}--\ref{sec:ablation} measure the
+      The mechanism and the ablation are about the gain, not about routing.
+      Sections~\ref{sec:mech}--\ref{sec:ablation} measure the
 context-flip rate, the gate value, the column geometry, and the final
 accuracy of four arms. Every one of those is a measurement of the
 network's output or of an intervention's effect on that output. None of
@@ -1521,6 +1565,276 @@ the instrument to explain it before we thought to build it.
 
 
 % ===== 相关工作 / 局限 / 讨论 =====
+
+
+\section{Controls added after the first review of this line of work}
+\label{sec:controls}
+
+The five sections above are the argument as it stood when this manuscript
+was assembled. A review of that draft pointed out five places where a
+control was missing rather than a claim being wrong, and we ran them. Four
+of the five changed what we can claim; one of them changed the paper's
+relationship to the method it audits. We report them here, in the order
+they were asked for, and we have edited the earlier sections and the
+abstract to reflect the outcomes rather than leaving the corrections
+implicit.
+
+\subsection{The own-segment specificity control, and what the bias is
+actually doing}
+\label{sec:ctrl-specificity}
+
+If the own-segment bias works by restoring own-segment routing, then the
+word \emph{own} is doing work: the same bias applied to a different
+segment should do less. If instead it works by removing a constant
+damping factor, the qualifier should be irrelevant. We ran four arms on
+the identical protocol (Permuted-MNIST and Permuted-Fashion, $T{=}10$,
+$n_h{=}256$, $\lambda=1000$, usage-weighted Fisher anchors, $n=10$ paired
+seeds): \emph{base} (no bias), \emph{repaired} (the bias of $b=10$ on the
+own segment, as in Sec.~\ref{sec:causal}), \emph{random} (the same $b=10$
+on one segment drawn at random per neuron and held fixed for the run),
+\emph{uniform} (the same $b=10$ on every segment), and \emph{rescale}
+(no gate at all: $h=\mathrm{kwta}(t/0.565)$, a pure constant removal of
+the damping factor).
+
+\begin{table}[t]
+\centering\small
+\caption{Where the own-segment bias acts. Means over $n=10$ paired seeds on the identical protocol. The ``random arm places the same bias on a segment drawn at random per neuron; the ``uniform arm places it on every segment; the ``rescale arm removes the gate entirely and divides the trunk output by the base network\'s measured gate constant $0.565$.}
+\label{tab:ctrl-specificity}
+\begin{tabular}{llrrrr}
+\toprule
+dataset & arm & $\ell$ & final avg & BWT & $n$ \\
+\midrule
+mnist & base & 74.38 & 63.83 & -11.73 & 10 \\
+mnist & repaired & 77.52 & 68.55 & -9.97 & 10 \\
+mnist & random & 74.19 & 64.04 & -11.29 & 10 \\
+mnist & uniform & 77.38 & 68.28 & -10.11 & 10 \\
+mnist & rescale & 81.23 & 73.63 & -8.44 & 10 \\
+fashion & base & 56.83 & 42.40 & -16.02 & 10 \\
+fashion & repaired & 57.76 & 43.16 & -16.22 & 10 \\
+fashion & random & 56.62 & 42.39 & -15.82 & 10 \\
+fashion & uniform & 58.23 & 43.66 & -16.19 & 10 \\
+fashion & rescale & 61.50 & 47.84 & -15.19 & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The result sharpens the story in a way we did not expect. On MNIST the
+\emph{repaired} arm reaches $\ell=77.5$ against the base arm's $74.4$,
+and the \emph{uniform} arm --- the same bias on every segment rather
+than the own one --- reaches essentially the same place ($77.4$). So
+\emph{own} is not doing the work: a bias on the own segment is worth
+about three points of learning term, and a bias on \emph{any} segment is
+worth the same. What does not work is the \emph{random} arm, which
+reaches the base arm's level ($74.2$, paired difference $-0.19$,
+$p=0.34$): biasing a segment that the network does not use buys
+nothing, and biasing a segment it does use buys the full effect,
+whichever one that is. The mechanism is therefore about which segment
+is active, not about the segment being the task's own.
+
+Two consequences follow. The first is about the paper's own vocabulary:
+we have been describing the intervention as an own-segment bias
+throughout, and the controls say the accurate description is a bias on
+\emph{whatever segment the network is currently using}. The second is
+about the size of the effect: the \emph{rescale} arm, which removes the
+gate altogether and divides the trunk output by the base network's
+measured gate constant $0.565$, reaches $\ell=81.2$ --- four points
+above the bias arms. We wrote in Sec.~\ref{sec:mech} that the bias buys
+the removal of a constant damping factor; this control says the bias
+buys that, and that a more direct way to buy it does better still. The
+own-segment bias is best understood as a crude, one-parameter way of
+removing a damping factor that the architecture should never have
+introduced, not as a repair of routing.
+
+\subsection{A positive control for the instrument we say is unreliable}
+\label{sec:ctrl-oracle}
+
+Sec.~\ref{sec:audit} rests on a negative reading of the dominant-segment
+instrument, and Sec.~\ref{sec:pseudo} argues that this reading may be a
+statement about the instrument rather than about the network. A
+measurement that only ever returns ``not detected'' cannot distinguish
+``the quantity is absent'' from ``the instrument is broken''. We therefore
+built a model in which task-dominant gating is true by construction: the
+own segment's gate entry is forced to $+M$ and every other segment's to
+$-M$, so that the own segment wins every competition by construction
+($M=5$), with a weaker version ($M=1$) to locate the detection
+threshold, and the base network unchanged. The override is applied at
+the gate itself, so that both the network's forward pass and the
+instrument read the forced values.
+
+The instrument detects the forced specialization exactly: the
+active-only own-segment rate is $1.000$ in every phase of every oracle
+run on both datasets, against $0.055$ (MNIST) and $0.057$ (Fashion) for
+the base network. The instrument is therefore sensitive, and the negative
+readings in Sec.~\ref{sec:audit} are informative: in this architecture
+family, task-dominant gating is genuinely not there. This is the
+strongest support we can offer for the paper's central negative claim,
+and it is support we did not have in the first draft.
+
+The oracle arms are also informative about a different question, though
+the answer is more mixed than we expected. Forcing the specialization
+does improve the learning term on MNIST ($\ell=77.3$ against the base
+network's $74.4$, paired $t(9)=11.5$, $p<10^{-4}$ after correction) and
+slightly on Fashion-MNIST ($\ell=58.0$ against $56.8$, $t(9)=2.5$,
+$p=0.034$ before correction and not significant after it). So a
+specialization \emph{would} be useful on MNIST if the architecture could
+acquire one. That is a statement about the architecture's capacity rather
+than about the protection method, and it lines up with what
+Sec.~\ref{sec:ctrl-specificity} finds: what the network needs is not
+more protection but a usable path for the signal it already computes.
+
+\subsection{The granularity result is a property of our anchor
+construction, not of granularity as such}
+\label{sec:ctrl-anchor}
+
+The null in Sec.~\ref{sec:granularity} --- segment-resolved anchors buy
+nothing over neuron-resolved ones --- was attributed to two properties of
+the construction we chose: attribution is \emph{self-limiting} (the
+anchor's own penalty pins the weights, so the tracked reference never
+moves), and the Fisher mass that drives the weighting is too diffuse to
+partition. A reviewer can reasonably object that the first of these is a
+property of one implementation rather than a general fact about
+protection below the neuron level, and that the null is therefore close
+to a strawman. We tested it by building a second segment-resolved
+construction that is not self-limiting: the per-segment reference
+states are refreshed at the end of each phase in which that segment is
+trained, so the penalty no longer pulls the weights toward a stale
+target (variant V2; a third variant, V3, additionally estimates the
+Fisher term per segment from the samples that segment wins).
+
+The null does not survive. On MNIST, the original construction reproduces
+it exactly ($\Delta\ell=-0.03$ against the neuron-resolved anchor,
+$p=0.90$), while the refreshed-reference variant reaches
+$\Delta\ell=+2.26$ ($t(5)=11.7$, $p<10^{-3}$ after correction, $d_z=4.8$)
+and V3 reaches $+2.21$. The general claim that sub-neuron protection
+granularity is worthless is therefore \emph{not supported by our data},
+and we withdraw it.
+
+What the variant buys is not free, and the second number matters as much
+as the first: the same variant that gains two and a quarter points of
+learning term loses about twenty points of final accuracy
+($\Delta\mathrm{avg}=-20.7$, $t(5)=-20.5$). Refreshing the per-segment
+references lets a segment's anchor follow the segment rather than
+pinning it, which is exactly what makes the segment-level penalty
+informative --- and exactly what makes it interfere with the tasks that
+follow. So the honest summary of this control is not that
+sub-neuron granularity is valuable, but that \emph{it is a real lever
+whose direction depends entirely on the reference-update rule, and that
+the null we reported was an artefact of the rule we happened to
+implement}. A method that can be made to help or to hurt by a
+implementation choice is not a settled question, and the first draft of
+this paper treated it as one.
+
+\subsection{How the method we audit compares with contemporary
+alternatives}
+\label{sec:ctrl-baselines}
+
+Every comparison in this manuscript so far has been against elastic
+regularization from 2016--2018 (EWC, SI, MAS) and PackNet. That is a
+real weakness: the reader has no way to know whether the protection
+scheme we are auditing is competitive with what the field does now. We
+ran two contemporary replay-based methods on the identical protocol
+($T=10$, $n_h{=}256$, $n=10$ paired seeds, same permutations, same
+evaluation): \emph{ER}, a reservoir buffer of $500$ exemplars mixed into
+each batch, and \emph{DER}, the same buffer augmented with the stored
+logits and a distillation term. Neither uses the elastic anchor chain,
+because replay is an alternative protection mechanism rather than an
+addition to one --- stacking the $\lambda=1000$ penalty on top of a
+buffer would suppress the gradient the buffer exists to supply.
+
+The comparison is not close. On Permuted-MNIST, DER reaches a final
+average accuracy of $86.4$ against DeLP's $64.0$, with a forgetting
+measure of $-2.9$ against DeLP's $-11.4$; on Permuted-Fashion, $75.3$
+against $42.5$, with $-0.7$ against $-15.9$. Every one of the twelve
+paired comparisons is significant at $p<10^{-6}$ with standardized effect
+sizes between $2.2$ and $14.0$, in DER's favour on all three metrics.
+Experience Replay alone is also ahead of DeLP on final accuracy, though
+it forgets more on MNIST than DeLP does.
+
+This does not contradict anything in the previous sections, and it is
+worth being precise about why. Every finding above is a statement about
+the internals of DeLP and of the active-dendrite architecture it is built
+on: that the protection granularity below the neuron buys nothing under
+our anchor construction, that the routing statistic the field measures
+is contaminated, that the own-segment bias works by removing a damping
+factor, and that the whole scheme is outcompeted by a replay buffer
+coupled with logit distillation. Those findings say that the particular
+protection mechanism examined here is not competitive, and that the
+architectural premise it inherits --- that tasks occupy different
+dendritic segments --- does not hold in the trained network. They do not
+say that the architecture is unprotectable. A reviewer should read this
+paper as an argument that the dendritic-segment account of continual
+learning, and the protection scheme built on it, need to be rethought
+from the trunk upward, not as an argument that continual learning on this
+backbone is hard.
+
+\subsection{Is the robustness null a real null or a metric that cannot
+see?}
+\label{sec:ctrl-metric}
+
+Sec.~\ref{sec:results} reports that nothing degrades under context
+noise, while also reporting that the base network's predictions flip
+under a context change at rates of $14.8\%$ (MNIST) and $30.1\%$ (Fashion)
+at the individual-sample level. A reader is entitled to ask how both can
+be true, and whether the accuracy metric is simply too coarse to see a
+damage that is happening. We quantified it. The accuracy loss is linear
+in the corruption rate $\rho$ with a slope of $-0.77$ points per unit
+$\rho$ on MNIST (base arm), so the largest corruption in the sweep costs
+$0.25$ points, and the $95\%$ confidence interval on that loss excludes
+zero. Against the observed argmax flip rate of $14.8\%$, that slope
+implies that only about $4$--$5\%$ of the flips turn a correct prediction
+into an incorrect one --- the rest turn an incorrect prediction into a
+correct one, or into another incorrect one, and these two effects
+largely cancel under the 10-way task mixture. To lose five accuracy
+points at $\rho=0.4$ the slope would have to be $12.5$ points per unit
+$\rho$; the measured slope is $0.77$, a factor of sixteen smaller. The
+null is therefore a real null: the noise reaches the network, the metric
+is sensitive enough to see a damage of the size the pre-registered
+thresholds were written for, and the damage does not occur.
+
+\subsection{Equivalence testing for the comparisons we describe as
+showing no difference}
+\label{sec:ctrl-tost}
+
+Several comparisons in this manuscript are described as showing no
+difference: the granularity ladder, the constant-gate control against the
+base network, and the repaired arm against the base arm on
+Fashion-MNIST. A failure to reject is not evidence of equivalence, and at
+$n=10$ a 95\% confidence interval on the learning term is wide enough
+that a half-point difference cannot be excluded. We therefore re-ran each
+of these as a two-one-sided-tests equivalence test at a pre-declared
+margin of equivalence of $0.5$ accuracy points, reported as the 90\%
+interval that corresponds to $\alpha=0.05$ in a TOST. The full table is
+in the supplementary material.
+
+The outcome is mixed and we report it as measured. For the granularity
+ladder, the branch-versus-neuron comparison on the learning term is
+equivalent at the declared margin in both MNIST cells, but not in the
+Fashion cells and not for final accuracy; the correct summary is that we
+detect no difference larger than roughly half a point where the effect
+is small, not that the two constructions are interchangeable everywhere.
+For the constant-gate control, no comparison meets the equivalence
+criterion: on Fashion-MNIST the 90\% interval on the learning term is
+$[-1.58,+0.92]$, so an effect of up to about one and a half points cannot
+be excluded. We therefore describe that arm in the text as being
+consistent with the base system rather than as reproducing it, and the
+same applies to the repaired arm on Fashion-MNIST.
+
+\subsection{What the additional controls leave unchanged}
+\label{sec:ctrl-unchanged}
+
+Two things survive all of this. The dead-neuron artifact is a fact about
+argmax over a block of exactly-zero rows, verifiable without any claim
+about what the network learned, and the corrected instrumentation it
+motivates is an instrumentation change. And the self-interrogation of
+Sec.~\ref{sec:pseudo} is unaffected: if the gate's value does not depend
+on which segment wins, the dominant-segment statistic is a statistic of
+the instrumentation, and the oracle control in Sec.~\ref{sec:ctrl-oracle}
+shows the instrument is sensitive --- which means the negative readings
+are real measurements of an absence, not artefacts of a broken measure.
+What the additional controls remove is the strong form of the paper's
+first contribution, the specificity of the own-segment framing, and any
+implication that DeLP is competitive with contemporary protection
+methods.
 
 
 \section{Related work}
@@ -1580,15 +1894,15 @@ instrumentation, not the metric, fabricates the signal.
 architecture-agnostic, and --- on weak baselines with hard routing ---
 effective . This paper draws its boundary:
 \begin{itemize}
-\item \textbf{Audit mortality before trusting any dominant-segment
-statistic.} The bare-MLP artifact appears iff gates die; conv+GN mortality
+      \item Audit mortality before trusting any dominant-segment statistic.
+      The bare-MLP artifact appears iff gates die; conv+GN mortality
 is zero and the statistic reads clean. One probe (an untrained-pass
 share, or the dead-gate fraction) is enough to know which regime you
 are in.
 \item \textbf{Audit baseline strength before deploying the repair.}
 If the unbiased baseline's learning term is already near its ceiling,
 the bias will not buy learning --- but will still charge retention
-($\Delta\mathrm{avg} \le -2.3$ on every strong-feature cell,
+($\Delta\mathrm{avg}<0$ on all four strong-feature cells (from $-0.84$ to $-6.55$),
 significant in $3/4$).
 \item \textbf{Protection strength does not transfer.} $\lambda$
 calibrated on one parameter scale left the conv baseline with
@@ -1666,8 +1980,9 @@ line.
 \label{sec:limitations}
 
 \begin{enumerate}
-\item \textbf{Scale.} All results are on one-hidden-layer MLPs with
-      permuted benchmarks and $T \le 20$. The artifact and
+\item \textbf{Scale.} All results are on permuted benchmarks with $T \le 20$; the trunk is a
+      one-hidden-layer MLP except in the convolutional and width-variant arms
+      of Secs.~\ref{sec:conv}--\ref{sec:gnmlp}. The artifact and
       anti-specialization findings concern the interaction of kWTA
       mortality with argmax instrumentation and should be re-checked
       wherever segments exist (e.g.\ convolutional or transformer backbones
@@ -1689,14 +2004,14 @@ line.
       ($+0.113 \pm 0.031$ MNIST, $+0.083 \pm 0.025$ Fashion; $n{=}7$
       runs each, $t(6) \ge 8.7$) --- the raw-gate scale, an order of
       magnitude below the smallest effective dose --- and its accuracy
-      matches the unbiased baseline. The mechanism section below establishes what the bias actually
+      matches the unbiased baseline. The mechanism section (Secs.~\ref{sec:mech}--\ref{sec:ablation}) establishes what the bias actually
 does: it saturates the own-segment sigmoid until the gate stops
-      depending on the context (context-swap flip rate exactly $0.0\%$ at
-      $b{=}10$), and on MNIST a gate-removal control reproduces the entire
+      depending on the context (context-swap flip rate $0.007$--$0.021\%$ at
+      $b{=}10$), and on MNIST a gate-removal control recovers $76\%$ of the
       gain. The repair therefore does not restore segment--task routing;
       it removes the network's dependence on it. On Fashion-MNIST the
-      bypass is rejected ($66.84$ vs.\ $64.30$, $t{=}6.8$), so the
-      mechanism is dataset-dependent. The routing-restoration reading
+      comparison is not significant at $n{=}10$ ($t{=}1.9$, $p_{\mathrm{Holm}}=0.15$),
+      so the mechanism is dataset-dependent. The routing-restoration reading
       is withdrawn outright by Secs.~\ref{sec:mech}--\ref{sec:ablation}:
       what the bias buys is the removal of a constant damping factor,
       and on MNIST a gate-removal control reproduces the gain outright.
@@ -1736,9 +2051,11 @@ We asked whether the segment structure of active-dendrite networks offers
 protection granularity below the neuron, and found that the question
 dissolves one level up: the entire benefit of usage-localized protection is
 realized at neuron level because the segment--task specialization the finer
-granularity would need is absent --- measured, at chance before each phase and
-pushed below chance by each phase's own training, with Fisher mass too diffuse
-to partition meaningfully. On the way we isolated a dead-neuron artifact that
+granularity would need is not detectable by the standard instrument --- at
+chance before each phase and pushed below chance by that phase's own training,
+with Fisher mass too diffuse to partition meaningfully. Because that
+instrument is unreliable in this family, this is an absence of measurement
+rather than a measured absence, and we claim no more than that. On the way we isolated a dead-neuron artifact that
 fabricates dominance statistics for any naive instrument in this family.
 
 Having measured the size of the gap, we tried to close it. A one-parameter
@@ -1752,7 +2069,7 @@ but because the interpretation was. Three further results say so.
 The repair does not transfer. On a convolutional active-dendrite backbone the
 dose--response collapses to noise and final accuracy reverses; the natural
 explanation (the repair revived dying gates, and conv gates do not die) is
-refuted by a same-architecture control in which mortality and gain decouple
+refuted by a same-architecture control in which mortality and gain do not track
 in both directions. What the repair actually needs is a weak baseline with
 learning-term room to buy; what it always charges is retention, and on
 strong-feature backbones --- where nothing else is for sale --- that is all it
@@ -1767,7 +2084,8 @@ $\sigma(10+u)\approx 1$, so the network becomes context-degenerate rather
 than better-routed. A four-arm control settles what the bias pays for:
 holding the gate at the base system's own measured constant reproduces the
 base system, while deleting the gate reproduces most of the repair's gain and
-outperforms it outright on Fashion-MNIST. The bias removes a constant
+is numerically above it on Fashion-MNIST, a difference that is not significant at
+$n{=}10$. The bias removes a constant
 damping factor that a never-used gate had left in place.
 
 So the honest summary is this: we measured the size and the cost of the
@@ -1787,6 +2105,29 @@ works by fixing the mechanism or by deleting it, and in the latter case ask
 what was being deleted. Both are cheap to check --- one control arm, one
 probe --- and both would have caught our own misreading earlier than they
 did.
+
+Two results from the added controls change the paper's
+position relative to the method it audits, and we state them without
+discretion. First, the granularity result does not survive a
+construction that is not self-limiting: a segment-resolved anchor with
+refreshed reference states gains about two points of learning term over
+the neuron-resolved one on MNIST, where our original construction
+produced no difference at all --- at a cost of roughly twenty points of
+final accuracy (Sec.~\ref{sec:ctrl-anchor}). The general claim that
+sub-neuron protection granularity is worthless is not supported by our
+data and is withdrawn; what the control shows is that the direction of
+the effect is set by the reference-update rule, not by the granularity
+itself. Second, and more bluntly, DeLP is not competitive with
+contemporary protection methods: a replay buffer with logit distillation
+reaches $86.4$ against DeLP's $64.0$ on Permuted-MNIST and $75.3$
+against $42.5$ on Permuted-Fashion, with markedly less forgetting in
+both (Sec.~\ref{sec:ctrl-baselines}). The right way to read this paper is
+therefore not as a defence of DeLP but as an argument that the
+dendritic-segment account of continual learning needs to be rethought
+from the trunk upward --- the routing it assumes does not emerge, the
+instrument used to check it is unreliable, the repair we proposed turns
+out to be a damping-factor removal, and the whole scheme is outcompeted
+by a buffer.
 
 Finally, the meta-result is worth stating plainly. The repair that this
 manuscript originally reported as causal survived a $22$-cell

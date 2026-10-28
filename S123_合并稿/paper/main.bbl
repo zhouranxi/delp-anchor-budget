@@ -1,0 +1,79 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{poirazi2003}
+P.~Poirazi, B.~W. Mel.
+
+\bibitem{london2005}
+M.~London, M.~H{\"a}usser.
+
+\bibitem{poirazi2020}
+P.~Poirazi, A.~Papoutsi.
+
+\bibitem{iyer2022}
+A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad.
+
+\bibitem{zhou2026delp}
+
+
+\bibitem{kirkpatrick2017}
+J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al.
+
+\bibitem{parisi2019}
+G.~I. Parisi, R.~Kemker, J.~L. Part, C.~Kanan, S.~Wermter.
+
+\bibitem{xiao2017}
+Fashion-{MNIST}: a novel image dataset for benchmarking machine learning
+  algorithms.
+
+\bibitem{ujfalussy2018}
+B.~B. Ujfalussy, J.~K. Makara, M.~Lengyel, T.~Branco.
+
+\bibitem{boyle2025}
+J.~A. Boyle, et~al.
+
+\bibitem{baek2024}
+E.~Baek, et~al.
+
+\bibitem{boahen2022}
+K.~Boahen.
+
+\bibitem{zenke2017}
+F.~Zenke, B.~Poole, S.~Ganguli.
+
+\bibitem{aljundi2018}
+R.~Aljundi, F.~Babiloni, M.~Elhoseiny, M.~Rohrbach, T.~Tuytelaars.
+
+\bibitem{chaudhry2018}
+Riemannian walk for incremental learning: Understanding forgetting and
+  intransigence.
+
+\bibitem{mallya2018}
+A.~Mallya, S.~Lazebnik.
+
+\bibitem{serra2018}
+J.~Serra, D.~Sur{\'i}s, M.~Miron, A.~Karatzoglou.
+
+\bibitem{masse2018}
+N.~Y. Masse, G.~D. Grant, D.~J. Freedman.
+
+\bibitem{musgrave2020}
+K.~Musgrave, S.~Belongie, S.-N. Lim.
+
+\bibitem{lucic2018}
+M.~Lucic, K.~Kurach, M.~Michalski, S.~Gelly, O.~Bousquet.
+
+\bibitem{melis2018}
+G.~Melis, C.~Dyer, P.~Blunsom.
+
+\bibitem{agarwal2021}
+R.~Agarwal, M.~Schwarzer, P.~S. Castro, A.~Courville, M.~G. Bellemare.
+
+\bibitem{lipton2019}
+Z.~C. Lipton, J.~Steinhardt.
+
+\end{thebibliography}

@@ -1,0 +1,13 @@
+# Analysis, statistics and figure generation for the S2 manuscript.
+# CPU-only torch is enough; it is only required to re-run the experiments,
+# not to verify the published numbers from the archived records.
+
+numpy>=1.21
+scipy>=1.7
+matplotlib>=3.4
+pillow>=8.0
+python-docx>=0.8      # generates declarations.docx
+pypdfium2>=4.0        # renders the compiled PDF for visual checks
+
+# For re-running the experiments (optional for verification):
+# torch>=1.12

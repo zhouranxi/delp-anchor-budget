@@ -17,7 +17,7 @@ verifiable:
 |---|---|---|
 | `S1_剂量响应审计/` | *Segment Specialization in Active-Dendrite Continual Learning: An Audit, an Artifact, and a Causal Repair* — dead-neuron measurement artifact, anti-specialization, one-parameter dose–response repair | Preprint [doi:10.5281/zenodo.23637973](https://doi.org/10.5281/zenodo.23637973); submitted to Neural Networks |
 | `S4_gate_bypass/` (中文 `S4_门控旁路/`) | *The Repair Bypasses the Gate* — context noise reveals the own-bias repair saturates the gate into a context-free gain | Draft v0.1 |
-| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Manuscript |
+| `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | **Current submission: Pattern Recognition** (34 pp., 34 refs; preprint concept DOI 10.5281/zenodo.23668522, v3). v3 adds: Wilcoxon/Shapiro–Wilk non-parametric tests (`audit/audit_nonparametric.py`), one-command verification (`audit/verify_all.py`, 8 checks), LaTeX pre-flight + language lint, reproducibility container (`Dockerfile`), and the Split-CIFAR-100 policy-grid shards in `bench/results/` |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Submission-ready |
 
 The descriptions below refer to the S2 study (this repository's original

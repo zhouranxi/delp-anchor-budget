@@ -24,6 +24,7 @@
 \centering\small
 \caption{Causal probe, $T={10}$, $\lambda=1000$: paired differences vs.\ $b=0$ ($n=10$ paired seeds). $\dagger$: Holm-corrected $p<0.05$ within the $\Delta\ell$ family; $\ddagger$: within the $\Delta\mathrm{avg}$ family; $\S$: within the $\Delta\mathrm{BWT}$ family. Intervals are 95\% CI for the paired mean difference; $d_z$ is the paired standardized effect size.}
 \label{tab:dose10}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrl}
 \toprule
 dataset & arm ($b$) & $\Delta\ell$ & $\Delta\mathrm{avg}$ & $\Delta\mathrm{BWT}$ & $p_{\mathrm{Holm}}(\Delta\ell)$ & $d_z$ & 95\% CI \\
@@ -42,6 +43,7 @@ mnist & neuron ($3$) & $+2.68{\dagger}$ & $+4.08{\ddagger}$ & $+1.56{\S}$ & $0.0
 mnist & neuron ($10$) & $+3.32{\dagger}$ & $+4.80{\ddagger}$ & $+1.65{\S}$ & $0.000$ & $+4.64$ & $[+2.81, +3.83]$ \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 ```
 
@@ -52,6 +54,7 @@ mnist & neuron ($10$) & $+3.32{\dagger}$ & $+4.80{\ddagger}$ & $+1.65{\S}$ & $0.
 \centering\small
 \caption{Causal probe, $T={20}$, $\lambda=1000$: paired differences vs.\ $b=0$ ($n=10$ paired seeds). $\dagger$: Holm-corrected $p<0.05$ within the $\Delta\ell$ family; $\ddagger$: within the $\Delta\mathrm{avg}$ family; $\S$: within the $\Delta\mathrm{BWT}$ family. Intervals are 95\% CI for the paired mean difference; $d_z$ is the paired standardized effect size.}
 \label{tab:dose20}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrl}
 \toprule
 dataset & arm ($b$) & $\Delta\ell$ & $\Delta\mathrm{avg}$ & $\Delta\mathrm{BWT}$ & $p_{\mathrm{Holm}}(\Delta\ell)$ & $d_z$ & 95\% CI \\
@@ -68,6 +71,7 @@ mnist & neuron ($3$) & $+3.72{\dagger}$ & $+3.25{\ddagger}$ & $-0.49{}$ & $0.000
 mnist & neuron ($10$) & $+4.56{\dagger}$ & $+3.81{\ddagger}$ & $-0.79{}$ & $0.000$ & $+2.57$ & $[+3.29, +5.83]$ \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 ```
 
@@ -78,6 +82,7 @@ mnist & neuron ($10$) & $+4.56{\dagger}$ & $+3.81{\ddagger}$ & $-0.79{}$ & $0.00
 \centering\small
 \caption{ConvADNet dose--response, paired vs.\ $b=0$ ($n=10$; Holm-corrected $p$ within each metric family; 95\% CI for the paired mean difference; $d_z$ the paired standardized effect size). No cell survives correction on any metric, which is the pre-registered G1 criterion evaluated conservatively.}
 \label{tab:convdose}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrl}
 \toprule
 cell & arm ($b$) & $\Delta\ell$ & $\Delta\mathrm{avg}$ & $\Delta\mathrm{BWT}$ & $p_{\mathrm{Holm}}(\Delta\ell)$ & $d_z$ & 95\% CI \\
@@ -96,6 +101,7 @@ mnist $T=10$ & $10$ & $+0.07$ & $-0.84$ & $-1.01$ & $1.000$ & $+0.04$ & $[-1.23,
 mnist $T=20$ & $10$ & $+1.28$ & $+0.30$ & $-1.04$ & $0.682$ & $+0.61$ & $[-0.22, +2.79]$ \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 ```
 
@@ -106,6 +112,7 @@ mnist $T=20$ & $10$ & $+1.28$ & $+0.30$ & $-1.04$ & $0.682$ & $+0.61$ & $[-0.22,
 \centering
 \caption{Four-arm control experiment ($n=10$ paired seeds, $\rho=0$, matched width $n_h=256$, matched usage-weighted anchors). Differences are paired against the base arm of the same dataset and seed; $p$ is Holm-corrected within each metric family; $d_z$ is the paired standardized effect size.}
 \label{tab:ablation}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrr}
 \toprule
 dataset & arm & $\Delta\ell$ & $p$ & $d_z$ & $\Delta\mathrm{avg}$ & $p$ \\
@@ -118,6 +125,7 @@ mnist & repaired & $+3.32{*}$ & $0.000$ & $+4.64$ & $+4.80{*}$ & $0.000$ \\
 mnist & nogate & $+2.61{*}$ & $0.000$ & $+2.46$ & $+3.64{*}$ & $0.000$ \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 ```
 

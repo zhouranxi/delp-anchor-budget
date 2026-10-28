@@ -8,6 +8,12 @@ measures:
   3. dend.weight column similarity (own-task col vs other-task col).
 If (1) is ~0, the rho-insensitivity is REAL (gating is context-degenerate),
 not a noise-injection bug.
+
+FIX 2026-10-27 (data-consistency audit): lambda is now actually applied to
+the anchor penalty (`loss = loss + lam * pen`; the original omitted the
+factor, so every diagnostic ran with an effectively lambda=1 penalty while
+the record claimed lam=1000). nh is now explicit (default 256 = exp4's NH)
+and both are reported in the output.
 """
 
 import argparse, json, os, sys
@@ -22,6 +28,7 @@ for _cand in (os.path.join(_here, "..", "dendritic-lab"),
         break
 sys.path.insert(0, _here)
 
+import exp4_branch_protection as e4
 import exp6_baselines as eb
 from exp6_baselines import get_perms, eval_model, DEV, EPOCHS, BS, NTRAIN, LR
 from exp4_branch_protection import permute
@@ -31,17 +38,18 @@ from anchor_budget import load_data
 
 NTASK = 10
 LAM = 1000.0
+NH = e4.NH          # 256 -- the real default the dendritic arms use
 
 
-def train_full(ds, seed, own_bias):
+def train_full(ds, seed, own_bias, nh=NH, lam=LAM):
     torch.manual_seed(seed)
     xtr, ytr, xte, yte = load_data(ds)
     perms = get_perms(seed, NTASK)
     if own_bias:
         model = BiasADNet(NTASK, NTASK, own_bias=own_bias,
-                          bias_mode="fixed").to(DEV)
+                          bias_mode="fixed", nh=nh).to(DEV)
     else:
-        model = ADNet(protected=True, nseg=NTASK, ntask=NTASK).to(DEV)
+        model = ADNet(protected=True, nseg=NTASK, ntask=NTASK, nh=nh).to(DEV)
     opt = torch.optim.Adam(model.parameters(), lr=LR)
     anchors = []
     for phase in range(NTASK):
@@ -58,8 +66,10 @@ def train_full(ds, seed, own_bias):
                 loss = F.cross_entropy(out, yb)
                 if anchors:
                     P = flat_params(model)
+                    pen = 0.0
                     for a in anchors:
-                        loss = loss + anchor_penalty(a, P, a["gran"])
+                        pen = pen + anchor_penalty(a, P, a["gran"])
+                    loss = loss + lam * pen   # FIX 2026-10-27: apply lambda
                 loss.backward()
                 model.protect_grads(phase)
                 opt.step()
@@ -67,8 +77,8 @@ def train_full(ds, seed, own_bias):
     return model, xte, yte, perms
 
 
-def diag(ds, seed, own_bias):
-    model, xte, yte, perms = train_full(ds, seed, own_bias)
+def diag(ds, seed, own_bias, nh=NH):
+    model, xte, yte, perms = train_full(ds, seed, own_bias, nh=nh)
     model.eval()
 
     flip_rates, gate_own, gate_other = [], [], []
@@ -117,6 +127,8 @@ def diag(ds, seed, own_bias):
         "gate_mean_other": st.mean(gate_other),
         "dend_col_cosine_mean": st.mean(sims),
         "dend_col_cosine_min": min(sims),
+        "nh": nh,
+        "lam": LAM,
     }
 
 
@@ -124,7 +136,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--ds", default="mnist")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--nh", type=int, default=NH)
     args = ap.parse_args()
     for b in (0.0, 10.0):
-        r = diag(args.ds, args.seed, b)
+        r = diag(args.ds, args.seed, b, nh=args.nh)
         print(json.dumps(r, indent=1), flush=True)

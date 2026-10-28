@@ -787,16 +787,29 @@ out the dying-gate explanation.
 
 \textbf{The network absorbs the intervention rather than opposing it.}
 Under per-phase signed instrumentation of the context-$t$ gating column
-($n=3$ seeds, $T{=}10$ MNIST), we saw the own-segment entries drift
+($n=10$ seeds, $T{=}10$ MNIST), we saw the own-segment entries drift
 \emph{positive} in all ten phases under $b{=}10$ (one-sample $t$ over
-seeds: $223$, $37$, $17$, $17$, $8$, $11$, $9$, $5.1$, $4.4$, $4.5$;
-per-phase mean displacement decaying from $+0.027$ to $+0.004$), versus
-$\le +0.004$ under $b{=}0$ and significant only in the first two phases.
-The raw own gate stays within $|u| \le 0.32$ across all seeds and phases
+seeds: $170$, $54$, $25$, $22$, $14$, $16$, $8.0$, $14$, $8.1$, $14$;
+per-phase mean displacement decaying from $+0.027$ to $+0.004$). Under
+$b{=}0$ the same quantity is small but not absent: its per-phase means
+peak at $+0.0041$, a factor of $6.5$ below the $b{=}10$ peak, and it is
+nominally significant in phases $0$--$7$ at $t$ between $2.8$ and $23$
+before turning negative in phase $8$. We therefore compare magnitudes
+rather than significance thresholds here: the network drifts \emph{with}
+the bias at every dose and by an amount that scales with it, which is
+the opposite of what adversarial compensation would produce.
+The raw own gate stays within $|u| \le 0.325$ across all seeds and phases
 --- thirty times below the imposed $b{=}10$ and three times below even
 $b{=}1$ --- so the offset remains fully in effect throughout training.
 Adversarial compensation predicts the opposite displacement; it does not
 occur.
+
+An earlier version of this paragraph quoted the same per-phase
+$t$ statistics over three seeds. That statistic is not reproducible: the
+per-seed means agree across machines to $10^{-4}$, but a $t$ over three
+numbers is dominated by the sample standard deviation, and float-level
+noise moved the values by several units between runs. We report the
+ten-seed version instead, and the qualitative reading is unchanged.
 
 \textbf{The saturation is a scale effect, not a partial restoration.} The
 own-segment win rate saturates at $13$--$19\%$ regardless of dose,
@@ -1490,7 +1503,7 @@ preregistered. The no-gate control exists in three versions in the
 artifact --- an invalidated first attempt (an extra sigmoid on $t$ that
 changed the activation structure), a width-mismatched second version
 ($n_h{=}2000$), and the matched version reported here --- all retained
-under an explicit deprecation notice.
+under an explicit deprecation notice (Table~\ref{tab:ablation}).
 
 \begin{table}[t]
 \centering
@@ -1713,7 +1726,7 @@ own segment, as in Sec.~\ref{sec:causal}), \emph{random} (the same $b=10$
 on one segment drawn at random per neuron and held fixed for the run),
 \emph{uniform} (the same $b=10$ on every segment), and \emph{rescale}
 (no gate at all: $h=\mathrm{kwta}(t/0.565)$, a pure constant removal of
-the damping factor).
+the damping factor); Table~\ref{tab:ctrl-specificity} reports all five.
 
 \begin{table}[t]
 \centering\small

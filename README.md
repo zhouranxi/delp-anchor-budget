@@ -19,6 +19,23 @@ verifiable:
 | `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Preprint [doi:10.5281/zenodo.23685906](https://doi.org/10.5281/zenodo.23685906) — revised after the Neurocomputing decision (protocol description corrected, all headline numbers re-derived; see `S2_锚累积/rejection_fix/`) |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Preprint [doi:10.5281/zenodo.23685385](https://doi.org/10.5281/zenodo.23685385) — includes the 2×2 width × normalization scan (320 runs) separating the GroupNorm effect from the width effect |
 | `S4_gate_bypass/` | *The Repair Saturates the Gate* — context noise as a degeneracy diagnostic; four-arm control (base / repaired / constant-gate / no-gate, 80 runs) | Preprint [doi:10.5281/zenodo.23686689](https://doi.org/10.5281/zenodo.23686689) — **conclusion reversed after the audit**: the repair does not bypass the gate, it saturates it (σ(10+u) ≈ 1) |
+| **`S123_合并稿/`** | **Segment–Task Specialization Does Not Emerge in Active-Dendrite Networks: A Dead-Neuron Artifact, a Repair That Does Not Transfer, and What the Own-Segment Bias Actually Does** — the combined manuscript of S1 + S3 + S4 | **Current submission version** (52 pp, 10 tables, 8 figures). Supersedes the three separate records above, which are retained as the individually-published versions of record |
+
+### Why the three were merged
+
+S1 reported the own-segment bias as a *causal repair*; S3 showed it does not
+transfer to a convolutional backbone; S4 showed it works by saturating the
+dendritic gate rather than by restoring routing. Those three statements
+cannot all be true at once, and publishing them apart invites exactly the
+cross-reading a reviewer will do. The merged manuscript states them in one
+narrative — hypothesis, artifact, apparent repair, boundary failure,
+mechanism re-qualification — and rewrites the title, abstract, and
+conclusion so that the third result is presented as an apparent success that
+the fourth and fifth results overturn, rather than as a contradiction.
+
+The three original folders are kept unchanged so that the DOIs already
+issued for them continue to resolve to the documents they were issued for.
+
 
 ### Archival records (all six, cross-linked)
 

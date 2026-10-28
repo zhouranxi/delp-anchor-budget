@@ -19,7 +19,7 @@ verifiable:
 | `S2_锚累积/` | *The Anchor Accumulation Problem* — bounded anchor sets, eviction criteria, the soft-bound law ℓ ≈ 84 − 11·ln h | Preprint [doi:10.5281/zenodo.23685906](https://doi.org/10.5281/zenodo.23685906) — revised after the Neurocomputing decision (protocol description corrected, all headline numbers re-derived; see `S2_锚累积/rejection_fix/`) |
 | `S3_修复边界/` | *Repair Headroom, Not Dying Gates* — where the S1 repair transfers (conv backbone: no) and what tracks the gain (baseline strength, not mortality) | Preprint [doi:10.5281/zenodo.23685385](https://doi.org/10.5281/zenodo.23685385) — includes the 2×2 width × normalization scan (320 runs) separating the GroupNorm effect from the width effect |
 | `S4_gate_bypass/` | *The Repair Saturates the Gate* — context noise as a degeneracy diagnostic; four-arm control (base / repaired / constant-gate / no-gate, 80 runs) | Preprint [doi:10.5281/zenodo.23686689](https://doi.org/10.5281/zenodo.23686689) — **conclusion reversed after the audit**: the repair does not bypass the gate, it saturates it (σ(10+u) ≈ 1) |
-| **`S123_合并稿/`** | **Segment–Task Specialization Does Not Emerge in Active-Dendrite Networks: A Dead-Neuron Artifact, a Repair That Does Not Transfer, and What the Own-Segment Bias Actually Does** — the combined manuscript of S1 + S3 + S4 | **Current submission version** — preprint [doi:10.5281/zenodo.23719801](https://doi.org/10.5281/zenodo.23719801). Submitted to TMLR. 59 pp Elsevier format + 25 pp TMLR format, 10 tables, 8 figures, all statistics Holm-corrected with CIs and effect sizes. Supersedes the three separate records above, which are retained as the individually-published versions of record and now cross-link here |
+| **`S123_合并稿/`** | **What an Active-Dendrite Continual Learner Actually Learns: A Dead-Neuron Artifact, a Granularity Result That Did Not Survive Its Own Controls, and a Repair That Is a Damping Factor** — the combined manuscript of S1 + S3 + S4, with the controls added after the first review | **Current submission version** — preprint [doi:10.5281/zenodo.23726912](https://doi.org/10.5281/zenodo.23726912). Submitted to TMLR. 71 pp Elsevier format + 30 pp TMLR format + 7 pp supplementary, 11 tables, 8 figures. All statistics Holm-corrected with CIs and effect sizes; equivalence testing (TOST) replaces reliance on failure to reject. Supersedes the three separate records above, which are retained as the individually-published versions of record and now cross-link here |
 
 ### Why the three were merged
 
@@ -35,6 +35,42 @@ the fourth and fifth results overturn, rather than as a contradiction.
 
 The three original folders are kept unchanged so that the DOIs already
 issued for them continue to resolve to the documents they were issued for.
+
+### Controls added after the first review
+
+The merged manuscript contains a section reporting five controls that a
+review of the first version identified as missing rather than as errors,
+and the earlier sections, the abstract and the conclusion are edited to
+reflect what they showed:
+
+1. **Specificity of the intervention** (`bench/s5_bias_specificity.py`, 100 runs).
+   A bias of `b=10` on the own segment, on a random segment, on every segment,
+   and a pure constant rescaling of the trunk. The bias acts on whichever
+   segment the network is using; `own` is not privileged, and the rescaling
+   arm does better than any bias arm.
+2. **Positive control for the instrument**
+   (`bench/s5_oracle_control.py`, 60 runs). With task-dominant gating forced
+   by construction, the dominant-segment instrument reads 1.000 where the
+   base network reads 0.055, so the paper's negative readings are real.
+3. **Construction diversity of the granularity result**
+   (`bench/s5_anchor_variants.py`, 80 runs). A segment-resolved anchor with
+   refreshed per-segment references does not reproduce the null, so the
+   general claim that sub-neuron granularity is worthless is withdrawn.
+4. **Contemporary protection methods** (`bench/s5_modern_baselines.py`,
+   40 runs). Dark Experience Replay reaches 86.4 against DeLP's 64.0 on
+   Permuted-MNIST and 75.3 against 42.5 on Permuted-Fashion, with markedly
+   less forgetting in both.
+5. **Metric sensitivity and equivalence testing**
+   (`_audit_s3/compute_metric_sensitivity.py`, `_audit_s3/compute_tost.py`).
+   The robustness null survives a sensitivity analysis, and the comparisons
+   the text describes as showing no difference are now accompanied by TOST
+   equivalence tests rather than by failure to reject.
+
+The task-relevance probe was also re-run (`bench/s5_task_relevance.py`,
+40 runs), because the original run's script and per-seed records were not
+in the artifact; the reproduced numbers replace the earlier ones in the
+text. The raw per-seed records for all five controls are in
+`bench/results_s5/`.
 
 
 ### Archival records (all six, cross-linked)

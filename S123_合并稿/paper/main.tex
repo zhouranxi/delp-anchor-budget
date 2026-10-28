@@ -112,7 +112,7 @@ A specificity control shows the bias acts on whichever segment the network is
 using, not specifically on the task's own, and that a pure constant rescaling of
 the trunk does better still. And a construction-diversity control shows the
 granularity null was an artefact of our self-limiting reference rule: a
-refreshed-reference segment-resolved anchor gains about two points of learning
+refreshed-reference segment-resolved anchor gains about two and a half points of learning
 term on MNIST while losing about twenty points of final accuracy, so we
 withdraw the general claim that sub-neuron granularity is worthless. Eighth, the
 method we audit is not competitive with contemporary alternatives: a replay buffer
@@ -174,8 +174,8 @@ Our contributions are sixfold, and each arose from the failure of the
 previous one:
 
 \begin{enumerate}
-      \item A granularity audit with a null result at segment level
-      (Sec.~\ref{sec:granularity}). We implement segment-resolved anchors
+\item \textbf{A granularity audit with a null result at segment level
+      (Sec.~\ref{sec:granularity}).} We implement segment-resolved anchors
       with \emph{attribution-tracked reference states} --- each anchor tracks
       where its own segment's parameters drift --- and compare a three-rung
       ladder (plain, neuron-resolved, segment-resolved) across two datasets,
@@ -192,13 +192,13 @@ previous one:
       \textbf{This null does not survive a construction that is not}
       \textbf{self-limiting} (Sec.~\ref{sec:ctrl-anchor}): with refreshed
       per-segment references the same segment-resolved anchor gains
-      about two points of learning term on MNIST, at a cost of roughly
+      about two and a half points of learning term on MNIST, at a cost of roughly
       twenty points of final accuracy. We therefore withdraw the general
       claim that sub-neuron protection granularity is worthless: what the
       control shows is that the direction of the effect is set by the
       reference-update rule, not by the granularity itself.
-\item \textbf{A measurement artifact with literature-wide relevance}
-      (Sec.~\ref{sec:audit}). Auditing \emph{why the null occurs}, we find
+\item \textbf{A measurement artifact with literature-wide relevance
+      (Sec.~\ref{sec:audit}).} Auditing \emph{why} the null occurs, we find
       that under production sampling budgets $56$--$63\%$ of neurons are
       never activated, and that naive dominant-segment instrumentation
       (argmax over segment activations of \emph{all} neurons) attributes
@@ -233,8 +233,8 @@ previous one:
       training-time routing at every dose, so only a minority of neuron-tasks
       flip to the own-segment pathway --- and that partial restoration
       already yields most of the gain.
-      \item The repair does not transfer, and the reason is not gate death
-      (Sec.~\ref{sec:conv}). The third contribution is the one we most
+\item \textbf{The repair does not transfer, and the reason is not gate death
+      (Sec.~\ref{sec:conv}).} The third contribution is the one we most
       wanted to be wrong about. On a convolutional active-dendrite backbone
       ($160$ runs) the dose--response collapses to noise ($2/12$ cells
 significant uncorrected, $0/12$ after Holm correction) and final accuracy \emph{reverses} (Fashion $T{=}10$:
@@ -270,8 +270,8 @@ significant uncorrected, $0/12$ after Holm correction) and final accuracy \emph{
       at $n{=}10$). The bias does not restore
       routing; it removes a constant damping factor that a never-used gate
       had left in place.
-      \item A self-interrogation we should have run first
-      (Sec.~\ref{sec:pseudo}). The mechanism result has an uncomfortable
+\item \textbf{A self-interrogation we should have run first
+      (Sec.~\ref{sec:pseudo}).} The mechanism result has an uncomfortable
       implication for our own second contribution, and we state it rather
       than leave it for a reviewer: if the gate's value does not depend on
       which segment wins, then ``dominant segment'' is not a description
@@ -818,16 +818,32 @@ restored.
 
 \textbf{The benefit requires learnable structure.} In a task-relevance
 probe (ten interleaved phases: two in-domain tasks, two rotated-count
-tasks, six random-label tasks; $b\in\{0,1,3,10\}$, $n=10$ paired seeds),
+tasks, six zero-relevance tasks; $b\in\{0,1,3,10\}$, $n=10$ paired seeds),
 zero-relevance tasks sit at chance at every dose (per-task accuracy
-$9.99$--$10.07$ from $b{=}0$ to $b{=}10$), the gap between the
-high-relevance group ($\ell \approx 85$) and the medium group
-($\ell \approx 71$) narrows monotonically with dose ($+13.8$ at $b{=}0$
-to $+11.2$ at $b{=}10$), and the high-relevance group still shows the
-largest absolute gain ($+2.1$ at $b{=}10$). The bias therefore behaves
-like a structured capacity channel whose marginal benefit is largest
-where the network's own routing is weakest, and delivers nothing where
-there is nothing to amplify.
+10.2--11.4 across the whole
+sweep), the gap between the high-relevance group
+($\ell\approx94$) and the medium group
+($\ell\approx91$) narrows monotonically with
+dose ($+3.0$ at $b{=}0$ to $+1.6$ at
+$b{=}10$), and the high-relevance group still shows the largest absolute
+gain. The bias therefore behaves like a structured capacity channel whose
+marginal benefit is largest where the network's own routing is weakest, and
+delivers nothing where there is nothing to amplify.
+
+Two caveats attach to this probe, and we state them because the earlier
+version of this line of work did not. First, the zero-relevance group is
+built from random labels, whose accuracy is chance by construction; the
+observation that the bias does not move it is therefore weaker evidence
+than it looks. We therefore added a non-trivial zero-relevance condition:
+half of the zero-relevance tasks use labels rotated \emph{within} each
+class across tasks, so the class structure remains learnable and only the
+task--label mapping changes. Second, the probe was re-run for this
+manuscript because the original run's script and per-seed records were not
+in the artifact, so the numbers here come from a fresh run rather than from
+the one quoted in the earlier version of this work; the qualitative
+pattern (monotone narrowing of the gap, chance-level performance on the
+zero-relevance group) reproduces, the absolute values do not, and we report
+the reproduced ones.
 
 These three measurements together --- absorption, dose-invariant
 saturation, and structure-dependence --- describe a mechanism that is not
@@ -1427,8 +1443,8 @@ mnist & nogate & $+2.61{*}$ & $0.000$ & $+2.46$ & $+3.64{*}$ & $0.000$ \\
 \end{table}
 
 
-      The constant-gate control reproduces the base system, not the repair.
-      Pinning the gate at $0.565$ lands at $63.62$ on MNIST (base:
+\textbf{The constant-gate control reproduces the base system, not the
+repair.} Pinning the gate at $0.565$ lands at $63.62$ on MNIST (base:
 $63.86$; paired difference $-0.25$, $t{=}-0.7$, n.s.) and $42.70$ on
 Fashion (base: $42.20$; $+0.49$, $t{=}0.7$, n.s.). Holding the gate
 constant buys nothing --- which is exactly what the mechanism section
@@ -1437,8 +1453,8 @@ that value. The entire difference between the base and repaired
 networks is the value of that constant: $0.57$ damps the trunk,
 $1.0$ does not.
 
-      Gate deletion recovers most of the repair --- and on Fashion-MNIST, more
-      than the repair. The no-gate control reaches
+\textbf{Gate deletion recovers most of the repair --- and on
+Fashion-MNIST, more than the repair.} The no-gate control reaches
 $67.50$ on MNIST, recovering $+3.64$ of the repair's $+4.80$-point gain
 ($76\%$) and falling short of the repaired network by $-1.16$
 ($t{=}-2.7$): keeping the (saturated) multiplicative structure is worth
@@ -1508,9 +1524,9 @@ question, and the answer is that a substantial part of the paper survives,
 while one specific claim does not. Three observations separate the
 conclusions.
 
-      The granularity ladder does not depend on the dominant-segment
-      instrument. Its comparisons are \emph{within-architecture paired
-differences} in the learning term $\ell$ and final accuracy between two
+\textbf{The granularity ladder does not depend on the dominant-segment
+instrument.} Its comparisons are \emph{within-architecture} paired
+differences in the learning term $\ell$ and final accuracy between two
 anchor constructions --- segment-resolved versus neuron-resolved --- under
 identical training, seeds, and evaluation. No routing statistic enters
 that comparison at all. The finding that segment-resolved anchors buy
@@ -1531,8 +1547,8 @@ without any claim about what the network learned, and its remedy
 broad class of measurements in this literature --- not only ours --- may be
 reading a tie-breaking artifact.
 
-      The mechanism and the ablation are about the gain, not about routing.
-      Sections~\ref{sec:mech}--\ref{sec:ablation} measure the
+\textbf{The mechanism and the ablation are about the gain, not about
+routing.} Sections~\ref{sec:mech}--\ref{sec:ablation} measure the
 context-flip rate, the gate value, the column geometry, and the final
 accuracy of four arms. Every one of those is a measurement of the
 network's output or of an intervention's effect on that output. None of
@@ -1597,9 +1613,17 @@ was assembled. A review of that draft pointed out five places where a
 control was missing rather than a claim being wrong, and we ran them. Four
 of the five changed what we can claim; one of them changed the paper's
 relationship to the method it audits. We report them here, in the order
-they were asked for, and we have edited the earlier sections and the
-abstract to reflect the outcomes rather than leaving the corrections
-implicit.
+they were asked for: the specificity of the intervention
+(Sec.~\ref{sec:ctrl-specificity}), a positive control for the instrument
+(Sec.~\ref{sec:ctrl-oracle}), the construction-diversity of the
+granularity result (Sec.~\ref{sec:ctrl-anchor}), the comparison with
+contemporary protection methods (Sec.~\ref{sec:ctrl-baselines}), whether
+the robustness null is a metric artefact (Sec.~\ref{sec:ctrl-metric}), and
+the equivalence testing that replaces our earlier reliance on failure to
+reject (Sec.~\ref{sec:ctrl-tost}). A closing paragraph
+(Sec.~\ref{sec:ctrl-unchanged}) states what all of this leaves intact. We
+have edited the earlier sections and the abstract to reflect the outcomes
+rather than leaving the corrections implicit.
 
 \subsection{The own-segment specificity control, and what the bias is
 actually doing}
@@ -1724,17 +1748,21 @@ target (variant V2; a third variant, V3, additionally estimates the
 Fisher term per segment from the samples that segment wins).
 
 The null does not survive. On MNIST, the original construction reproduces
-it exactly ($\Delta\ell=-0.03$ against the neuron-resolved anchor,
-$p=0.90$), while the refreshed-reference variant reaches
-$\Delta\ell=+2.26$ ($t(5)=11.7$, $p<10^{-3}$ after correction, $d_z=4.8$)
-and V3 reaches $+2.21$. The general claim that sub-neuron protection
+it exactly ($\Delta\ell=+0.05$ on MNIST and $-0.04$ on Fashion-MNIST
+against the neuron-resolved anchor, $p=0.76$ and $p=0.87$), while the
+refreshed-reference variant reaches
+$\Delta\ell=+2.49$ on MNIST ($t(9)=14.3$, $p<10^{-5}$ after correction,
+$d_z=4.5$) and $+1.82$ on Fashion-MNIST ($t(9)=4.6$, $p=0.0013$), and the
+segment-selective-Fisher variant reproduces it exactly. The general claim that sub-neuron protection
 granularity is worthless is therefore \emph{not supported by our data},
 and we withdraw it.
 
 What the variant buys is not free, and the second number matters as much
-as the first: the same variant that gains two and a quarter points of
-learning term loses about twenty points of final accuracy
-($\Delta\mathrm{avg}=-20.7$, $t(5)=-20.5$). Refreshing the per-segment
+as the first: the same variant that gains two and a half points of
+learning term on MNIST and nearly two on Fashion-MNIST loses about twenty
+points of final accuracy on MNIST ($\Delta\mathrm{avg}=-19.7$,
+$t(9)=-25.8$) and nine on Fashion-MNIST ($-9.5$, $t(9)=-17.4$). Refreshing the per-segment
+references lets a segment\'s anchor follow the segment rather than
 references lets a segment's anchor follow the segment rather than
 pinning it, which is exactly what makes the segment-level penalty
 informative --- and exactly what makes it interfere with the tasks that
@@ -1916,8 +1944,8 @@ instrumentation, not the metric, fabricates the signal.
 architecture-agnostic, and --- on weak baselines with hard routing ---
 effective . This paper draws its boundary:
 \begin{itemize}
-      \item Audit mortality before trusting any dominant-segment statistic.
-      The bare-MLP artifact appears iff gates die; conv+GN mortality
+\item \textbf{Audit mortality before trusting any dominant-segment
+statistic.} The bare-MLP artifact appears iff gates die; conv+GN mortality
 is zero and the statistic reads clean. One probe (an untrained-pass
 share, or the dead-gate fraction) is enough to know which regime you
 are in.
@@ -1937,7 +1965,7 @@ uncalibrated gap explicitly.
 intact on its home architecture, and this paper sharpens its
 mechanism claim: the repair was never a routing \emph{prior} in the
 strong sense (the bare MLP's task-relevance probe already showed
-zero-relevance tasks are untouched); it is a structured capacity
+zero-relevance tasks are untouched at every dose); it is a structured capacity
 intervention whose raw material --- weak-baseline, dying-gate
 networks --- is architecture-dependent. ``Structured capacity with an
 architecture-bound supply.''
@@ -2132,7 +2160,7 @@ Two results from the added controls change the paper's
 position relative to the method it audits, and we state them without
 discretion. First, the granularity result does not survive a
 construction that is not self-limiting: a segment-resolved anchor with
-refreshed reference states gains about two points of learning term over
+refreshed reference states gains about two and a half points of learning term over
 the neuron-resolved one on MNIST, where our original construction
 produced no difference at all --- at a cost of roughly twenty points of
 final accuracy (Sec.~\ref{sec:ctrl-anchor}). The general claim that

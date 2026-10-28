@@ -1,0 +1,43 @@
+{
+  "title": "Segment-Task Specialization Does Not Emerge in Active-Dendrite Networks: A Dead-Neuron Artifact, a Repair That Does Not Transfer, and What the Own-Segment Bias Actually Does",
+  "upload_type": "publication",
+  "publication_type": "Preprint (submitted to TMLR; not yet accepted)",
+  "publication_date": "2026-10-28",
+  "version": "1",
+  "description": "This record deposits the combined manuscript of three previously separate studies of dendritic context-gated protection in continual learning. The three were written independently and published separately (Zenodo records 23685865 for S1, 23685385 for S3, and 23686689 for S4); this record supersedes them as a single, self-consistent narrative, and the earlier records are retained unchanged so that their DOIs continue to resolve to the documents they were issued for. The merge was necessary because the three sets of results could not all be true at once. S1 reported that a one-parameter own-segment bias on the dendritic input is a causal repair of the missing segment-task specialization, raising the learning term in 22/22 dose cells (significant in 20/22 at n=10 paired, with Delta-ell up to +4.6, t(9)=8.1). S3 showed that this repair does not transfer: on a convolutional active-dendrite backbone the dose-response collapses to noise and final accuracy reverses. S4 showed the mechanism: the winning segment's gate value is a constant of the training run (0.565, identical to four decimals under every alternative context) and the dendritic columns remain orthogonal at their random initialization, so the context pathway is present but unused as a modulator; the repair works by saturating that gate (sigma(10+u) ~ 1) and deleting the gate outright reproduces most of its gain on MNIST and outperforms it on Fashion-MNIST. The merged manuscript rewrites its title, abstract, and conclusion so that the third result is presented as an apparent success that the fourth and fifth results overturn, rather than as a contradiction across papers. It adds a self-interrogation section asking what follows for the paper's own second finding if 'dominant segment' is not a description of a routing decision but of an argmax over near-degenerate rows: the granularity ladder, the dead-neuron artifact, and the mechanism results survive, but the strong form of the anti-specialization claim does not, and the weaker formulation is adopted throughout. All statistics are recomputed from the raw per-seed records with Holm correction within each metric family, 95% confidence intervals, and paired standardized effect sizes; after correction the S1 dose grid remains significant in 16/22 cells for both Delta-ell and Delta-average, while the ConvADNet dose grid retains no significant cell on any metric. The package contains the LaTeX source, the compiled PDF in both the Elsevier (submission) and TMLR (double-blind, anonymized) formats, all figures, the bibliography, and a machine-readable file of the recomputed statistics with the scripts that produced them. All code, per-run records, pre-registrations and dated amendments are archived in the project repository linked in the manuscript.",
+  "keywords": [
+    "continual learning",
+    "catastrophic forgetting",
+    "active dendrites",
+    "dendritic segments",
+    "elastic weight consolidation",
+    "segment-task specialization",
+    "measurement validity",
+    "dead neurons",
+    "multiple comparison correction",
+    "reproducibility",
+    "preprint"
+  ],
+  "creators": [
+    {
+      "given_name": "Ranxi",
+      "family_name": "Zhou",
+      "affiliation": "Hunan University of Chinese Medicine, Changsha, China",
+      "role": "Researcher"
+    }
+  ],
+  "related_identifiers": [
+    { "scheme": "doi", "identifier": "10.5281/zenodo.23685865", "relation": "references" },
+    { "scheme": "doi", "identifier": "10.5281/zenodo.23685385", "relation": "references" },
+    { "scheme": "doi", "identifier": "10.5281/zenodo.23686689", "relation": "references" },
+    { "scheme": "doi", "identifier": "10.5281/zenodo.23685906", "relation": "references" },
+    { "scheme": "doi", "identifier": "10.5281/zenodo.23685788", "relation": "references" },
+    { "scheme": "doi", "identifier": "10.5281/zenodo.23685822", "relation": "references" },
+    { "scheme": "url", "identifier": "https://github.com/zhouranxi/delp-anchor-budget", "relation": "issupplementto" }
+  ],
+  "access_right": "open",
+  "license": { "id": "cc-by-4.0" },
+  "communities": [],
+  "resource_type": { "general": "publication", "kind": "publication" },
+  "file_note": "Files: main.pdf (Elsevier/Neural Networks format), main.tex, main.bbl, refs.bib, figs/*.pdf (8 figures), stats_recomputed.md and stats_recomputed.json (recomputed statistics with correction), zenodo_metadata.json. A TMLR-formatted anonymized version is included as tmlr/main.pdf with its source and style files."
+}

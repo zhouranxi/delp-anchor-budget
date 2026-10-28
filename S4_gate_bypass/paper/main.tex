@@ -6,8 +6,8 @@
 
 \begin{frontmatter}
 
-\title{The Repair Bypasses the Gate: Context Noise Exposes the Mechanism
-of Own-Segment Bias in Active-Dendrite Continual Learning}
+\title{The Repair Saturates the Gate: Context Noise as a Degeneracy
+Diagnostic in Active-Dendrite Continual Learning}
 
 \author[hnucm]{Ranxi Zhou}
 \affiliation[hnucm]{organization={Hunan University of Chinese Medicine},
@@ -19,33 +19,36 @@ plasticity and routing on a task-context signal. A companion audit
 (\cite{zhou2026delpS1}, S1) found that such networks never develop
 segment--task specialization and that a constant bias $b$ on the
 own-segment dendritic input causally repairs the learning term
-($\Delta\ell$ up to $+4.6$, $t \ge 8$). Every result in that line --
+($\Delta\ell$ up to $+4.6$, $|t| \ge 8$). Every result in that line --
 including the repair itself -- was obtained under oracle context. We ask
 the question the line left open: \emph{when the context signal is wrong,
 what survives?} Under the worst-case evaluation protocol (each sample's
 context one-hot flipped to a uniformly random other task with probability
-$\rho$), the answer is: everything, at every noise level.
-Final accuracy moves by less than $0.05$ points at $\rho \le 0.4$ for both
-the base system and the repaired one; the repair's paired gain is retained
-at 98--101\% ($+1.22 \to +1.23$ on MNIST, $+0.45 \to +0.42$ on
-Fashion-MNIST). Zero noise sensitivity is not robustness --- it is a
-symptom. Mechanism probes show why: the trained dendritic gate is
-\emph{context-degenerate}. Swapping the context one-hot changes at most
-$6.2\%$ of predictions in the base network, and after the repair
-(\(b{=}10\)) exactly $0.0\%$ -- the bias saturates the winning segment's
-sigmoid so the gate output no longer depends on the context at all, while
-the dendritic weight columns stay mutually orthogonal (cosine
-$\approx 0.003$, i.e.\ their random initialization) throughout training.
-A degenerate-control ablation then asks what the repair actually repairs:
-a network with the entire dendritic gate removed ($h = \mathrm{kwta}(t)$,
-same trunk, same anchor chain) matches the repaired network on MNIST
-($73.22$ vs.\ $72.63$, n.s.) --- there the repair's entire benefit is
-reproduced by gate removal, i.e.\ \emph{the repair works by removing the
-dependence on the thing it was supposed to fix}. On Fashion-MNIST the
-bypass is rejected ($66.84$ vs.\ $64.30$, $t{=}6.8$): the multiplicative
-gate retains input-dependent value even while context-degenerate. We
-conclude that ``context-gated protection'' in this architecture family
-runs, at these training budgets, on a gate that does not gate by context;
+$\rho$), the answer is: everything, at every noise level tested.
+Final accuracy moves by at most $0.25$ points at $\rho \le 0.4$ for the
+base system and by at most $0.01$ points for the repaired one; the
+repair's paired gain ($+4.80$, $t{=}17.0$, on MNIST) is retained at
+100--105\% under noise on MNIST and 100--124\% on Fashion-MNIST. Zero
+noise sensitivity is not robustness --- it is a symptom. Mechanism
+probes show why: the trained dendritic gate is \emph{context-degenerate}.
+Its value under the correct context and under every wrong context is
+identical to four decimals ($0.565$); after the repair ($b{=}10$)
+context swaps change at most $0.02\%$ of predictions on average (worst
+pair $0.15\%$); and the dendritic weight columns stay mutually
+orthogonal (cosine $\approx 0.003$) throughout training. Two degenerate
+controls then locate what the repair actually repairs. A
+\emph{constant-gate} control that pins the gate at its measured baseline
+value ($0.565$) reproduces the base network, not the repair --- merely
+holding the gate constant buys nothing, because the base system already
+runs at that constant. A \emph{no-gate} control ($h = \mathrm{kwta}(t)$,
+same trunk, same anchor chain) recovers most of the repair's benefit on
+MNIST ($67.50$ vs.\ $68.67$, $-1.16$, $t{=}-2.7$) and numerically
+exceeds it on Fashion-MNIST ($44.27$ vs.\ $42.89$, n.s.): the repair
+functions as a saturating soft deletion of the gate ($\sigma(10{+}u)
+\approx 1$), and what it buys is the removal of a constant
+${\approx}0.57$ damping factor --- not restored routing. We conclude
+that ``context-gated protection'' in this architecture family runs, at
+these training budgets, on a gate that does not gate by context;
 noise-robustness certificates for such systems should therefore be read
 as \emph{degeneracy diagnostics}, and repairs that survive adversarial
 context corruption deserve particular scrutiny.
@@ -100,16 +103,17 @@ either dataset, with or without the repair
 (Sec.~\ref{sec:results}). A robustness result this clean is not a
 reason to celebrate; it is a reason to dig. The rest of the paper is the
 dig. Mechanism probes (Sec.~\ref{sec:mech}) show the trained gate is
-\textbf{context-degenerate}: its response to the context one-hot is
-statistically indistinguishable from its response to any other one-hot,
-and after the repair the network's predictions are \emph{exactly}
-invariant to context swaps. A degenerate-control ablation
-(Sec.~\ref{sec:ablation}) then locates what the repair actually does:
-on MNIST, deleting the dendritic gate outright reproduces the repair's
-full benefit --- the repair works by \emph{removing the system's
-dependence on the component it was supposed to be fixing}. On
-Fashion-MNIST the gate keeps input-dependent value that no context-free
-replacement provides, and the bypass interpretation is rejected.
+\textbf{context-degenerate}: its value is identical to four decimals
+under every context, and after the repair the network's predictions are
+invariant to context swaps up to $0.02\%$ of samples. Two degenerate
+controls (Sec.~\ref{sec:ablation}) then locate what the repair actually
+does: pinning the gate at its own baseline constant reproduces the base
+network --- flattening buys nothing, because the base system already
+runs at that constant --- while deleting the gate outright recovers most
+of the repair's benefit on MNIST and numerically all of it on
+Fashion-MNIST. The repair works by \emph{saturating the gate to a
+constant gain of one}: a soft deletion of the system's dependence on the
+component it was supposed to be fixing.
 
 The contribution is threefold:
 \begin{enumerate}
@@ -120,15 +124,18 @@ Any ``robust to context noise'' certificate earned by such a system is
 evidence of degeneracy, not of robustness.
 \item \textbf{A mechanism re-qualification of the S1 repair.} The
 own-segment bias does not restore segment--task routing (which S1 showed
-never existed); it saturates the gate into a context-free multiplicative
-gain. On MNIST the repaired network is \emph{equivalent to} a network
-with no dendritic gate at all; on Fashion-MNIST it is not, and the
-difference delineates what the dendritic bank is actually for.
+never existed); it saturates the gate into a context-free gain of one ---
+a soft deletion of the dendritic damping. A constant-gain control at the
+measured baseline gate value reproduces the base system, and a
+gate-deletion control reproduces most (MNIST) or more (Fashion-MNIST) of
+the repair: what helps is \emph{removing} the constant ${\approx}0.57$
+damping, not shaping it.
 \item \textbf{A reusable three-instrument protocol}: worst-case noise
 sweep $\to$ flip-rate/gate-response probe $\to$ degenerate-control
-ablation. Each instrument is cheap; together they convert a suspicious
-null into a mechanistic verdict. We preregistered the first two, and the
-third was forced on us by their result.
+ablation with two variants (constant-gate and gate-removal). Each
+instrument is cheap; together they convert a suspicious null into a
+mechanistic verdict. We preregistered the first two, and the controls
+were forced on us by their result.
 \end{enumerate}
 
 \section{Background and setting}
@@ -136,7 +143,7 @@ third was forced on us by their result.
 
 \paragraph{Architecture.} The reference network is the one shared by the
 S1/S3 line \cite{zhou2026delpS1,zhou2026repair}: a one-hidden-layer
-active-dendrite network (ADNet) with $n_h{=}2000$ hidden units, one
+active-dendrite network (ADNet) with $n_h{=}256$ hidden units, one
 dendritic segment bank per task ($K{=}T$), $k$-winners-take-all sparse
 output ($k{=}64$). Given input $x$ and context one-hot $c$:
 \begin{equation}
@@ -163,6 +170,27 @@ tasks, 10 seeds, paired across all arms; permutations drawn once per seed
 and shared. Metrics: final average accuracy $\bar{a}$ over all tasks
 after the last task; paired $t$-statistics over seeds.
 
+\paragraph{Execution correction (2026-10-27).} An independent
+data-consistency audit of this line, run after the first version of these
+experiments had completed, found two defects in the harness and the
+experiments were re-run in full. (i)~The elastic penalty was applied
+without its $\lambda$ factor, so every run had effectively executed with
+$\lambda \approx 1$ while the record claimed $\lambda{=}1000$; the
+penalty now carries $\lambda$ as the reference implementation does.
+(ii)~The degenerate control had a hard-coded hidden width of $2000$ while
+the dendritic arms use $256$, so the two arms of the ablation differed by
+roughly eight-fold in parameter count; both now use the same width. The
+numbers reported here are all from the corrected re-run; the first
+version's records are retained in the artifact under an explicit
+deprecation notice. The correction moves the absolute accuracies
+substantially --- a genuinely enforced penalty forgets more, and the
+base network drops ${\sim}7.6$ points on MNIST --- and it changes one
+qualitative verdict: the first version's MNIST gate-removal
+\emph{equivalence} was an artifact of the width mismatch, and under
+matched widths the equivalence becomes approximate rather than exact
+(Sec.~\ref{sec:ablation}). The robustness null and the mechanism probes
+are unaffected.
+
 \section{Preregistered design}
 \label{sec:design}
 
@@ -177,7 +205,9 @@ plausible wrong context rather than a neutral one.
 \begin{itemize}
 \item \textbf{E1 (gating robustness).} $b{=}0$, $\rho \in
 \{0, 0.1, 0.2, 0.4\}$, both datasets. Survival: $\rho{=}0.1$ costs
-$\le 2$ points and $\rho{=}0.2$ costs $\le 5$; death: $\rho{=}0.1$ costs
+$\le 2$ points and $\rho{=}0.2$ costs $\le 5$, \emph{and} the
+per-seed direction agrees across both datasets in $\ge 8/10$ seeds;
+death: $\rho{=}0.1$ costs
 $>5$ or $\rho{=}0.2$ collapses ($\bar a < 50$ or cost $>10$).
 \item \textbf{E2 (repair survival).} Same grid crossed with
 $b \in \{0, 10\}$, paired per $(\rho, \text{dataset}, \text{seed})$.
@@ -188,9 +218,30 @@ $(1-\rho)\,\mathrm{onehot} + \rho\,\mathrm{uniform}$; direction only,
 no survival claim (multiple-comparison hygiene).
 \end{itemize}
 
+Two deviations from the pre-registered wording, both forced and both
+reported rather than absorbed. First, E2's criterion was written for
+$\Delta\ell$; the noise harness records only the final-phase
+per-task accuracies and no $\ell$ field, so $\Delta\ell$ is not
+computable from the collected data and the criterion is evaluated on
+$\Delta\bar a$ instead --- the same "net benefit of the repair"
+quantity, in the one form the runs support. Second, E1's third
+condition (per-seed directional agreement) was not met in strict
+form: the per-seed $\rho$-effect has mixed signs, though every
+per-seed shift stays below $0.1$ points. We report that as a
+condition we did not satisfy rather than dropping it, and the two
+amplitude conditions pass with orders of magnitude to spare.
+
 The noise stream is fixed per seed (a dedicated generator), so paired
-comparisons share corruption patterns exactly. 80 runs for E1+E2, 20 for
-E3.
+comparisons share corruption patterns exactly. The protocol trains one
+model per $(\text{dataset}, b, \text{seed})$ and evaluates it at all
+four $\rho$ levels: \textbf{60 training runs} (40 for E1+E2, 20 for E3)
+yielding 240 evaluation cells. (The pre-registration counted $\rho$ as
+independent training runs --- 240 --- which over-counts by a factor of
+four; the number of evaluated $(\rho, b, \text{dataset}, \text{seed})$
+cells is unchanged.) A dated amendment documenting every deviation is
+included in the artifact
+(``prereg/S4\_ctxnoise\_预注册\_修订说明\_2026-10-27.md''); the original
+pre-registration text is left untouched.
 
 \section{Results: nothing degrades, at any noise level}
 \label{sec:results}
@@ -198,136 +249,190 @@ E3.
 \begin{table}[t]
 \centering
 \caption{Final average accuracy under worst-case context flips
-($n{=}10$ seeds; noise applied to the final-phase evaluation only).}
+($n{=}10$ seeds; noise applied to the final-phase evaluation only;
+$\lambda{=}1000$ enforced, $n_h{=}256$ in all arms).}
 \label{tab:main}
 \begin{tabular}{llrrrr}
 \toprule
 dataset & arm & $\rho{=}0$ & $\rho{=}0.1$ & $\rho{=}0.2$ & $\rho{=}0.4$ \\
 \midrule
-MNIST    & base ($b{=}0$)    & 71.41 & 71.41 & 71.42 & 71.40 \\
-MNIST    & repaired ($b{=}10$) & 72.63 & 72.63 & 72.63 & 72.63 \\
-Fashion  & base ($b{=}0$)    & 66.38 & 66.39 & 66.40 & 66.41 \\
-Fashion  & repaired ($b{=}10$) & 66.84 & 66.84 & 66.84 & 66.84 \\
+MNIST    & base ($b{=}0$)    & 63.86 & 63.79 & 63.72 & 63.62 \\
+MNIST    & repaired ($b{=}10$) & 68.67 & 68.67 & 68.67 & 68.67 \\
+Fashion  & base ($b{=}0$)    & 42.20 & 42.15 & 42.09 & 42.04 \\
+Fashion  & repaired ($b{=}10$) & 42.89 & 42.89 & 42.89 & 42.89 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Table~\ref{tab:main} is the entire empirical content of E1 and E2.
-Both preregistered survival criteria pass, with margins that make the
-criteria look quaint: the largest degradation anywhere is $0.03$ points
-(MNIST base, $\rho{=}0.4$), where the criterion allowed $10$. The
-repair's paired gain is $+1.22$ ($t{=}3.8$) at $\rho{=}0$ and $+1.23$
-($t{=}3.8$) at $\rho{=}0.4$ on MNIST; $+0.45$ and $+0.42$ on
-Fashion-MNIST ($t{=}0.6$, n.s.\ throughout --- consistent with S3's
-finding that Fashion gains from the repair are small at $T{=}10$
-\cite{zhou2026repair}). Retention: 100.8\% and 97.8\%. E3's soft
-mixture moves nothing ($|\Delta| \le 0.02$, all n.s.), which will make
-sense shortly.
+Both preregistered survival criteria pass with orders of magnitude to
+spare: the largest movement anywhere is $0.25$ points (MNIST base,
+$\rho{=}0.4$), the largest on Fashion-MNIST is $0.16$, and the repaired
+arm moves by at most $0.01$ points on MNIST and \emph{exactly} $0.000$
+points on Fashion-MNIST --- where the death criteria allowed $10$ and
+$5$. The repair's paired gain on MNIST is $+4.80$ ($t{=}17.0$) at
+$\rho{=}0$ and $+5.05$ ($t{=}17.3$) at $\rho{=}0.4$; retention of the
+gain is $100.0\% \to 105.1\%$ across the sweep --- under noise the
+repair \emph{helps slightly more}, because its floor is flatter.
+On Fashion-MNIST the gain is small, as S3 found at $T{=}10$
+\cite{zhou2026repair}: $+0.69$ ($t{=}1.5$, n.s.) at $\rho{=}0$, rising
+to $+0.86$ ($t{=}1.8$) at $\rho{=}0.4$ (retention $100\% \to 123.7\%$;
+all n.s.). E1's third condition (per-seed directional agreement) holds
+in strict form on MNIST --- $10/10$ seeds shift negatively at every
+$\rho$ --- and fails on Fashion-MNIST ($8/10$, $9/10$, $7/10$ negative,
+with every per-seed shift within $\pm 0.18$ points); we report it as
+satisfied on one dataset and not on the other, as disclosed in
+Sec.~\ref{sec:design}. E3's soft mixture tracks the oracle slightly
+more closely than hard flips on the base arm (MNIST $\rho{=}0.4$: soft
+$-0.09$ vs.\ hard $-0.25$; paired soft$-$hard $+0.16$, $t{=}3.8$) and
+does nothing on the repaired arm; every E3 effect is ${\le} 0.26$
+points.
 
 A protocol-level artifact is worth excluding explicitly: the noise
 \emph{is} reaching the network. Per-seed corruption patterns are fixed,
 the context tensor is modified before the forward pass, and --- the
 direct check --- swapping contexts \emph{does} change predictions in the
-base network ($6.2\%$ of samples on average, up to $17.7\%$ for
-particular swaps; Sec.~\ref{sec:mech}). What is true is that prediction
-changes of this kind average out across a $10$-way task mixture at the
-final-accuracy level. The null is real, and it demands a mechanism.
+base network ($14.8\%$ of samples on average on MNIST, $30.1\%$ on
+Fashion-MNIST, up to $51.7\%$ for particular swaps;
+Sec.~\ref{sec:mech}). What is true is that prediction changes of this
+kind average out across a $10$-way task mixture at the final-accuracy
+level. The null is real, and it demands a mechanism.
 
 \section{Mechanism: the gate does not gate by context}
 \label{sec:mech}
 
 Three probes, each applied to fully trained networks. The headline
 numbers below are MNIST seed 0; the pattern replicates on Fashion-MNIST
-seed 0 and MNIST seed 1 (all numbers in the artifact): flip rates
-$6.2$--$6.9\%$ mean / $14.9$--$19.0\%$ worst at $b{=}0$, exactly $0.0$
-at $b{=}10$, gate own/other identical to four decimals, and column
-cosines in $[0.001, 0.003]$ in every case.
+seed 0 and MNIST seed 1 (all numbers in the artifact): at $b{=}0$,
+flip rates $14.8$--$30.1\%$ mean / $23.8$--$51.7\%$ worst pair; at
+$b{=}10$, flip rates $0.007$--$0.021\%$ mean / at most $0.15\%$ worst
+pair; gate own/other identical to four decimals ($0.564$--$0.565$); and
+mean column cosines in $[0.001, 0.003]$ in every case.
 
 \paragraph{Prediction flip rate.} For each task $c$ and each alternative
 context $c' \ne c$, measure the fraction of test samples whose argmax
 prediction differs between $\mathrm{ctx}{=}c$ and $\mathrm{ctx}{=}c'$.
-Base network: mean $6.2\%$, worst pair $17.7\%$ --- the network's output
-is \emph{mostly} context-invariant already. Repaired network ($b{=}10$):
-mean and worst \textbf{exactly $0.0\%$}. After the repair there is no
-context pair, anywhere in the task grid, that changes a single
-prediction.
+Base network: mean $14.8\%$ (MNIST) and $30.1\%$ (Fashion-MNIST), worst
+pair up to $51.7\%$ --- the base output is genuinely, substantially
+context-sensitive at the individual-prediction level, yet none of that
+sensitivity survives to final accuracy (Sec.~\ref{sec:results}: at most
+$0.25$ points). The context pathway does something per sample; what it
+does nets out to nothing. Repaired network ($b{=}10$): mean
+$0.007$--$0.021\%$, worst pair $0.15\%$ --- no longer \emph{exactly}
+zero, but a rounding error: roughly one flipped prediction in five
+thousand on average, a dozen samples for the worst single pair.
 
 \paragraph{Gate response.} The winning segment's gate value
-$\sigma(d)$ has mean $0.5649$ under the correct context and $0.5649$
+$\sigma(d)$ has mean $0.565$ under the correct context and $0.565$
 under every alternative --- identical to four decimal places, in both
-the base and repaired networks. The context one-hot selects \emph{which}
-segment wins, but not \emph{how much} it gates.
+the base ($0.5651$) and repaired ($0.5652$) networks. The context
+one-hot selects \emph{which} segment wins, but not \emph{how much} it
+gates: the gate's value is a constant of the training run, not a
+function of the context.
 
 \paragraph{Column geometry.} The dendritic weights projected onto the
 $T$ context columns remain mutually orthogonal after training: mean
-pairwise cosine $0.003$ (min $-0.034$), indistinguishable from their
-random initialization. Training, with per-task gradient protection,
-leaves the context channel of the gate bank essentially at its prior.
+pairwise cosine $0.003$ (per-model mean in $[0.001, 0.003]$; the most
+negative single pair over the three models is $-0.056$), indistinguishable
+from their random initialization. Training, with per-task gradient
+protection, leaves the context channel of the gate bank essentially at
+its prior.
 
 Together: the architecture's context pathway is present, trainable in
-principle, protected per task --- and unused. The max over segments is
-won by whichever row the (orthogonal, near-random) columns happen to
-favor for the current input batch statistics, and the repair adds a
-constant so large ($b{=}10$ against $|u| \lesssim 1$) that the max is
-always won by the own segment, with $\sigma(10 + u) \approx 1$
-saturated: a context-free gain of one. Equation~\ref{eq:adnet}
-degenerates to $h = \mathrm{kwta}(t)$.
+principle, protected per task --- and unused as a \emph{modulator}. The
+max over segments is won by whichever row the (orthogonal, near-random)
+columns happen to favor, the gate value is the same constant
+($\approx 0.565$) no matter which segment wins, and the repair adds a
+constant so large ($b{=}10$ against $|u| \lesssim 1$) that the own
+segment always wins with $\sigma(10 + u) \approx 1$: a context-free
+gain of one. Equation~\ref{eq:adnet} degenerates, in both arms, to a
+multiplication by a constant --- ${\approx}0.57$ in the base network,
+${\approx}1.0$ in the repaired one. Which of those two constants
+matters, and why, is what the next section measures.
 
 \section{Ablation: what does the repair repair?}
 \label{sec:ablation}
 
 If the repaired network computes (approximately) $h = \mathrm{kwta}(t)$,
 then a network with the dendritic bank deleted and the same trunk,
-sparsifier, and anchor chain should reproduce the repair's benefit. We
-built that degenerate control twice --- the first version was invalid
-(it applied an extra sigmoid to $t$, changing the activation structure;
-the mistake is retained in the artifact as a documented correction) ---
-and report the corrected one: $h = \mathrm{kwta}(W_{\mathrm{ff}} x)$,
-plain Fisher anchors on the trunk and readout, everything else identical.
+sparsifier, and anchor chain should reproduce most of the repair's
+benefit --- and, conversely, a network whose gate is held at the base
+system's measured constant ($0.565$) should reproduce the base system,
+because the base gate already \emph{is} that constant
+(Sec.~\ref{sec:mech}). We therefore run four arms under one protocol
+($\rho{=}0$, $n{=}10$ paired seeds, all arms at $n_h{=}256$, all with
+usage-weighted Fisher anchors at $\lambda{=}1000$): \textbf{base}
+($b{=}0$), \textbf{repaired} ($b{=}10$), \textbf{no-gate}
+($h = \mathrm{kwta}(W_{\mathrm{ff}} x)$; the bank deleted), and
+\textbf{constant-gate} ($h = \mathrm{kwta}(0.565 \cdot
+W_{\mathrm{ff}} x)$; the gate pinned at the base system's measured
+mean). The base and repaired arms replicate the Sec.~\ref{sec:results}
+runs to two decimals. The degenerate controls were added during the
+post-audit re-run (Sec.~\ref{sec:background}); they were not
+preregistered. The no-gate control exists in three versions in the
+artifact --- an invalidated first attempt (an extra sigmoid on $t$ that
+changed the activation structure), a width-mismatched second version
+($n_h{=}2000$), and the matched version reported here --- all retained
+under an explicit deprecation notice.
 
 \begin{table}[t]
 \centering
-\caption{Degenerate control vs.\ the repair ($n{=}10$ paired seeds,
-$\rho{=}0$).}
+\caption{Four-arm control experiment ($n{=}10$ paired seeds,
+$\rho{=}0$, matched width $n_h{=}256$ and matched usage-weighted
+anchors). Bold marks the best arm per dataset.}
 \label{tab:ablation}
 \begin{tabular}{lrrrr}
 \toprule
-dataset & repaired ($b{=}10$) & no-gate control & base ($b{=}0$) &
-no-gate $-$ base \\
+dataset & base ($b{=}0$) & const-gate ($0.565$) & repaired ($b{=}10$)
+& no-gate \\
 \midrule
-MNIST   & 72.63 & \textbf{73.22} & 71.41 & $+1.81^{*}$ \\
-Fashion & \textbf{66.84} & 64.30 & 66.38 & $-2.09^{*}$ \\
+MNIST   & 63.86 & 63.62 & \textbf{68.67} & 67.50 \\
+Fashion & 42.20 & 42.70 & 42.89 & \textbf{44.27} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{MNIST: bypass confirmed.} The no-gate control ($73.22$) matches
-the repaired network ($72.63$; paired difference $-0.59$, $t{=}-1.0$,
-n.s.) and beats the base ($+1.81$, $t{=}3.4$). Everything the repair
-buys on MNIST is bought by removing the gate. The repair's causal
-pathway and the gate's deletion have the same signature because they are
-the same operation: the bias implements a soft, saturating deletion of
-the dendritic modulation.
+\textbf{The constant-gate control reproduces the base system, not the
+repair.} Pinning the gate at $0.565$ lands at $63.62$ on MNIST (base:
+$63.86$; paired difference $-0.25$, $t{=}-0.7$, n.s.) and $42.70$ on
+Fashion (base: $42.20$; $+0.49$, $t{=}0.7$, n.s.). Holding the gate
+constant buys nothing --- which is exactly what the mechanism section
+predicts, since the base network's gate already \emph{is} constant at
+that value. The entire difference between the base and repaired
+networks is the value of that constant: $0.57$ damps the trunk,
+$1.0$ does not.
 
-\textbf{Fashion: bypass rejected --- and informative.} The repaired
-network ($66.84$) beats the no-gate control ($64.30$) by $+2.54$
-($t{=}6.8$). Here the multiplicative gate contributes value that no
-context-free trunk can, even though the gate is context-degenerate
-(Sec.~\ref{sec:mech}): a per-unit, input-dependent scaling
-$t \odot \sigma(d(x))$ is a capacity the plain trunk lacks. The
-S3 transfer study \cite{zhou2026repair} asked whether the repair crosses
-architectures and answered no; this ablation asks a sharper question ---
-\emph{what is the gate for, once the repair exists?} --- and gets a
-dataset-split answer: on MNIST, nothing; on Fashion, a learnable
-per-unit gain.
+\textbf{Gate deletion recovers most of the repair --- and on
+Fashion-MNIST, more than the repair.} The no-gate control reaches
+$67.50$ on MNIST, recovering $+3.64$ of the repair's $+4.80$-point gain
+($76\%$) and falling short of the repaired network by $-1.16$
+($t{=}-2.7$): keeping the (saturated) multiplicative structure is worth
+about one point, marginally significant at $n{=}10$. On Fashion-MNIST
+the no-gate control is the \emph{best} arm: $+2.07$ over base
+($t{=}2.5$) and $+1.37$ over the repaired network ($t{=}1.9$, n.s.) ---
+on the harder dataset, full deletion beats the repair outright.
 
-One confound is acknowledged rather than hidden: the dendritic arms use
-usage-weighted Fisher anchors (DeLP) while the no-gate control uses plain
-Fisher anchors, both at $\lambda{=}1000$; usage weighting reduces
-effective anchor strength, so the comparison slightly \emph{favors} the
-no-gate control. The MNIST equivalence and the Fashion gap are therefore
-lower and upper bounds respectively of the gate's contribution, which is
-the right direction for both conclusions.
+\textbf{Sensitivity to anchor weighting.} A second no-gate run with
+plain (unweighted) Fisher anchors --- a stronger, mismatched chain ---
+lands at $63.63$ on MNIST and $41.10$ on Fashion, i.e.\ at or below
+base. Anchor weighting alone moves the no-gate arm by $3.9$ and $3.2$
+points. The matched-anchor four-arm table above is therefore the
+primary comparison, and the residual MNIST gap ($-1.16$) should be read
+against that sensitivity. The first version of this experiment reported
+a clean MNIST \emph{equivalence} between the no-gate control and the
+repair; that verdict was an artifact of the width mismatch disclosed in
+Sec.~\ref{sec:background} and is retracted.
+
+\textbf{Verdict.} The repair is a saturating soft deletion: $b{=}10$
+drives $\sigma \to 1$, which is the no-gate limit reached through the
+gate rather than around it. What the repair buys on these benchmarks is
+the removal of a constant ${\approx}0.57$ damping factor --- and on
+Fashion-MNIST, where deletion is free to remove it \emph{exactly}, the
+removal is worth slightly more than the repair itself. What does
+\emph{not} follow is the stronger claim of the first version, that the
+repair and gate removal are interchangeable on MNIST: with matched
+widths and matched anchors they are close ($76\%$ of the gain
+recovered) but distinguishable.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -336,14 +441,16 @@ the right direction for both conclusions.
 the own-segment bias repairs the learning term; the mechanism section of
 that paper showed the network never pushes back at the parameter level.
 This paper supplies the missing re-qualification: the repair does not
-restore routing --- there was no routing to restore --- it
-\emph{saturates the gate into a context-free gain}. Read together, the
-chain is now: no specialization (S1) $\to$ repair works (S1) $\to$
-repair works without the gate (this paper, MNIST) $\to$ but the gate
-still pays on harder data (this paper, Fashion) $\to$ the repair does
-not transfer to strong backbones (S3). What survives as the
-``mechanism'' of the repair is sparse capacity management, not
-context-gated routing.
+restore routing --- there was no routing to restore --- it \emph{saturates
+the gate into a context-free gain of one}, i.e.\ a soft deletion of a
+constant ${\approx}0.57$ damping factor. Read together, the chain is
+now: no specialization (S1) $\to$ repair works (S1) $\to$ the repair is
+a saturating gate deletion that recovers $76\%$ of the removal benefit
+on MNIST and is beaten by full removal on Fashion-MNIST (this paper)
+$\to$ the repair does not transfer to strong backbones (S3). What
+survives as the ``mechanism'' of the repair is the removal of a constant
+damping --- sparse capacity management at best, context-gated routing
+not at all.
 
 \paragraph{For evaluation practice.} Robustness certificates obtained
 under context corruption are usually read as good news. In this family
@@ -360,21 +467,25 @@ training-time context errors corrupt usage statistics and anchors
 differently, and are the natural next experiment. (ii) The mechanism
 probes are computed on fully trained networks at $T{=}10$; whether the
 context columns stay orthogonal at larger $T$ or longer training is
-untested. (iii) The degenerate control differs from the dendritic arms
-in anchor weighting (usage vs.\ plain), as discussed above. (iv) One
-architecture family, two digit datasets --- the same scope limits as the
-companion line.
+untested. (iii) The degenerate controls were not preregistered and were
+added after the audit; the anchor-weighting sensitivity of the no-gate
+arm ($\pm 3.9$ points, Sec.~\ref{sec:ablation}) is larger than the
+residual repair-vs-deletion gap it bounds. (iv) One architecture
+family, two digit datasets --- the same scope limits as the companion
+line.
 
 \section{Conclusion}
 
 Asked whether context-gated protection survives a wrong context signal,
 the system answered: it never needed the signal. The repair that was
 motivated by broken routing survives for the same reason --- it never
-used the routing. Only on Fashion-MNIST, where the gate's multiplicative
-structure carries input-dependent value, does something
-context-irreplaceable remain. The general lesson travels beyond this
-architecture: \emph{when a robustness probe returns exactly zero damage,
-measure the pathway before celebrating the armor}.
+used the routing; it removes a constant damping factor that the
+never-used gate had left in place, and where removal can be done
+exactly, it does slightly better than the repair. The general lesson
+travels beyond this architecture: \emph{when a robustness probe returns
+exactly zero damage, measure the pathway before celebrating the armor
+--- and when a repair works, check whether it works by fixing the
+mechanism or by deleting it}.
 
 \section*{Data and code availability}
 All code, per-run records (including per-$\rho$ accuracy vectors), the

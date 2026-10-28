@@ -31,19 +31,22 @@ informative.} On a convolutional active-dendrite network
 (4-layer conv trunk + GroupNorm + global average pooling feeding the
 identical dendritic gate; $160$ runs, $10$ seeds per cell), the
 repair collapses to noise ($\Delta\ell$ significant in $4/12$ dose
-cells; largest effect $+1.46$ vs.\ the MLP's $+1.4$ to $+4.6$) and
+cells; largest effect $+1.46$ vs.\ the MLP's $+0.8$ to $+4.6$) and
 \emph{final accuracy reverses} ($\Delta\mathrm{avg}$ down to $-2.29$,
 $t{=}-3.1$). The dead-neuron artifact disappears entirely --- not
 because the instrument improved, but because conv+GroupNorm mortality
 is exactly zero where the bare MLP's was $57\%$. A decisive
 same-architecture control (GroupNorm inserted into the MLP's feature
-layer, $80$ runs, the only delta) separates the two candidate
+layer, $80$ runs) separates the two candidate
 explanations: mortality and repair-gain \emph{decouple} (GroupNorm
 raises mortality to $76.5\%$/$85.5\%$ while collapsing the gain to
 $17\%$/$26\%$ of its bare-MLP value), so dying gates are not the
-mediating variable; instead, gain decays as the unbiased baseline
-strengthens, and on both strong-feature backbones the repair buys
-learning only while significantly worsening retention. We conclude
+mediating variable. A post-hoc width$\times$normalization factor scan
+($320$ runs; Sec.~\ref{sec:gnmlp}) confirms the attribution:
+matched-width GroupNorm collapses the gain at both widths
+($\Delta\ell$ $-2.6$ to $-3.7$ vs.\ the plain trunk), while widening
+the plain trunk $7.8\times$ \emph{increases} the gain, so width cannot
+explain the collapse. We conclude
 with a practitioner-facing boundary: own-segment bias repairs pay
 when the baseline is weak and its gates die; on strong-feature
 backbones they silently trade retention for learning, and the
@@ -70,7 +73,7 @@ one-hidden-layer active-dendrite network (ADNet
 because dead neurons fall to segment~0 by argmax convention;
 (3) a constant bias $b$ on the own-segment dendritic input causally
 repairs the learning term with a clean dose--response
-($20/20$ dose cells positive, $18/20$ significant at $T \le 20$).
+($22/22$ dose cells positive, $20/22$ significant at $T \le 20$).
 
 S1's own limitations section asks the question this paper answers:
 \emph{does the chain transfer beyond the bare-MLP family?} The question
@@ -89,10 +92,13 @@ dendritic gate, kWTA sparsifier, and protected-gradient scheme
 ($160$ runs; Sec.~\ref{sec:conv});
 \item \textbf{GN-MLP} --- the original single-hidden-layer network
 with one GroupNorm layer inserted between the feature projection and
-the dendritic gate ($80$ runs; Sec.~\ref{sec:gnmlp}). This is a
-same-architecture control: every hyperparameter, the routing
-structure, and the protection mechanism are unchanged; the norm layer
-alone differs.
+the dendritic gate ($80$ runs; Sec.~\ref{sec:gnmlp}). This is intended
+as a same-architecture control: the routing structure and the
+protection mechanism are unchanged and the norm layer is the designed
+delta. One deviation from strict matching must be disclosed --- the
+GN-MLP implementation uses $2000$ hidden units where the bare MLP uses
+$256$ --- and a post-hoc width$\times$normalization factor scan
+eliminates the confound (Sec.~\ref{sec:gnmlp}).
 \end{itemize}
 
 Both transfer attempts fail their pre-registered criteria, and the
@@ -118,10 +124,14 @@ reverses (Sec.~\ref{sec:conv}).
 \item A zero-mortality finding: conv+GroupNorm keeps every gate
 alive, so the dominant-segment artifact of S1 is architecture-bound,
 not instrument-bound (Sec.~\ref{sec:conv}).
-\item A decisive same-architecture control ($80$ runs, one delta)
-showing mortality and repair-gain decouple: the ``dying-gate''
+\item A decisive same-architecture control ($80$ runs) showing
+mortality and repair-gain decouple: the ``dying-gate''
 hypothesis is false, and baseline strength --- not gate death --- is
-the tracking variable (Sec.~\ref{sec:gnmlp}).
+the tracking variable (Sec.~\ref{sec:gnmlp}). A post-hoc
+$320$-run width$\times$normalization factor scan separates the two
+deltas of that control and confirms the attribution to normalization:
+the gain collapse appears at matched width, and widening the plain
+trunk moves the gain the \emph{other} way (Sec.~\ref{sec:gnmlp}).
 \item A practitioner boundary condition: own-segment bias repairs pay
 only on weak-baseline, high-mortality configurations; on
 strong-feature backbones they silently trade retention for learning
@@ -158,23 +168,38 @@ chance ($1/T$) throughout training.
 is inflated $0.62$ vs.\ $0.11$ (active) by argmax ties over dead
 gates; mortality at $T{=}10$ is $57.2\%$.
 \item \textbf{Repair.} Adding $b \in \{1,3,10\}$ to the own-segment
-gate entry lifts the learning term $\Delta\ell = +1.4$ to $+4.6$
-(all paired $t \ge 2.4$), with final accuracy improving
-simultaneously in $17/20$ cells.
+gate entry lifts the learning term $\Delta\ell = +0.8$ to $+4.6$
+($\Delta\ell>0$ in $22/22$ dose cells, significant in $20/22$; paired
+$|t|$ up to $14.7$), with final accuracy improving
+simultaneously in $19/22$ cells.
 \end{enumerate}
 
 \paragraph{Pre-registered criteria (fixed before any data).}
 G1 (repair generalizes): $\ge 15/20$ dose cells with paired
-$\Delta\ell > 0$ significant, $\ge 18/20$ sign-consistent, with a
+$\Delta\ell > 0$ significant, $\ge 18/20$ sign-consistent, $\Delta\mathrm{avg}$
+and $\Delta\ell$ simultaneously significant in $\ge 12/20$, with a
 saturation guard ($\ell_0 > 90$ cells excluded). The pre-registration
 template carried S1's ``$20$ cells'' denominator over verbatim; the
 conv grid is $2$ datasets $\times$ $2$ depths $\times$ $3$ doses
 $= 12$ cells (no saturated cells arose), and all criteria are
-evaluated against $12$. G2 (artifact
-replicates): untrained-naive share exceeds active share by
-$\ge 0.05$. E4 (dying-gate control): confirms if GN mortality
+evaluated against $12$. We deliberately did \emph{not} rescale the
+absolute thresholds to the smaller grid, which means all three G1
+thresholds are unreachable at $n{=}12$: we report G1 as dead, and
+Sec.~\ref{sec:whattracks} shows the outcome is unchanged under any
+rescaling. G2 (artifact replicates) is a two-part criterion: an
+untrained probe whose naive share exceeds the active share by
+$\ge 0.05$ \emph{and} a trained $b{=}0$ arm whose naive share falls
+back to within $0.05$ of the active share. Only the second part was
+executed (the untrained probe was not run); the second part is met
+trivially, so we report G2 as dead on the executed half, with the
+unexecuted half flagged rather than quietly dropped. G3 (mechanism
+retention) was conditional on G1 surviving and therefore never
+triggered. E4 (dying-gate control): confirms if GN mortality
 $\le 0.10$ \emph{and} the repair vanishes; refutes if mortality
-$> 0.30$ or gain retention $\ge 50\%$.
+$> 0.30$ or gain retention $\ge 50\%$. A dated amendment documenting
+every one of these deviations, criterion by criterion, is included in
+the artifact (``prereg/S3\_CNN\_预注册\_修订说明\_2026-10-27.md''); the
+original pre-registration text is left untouched.
 
 % =====================================================================
 \section{ConvADNet: the repair does not transfer}
@@ -203,8 +228,13 @@ $\lambda{=}1000$, seeds $0$--$9$ per cell). $160$ runs total
 Table~\ref{tab:convdose} reports paired differences against $b{=}0$.
 Against the pre-registered bar ($\ge 15/20$ cells significant), the
 result is unambiguous: \textbf{$4/12$ cells} significant, largest
-effect $+1.46$ ($t{=}2.1$), sign-consistency $11/12$. The MLP's
-effects were $3$--$30\times$ larger with $t$ up to $26$
+effect $+1.46$ ($t{=}2.1$), sign-consistency $11/12$. The third
+pre-registered G1 condition --- $\Delta\ell$ and $\Delta\mathrm{avg}$
+simultaneously significant --- fails most completely of the three:
+\textbf{$0/12$ cells}, i.e.\ no conv dose cell moves the learning term
+and the final accuracy in the same significant direction at once. In the
+five conv cells with a matched bare-MLP counterpart, the MLP's effects were
+$4$--$56\times$ larger with paired $|t|$ up to $14.7$
 (Table~\ref{tab:three}, column $\Delta\ell$). Worse, final accuracy
 \emph{reverses}: at fashion $T{=}10$, $b{=}10$ costs
 $\Delta\mathrm{avg} = -2.29$ ($t{=}-3.1$) --- the repair buys a
@@ -303,9 +333,13 @@ The natural reading of Sec.~\ref{sec:conv} is: the repair worked in
 S1 because it revived dying gates, and conv gates do not die. This
 ``dying-gate hypothesis'' makes a sharp same-architecture prediction:
 insert a normalization layer into the MLP (features $t =
-\mathrm{GN}(\mathrm{ff}(x))$, the \emph{only} delta; $80$ runs,
+\mathrm{GN}(\mathrm{ff}(x))$; $80$ runs,
 seeds $0$--$9$, $b \in \{0,1,3,10\}$, both datasets, $T{=}10$) ---
 mortality should fall and the repair should weaken accordingly.
+One deviation from strict matching is disclosed rather than hidden:
+the GN-MLP uses $2000$ hidden units where the bare MLP uses $256$, so
+the control differs in width as well as normalization; a factor scan
+below separates the two.
 
 The prediction fails in both halves (Table~\ref{tab:three}, middle
 rows). Mortality \emph{rises} ($0.765$/$0.855$ vs.\ bare's
@@ -357,6 +391,59 @@ $+0.36$ & $-2.29^{*}$ \\
 \end{tabular}
 \end{table}
 
+\paragraph{Width vs.\ normalization: a $2{\times}2$ factor scan.}
+The width deviation disclosed above is not merely acknowledged --- it
+is measured. We re-ran the bare-MLP vs.\ GN-MLP comparison as a full
+$2{\times}2$ factor design: hidden width $n_h \in \{256, 2000\}$
+crossed with normalization $\{$none, $\mathrm{GN}\}$, at $b \in
+\{0,1,3,10\}$, both datasets, $10$ seeds --- $320$ runs. The scan is
+an independent reimplementation, and its GN-MLP cells replicate the
+original $80$-run records: $\ell_0$ $93.4$/$79.2$ vs.\
+$93.5$/$79.3$, gain $+0.58$/$+0.49$ vs.\ $+0.57$/$+0.36$.
+
+\begin{table}[t]
+\centering\small
+\caption{Width $\times$ normalization factor scan ($n{=}10$; paired
+vs.\ each cell's own $b{=}0$; $b{=}10$ learning-term gain with paired
+$t$). The GN collapse appears at both widths; the width effect on the
+plain trunk has the opposite sign.}
+\label{tab:twobytwo}
+\begin{tabular}{llrr}
+\toprule
+dataset & config & $\ell_0$ & $\Delta\ell_{b=10}$ \\
+\midrule
+MNIST & $n_h{=}256$, plain & $74.3$ & $+3.32^{*}$ ($t{=}14.7$) \\
+MNIST & $n_h{=}256$, GN    & $88.0$ & $+0.71^{*}$ ($t{=}7.5$) \\
+MNIST & $n_h{=}2000$, plain & $77.1$ & $+4.31^{*}$ ($t{=}12.5$) \\
+MNIST & $n_h{=}2000$, GN    & $93.4$ & $+0.58^{*}$ ($t{=}10.1$) \\
+\midrule
+Fashion & $n_h{=}256$, plain & $56.8$ & $+1.39^{*}$ ($t{=}2.4$) \\
+Fashion & $n_h{=}256$, GN    & $72.4$ & $-0.16$ ($t{=}-0.8$) \\
+Fashion & $n_h{=}2000$, plain & $60.0$ & $+3.45^{*}$ ($t{=}9.6$) \\
+Fashion & $n_h{=}2000$, GN    & $79.2$ & $+0.49^{*}$ ($t{=}4.5$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two effects separate cleanly (Table~\ref{tab:twobytwo}).
+(i)~\textbf{Normalization collapses the gain at matched width.}
+Holding width fixed at $256$, inserting GN changes the $b{=}10$
+learning-term gain from $+3.32$ to $+0.71$ on MNIST ($-2.61$) and from
+$+1.39$ to $-0.16$ on Fashion-MNIST ($-1.55$); at width $2000$, from
+$+4.31$ to $+0.58$ ($-3.73$) and from $+3.45$ to $+0.49$ ($-2.96$).
+The effect is large, negative, and present at both widths.
+(ii)~\textbf{Width moves the gain the other way.} Widening the plain
+trunk $7.8\times$ \emph{increases} the gain ($+0.99$ on MNIST,
+$+2.06$ on Fashion); under GN the width effect is small and mixed
+($-0.13$, $+0.65$). Width therefore cannot explain the GN-MLP
+collapse --- the wider plain network has, if anything, \emph{more}
+repair gain, consistent with the headroom reading of
+Sec.~\ref{sec:whattracks} (a wider trunk leaves more learning-term
+room open). The decoupling conclusion survives the confound and is
+stronger for it: the same-architecture control's verdict rests on the
+normalization delta, not on the width delta it accidentally also
+carried.
+
 % =====================================================================
 \section{What actually tracks the gain}
 \label{sec:whattracks}
@@ -385,7 +472,9 @@ no significant gain. Headroom is necessary-looking, not sufficient.}
 We stress what the data do \emph{not} support. A quantitative
 headroom law fails: across the six configuration$\times$dataset
 cells the Pearson correlation between HR$_\ell$ and $\Delta\ell$ is
-$r = 0.38$ (cell means; pooled per-seed $r = 0.31$), and the
+$r = 0.38$ (cell means; pooled over per-seed differences, using each
+cell's mean HR$_\ell$, $r = 0.27$; using each seed's own
+$100-\ell_0$ gives $r = 0.31$), and the
  clearest counterexample is ConvADNet on Fashion --- $24.7$ points of
 $\ell$-headroom, gain $+0.36$ ($t{=}1.4$, not significant). Headroom
 is thus \textbf{necessary-looking but not sufficient}: a strong

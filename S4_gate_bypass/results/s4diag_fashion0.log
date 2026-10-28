@@ -1,0 +1,22 @@
+{
+ "ds": "fashion",
+ "seed": 0,
+ "bias": 0.0,
+ "pred_flip_rate_mean": 0.06922222506254912,
+ "pred_flip_rate_max": 0.14900000393390656,
+ "gate_mean_own": 0.5647763848304749,
+ "gate_mean_other": 0.5647763848304749,
+ "dend_col_cosine_mean": 0.0029946051951911714,
+ "dend_col_cosine_min": -0.034416764974594116
+}
+{
+ "ds": "fashion",
+ "seed": 0,
+ "bias": 10.0,
+ "pred_flip_rate_mean": 0.0,
+ "pred_flip_rate_max": 0.0,
+ "gate_mean_own": 0.5647976577281952,
+ "gate_mean_other": 0.5647976577281952,
+ "dend_col_cosine_mean": 0.003102030242896742,
+ "dend_col_cosine_min": -0.03458164632320404
+}

@@ -133,14 +133,14 @@ for pidx, ax in zip(range(3), axes):
                 for r in json.load(open(f))['results']:
                     if 'error' not in r and r.get('kind') == 'gran':
                         recs.append(r)
-            # S3 E2: T20 b=1/3 stored in c2_{ds}_b{1,3}.json (no .part*)
+            # T=20 neuron arm at b=1 is a single merged file (no shards exist
+            # for b=1); b=3 and b=10 come from the .part* shards above.
             if T == 20:
-                for bfill in (1, 3):
-                    fp = os.path.join(RES, f's3e2_t20_{ds}_b{bfill}.json')
-                    if os.path.isfile(fp):
-                        for r in json.load(open(fp))['results']:
-                            if 'error' not in r and r.get('kind') == 'gran':
-                                recs.append(r)
+                fp = os.path.join(RES, f'c2t20_{ds}_b1_neuron.json')
+                if os.path.isfile(fp):
+                    for r in json.load(open(fp))['results']:
+                        if 'error' not in r and r.get('kind') == 'gran':
+                            recs.append(r)
             xs_, ys_ = [], []
             for b in (0.0, 1.0, 3.0, 10.0):
                 sb, s0 = sel(recs, ds, b, 'neuron'), sel(recs, ds, 0.0, 'neuron')

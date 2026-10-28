@@ -65,8 +65,15 @@ class BiasADNet(ADNet):
     (train, eval, usage alike); learned mode adds a trained per-(task,seg)
     bias table seg_bias (ntask, nseg) initialised at zero.
     """
-    def __init__(self, ntask, nseg, own_bias=0.0, bias_mode="fixed"):
-        super().__init__(protected=True, nseg=nseg, ntask=ntask)
+    def __init__(self, ntask, nseg, own_bias=0.0, bias_mode="fixed", nh=None):
+        # FIX 2026-10-27: nh is now passed through to ADNet so that the
+        # repaired arm can be run at a width that matches the ablation
+        # control exactly. Default (None) keeps the previous behaviour
+        # (exp4's NH = 256).
+        if nh is None:
+            super().__init__(protected=True, nseg=nseg, ntask=ntask)
+        else:
+            super().__init__(nh=nh, protected=True, nseg=nseg, ntask=ntask)
         self.own_bias, self.bias_mode = own_bias, bias_mode
         if bias_mode == "learned":
             self.seg_bias = nn.Parameter(torch.zeros(ntask, nseg))

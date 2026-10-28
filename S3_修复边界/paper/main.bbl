@@ -6,24 +6,40 @@
   \def\href#1#2{#2} \def\path#1{#1}\fi
 
 \bibitem{zhou2026delpS1}
-R.~Zhou, Segment specialization in active-dendrite continual learning: An audit, an artifact, and a causal repair, Preprint, Zenodo, version 1, doi:10.5281/zenodo.23637973, code: \url{https://github.com/zhouranxi/delp-anchor-budget} (2026).
+R.~Zhou, Segment specialization in active-dendrite continual learning: An
+  audit, an artifact, and a causal repair, Preprint, Zenodo, version 3,
+  doi:10.5281/zenodo.23685865, code:
+  \url{https://github.com/zhouranxi/delp-anchor-budget} (2026).
 
 \bibitem{iyer2022}
-A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
+A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding
+  catastrophe: Active dendrites enable multi-task learning in dynamic
+  environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219
+  (2022).
 
 \bibitem{boahen2022}
-K.~Boahen, Dendrocentric learning for synthetic intelligence, Nature 612 (2022) 43--50.
+K.~Boahen, Dendrocentric learning for synthetic intelligence, Nature 612 (2022)
+  43--50, doi:10.1038/s41586-022-05340-6.
 
 \bibitem{poirazi2020}
-P.~Poirazi, A.~Papoutsi, Illuminating dendritic function with computational models, Nature Reviews Neuroscience 21 (2020) 303--321.
+P.~Poirazi, A.~Papoutsi, Illuminating dendritic function with computational
+  models, Nature Reviews Neuroscience 21 (2020) 303--321,
+  doi:10.1038/s41583-020-0301-7.
 
 \bibitem{kirkpatrick2017}
-J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al., Overcoming catastrophic forgetting in neural networks, Proceedings of the National Academy of Sciences 114~(13) (2017) 3521--3526.
+J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al., Overcoming catastrophic
+  forgetting in neural networks, Proceedings of the National Academy of
+  Sciences 114~(13) (2017) 3521--3526, doi:10.1073/pnas.1611835114.
 
 \bibitem{masse2018}
-N.~Y. Masse, G.~D. Grant, D.~J. Freedman, Alleviating catastrophic forgetting using context-dependent gating and synaptic stabilization, Proceedings of the National Academy of Sciences 115~(44) (2018) E10467--E10475.
+N.~Y. Masse, G.~D. Grant, D.~J. Freedman, Alleviating catastrophic forgetting
+  using context-dependent gating and synaptic stabilization, Proceedings of the
+  National Academy of Sciences 115~(44) (2018) E10467--E10475,
+  doi:10.1073/pnas.1803839115.
 
 \bibitem{parisi2019}
-G.~I. Parisi, R.~Kemker, J.~L. Part, C.~Kanan, S.~Wermter, Continual lifelong learning with neural networks: A review, Neural Networks 113 (2019) 54--71.
+G.~I. Parisi, R.~Kemker, J.~L. Part, C.~Kanan, S.~Wermter, Continual lifelong
+  learning with neural networks: A review, Neural Networks 113 (2019) 54--71,
+  doi:10.1016/j.neunet.2019.01.012.
 
 \end{thebibliography}

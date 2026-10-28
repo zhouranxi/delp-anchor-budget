@@ -10,6 +10,17 @@ h = kwta(sigmoid(ff(x)))) on the identical protocol (T10, lam=1000 anchor
 chain on shared ff, seeds 0-9) and compare favg with the b=10 BiasADNet arm
 from s4ctx. If they match within noise, the repair = gate ablation story
 is confirmed; if b=10 > no-dendrite, the biased routing adds something.
+
+=== FIX 2026-10-27 (data-consistency audit) ===
+1. **lambda was never applied.** `loss = loss + anchor_penalty_like(a, P)`
+   omitted the lam factor (anchor_penalty_like does not include it), while
+   the dendritic reference uses `loss = loss + lam * pen`. Now fixed.
+2. **width mismatch.** NoDendNet hard-coded nh=2000 while the dendritic
+   arms actually use exp4_branch_protection.NH = 256 (the comment
+   "Keeps the SAME ff/out shapes as ADNet (nh=2000)" was wrong). The two arms
+   of the ablation therefore differed by ~7x in parameter count. nh is now
+   an explicit argument, defaulting to the real ADNet default, and the
+   applied lam / nh are recorded in the output.
 """
 
 import argparse, json, os, sys
@@ -24,6 +35,7 @@ for _cand in (os.path.join(_here, "..", "dendritic-lab"),
         break
 sys.path.insert(0, _here)
 
+import exp4_branch_protection as e4
 import exp6_baselines as eb
 from exp6_baselines import (get_perms, eval_model, finish, DEV, EPOCHS,
                             BS, NTRAIN, LR)
@@ -33,17 +45,21 @@ from anchor_budget import load_data
 
 NTASK = 10
 LAM = 1000.0
+NH = e4.NH          # 256 -- matches the dendritic arms exactly
 
 
 class NoDendNet(torch.nn.Module):
     """e4's degenerate ADNet: no dendrites, h = kwta(sigmoid(ff(x))).
 
-    Keeps the SAME ff/out shapes as ADNet (nh=2000) and the same anchor
+    FIX 2026-10-27: nh now defaults to the SAME width as the dendritic arms
+    (exp4_branch_protection.NH = 256). The previous hard-coded nh=2000 made
+    this arm ~7x wider than the dendritic arm it was compared against.
+    Keeps the same ff/out shapes as ADNet and the same anchor
     chain interface (flat_params-compatible keys) so the protection penalty
     applies to ff/out exactly as in the dendritic nets.
     """
 
-    def __init__(self, nh=2000):
+    def __init__(self, nh=NH):
         super().__init__()
         self.nh = nh
         self.ff = torch.nn.Linear(784, nh)
@@ -65,11 +81,11 @@ def e4_kwta(h, k=64):
     return h * gate
 
 
-def run(ds, seed, lam=LAM):
+def run(ds, seed, lam=LAM, nh=NH):
     torch.manual_seed(seed)
     xtr, ytr, xte, yte = load_data(ds)
     perms = get_perms(seed, NTASK)
-    model = NoDendNet().to(DEV)
+    model = NoDendNet(nh=nh).to(DEV)
     opt = torch.optim.Adam(model.parameters(), lr=LR)
     anchors, acc = [], {}
     for phase in range(NTASK):
@@ -85,8 +101,10 @@ def run(ds, seed, lam=LAM):
                 if anchors:
                     # anchor on ff/out keys only (no dend keys in this net)
                     P = {k: v for k, v in flat_params_like(model).items()}
+                    pen = 0.0
                     for a in anchors:
-                        loss = loss + anchor_penalty_like(a, P)
+                        pen = pen + anchor_penalty_like(a, P)
+                    loss = loss + lam * pen   # FIX 2026-10-27: apply lambda
                 loss.backward()
                 opt.step()
         anchors.append(make_anchor_nodend(model, xs))
@@ -94,7 +112,8 @@ def run(ds, seed, lam=LAM):
         acc.update(a)
     bwt, favg = finish(acc, NTASK)
     return {"kind": "nodend", "seed": seed, "dataset": ds, "ntask": NTASK,
-            "lam": lam, "bwt": round(bwt, 2), "final_avg": round(favg, 2)}
+            "lam": lam, "nh": nh,
+            "bwt": round(bwt, 2), "final_avg": round(favg, 2)}
 
 
 def flat_params_like(model):
@@ -137,13 +156,15 @@ def anchor_penalty_like(a, P):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="s4nodend.json")
+    ap.add_argument("--nh", type=int, default=NH)
     args = ap.parse_args()
     results = []
     for ds in ("mnist", "fashion"):
         for s in range(10):
-            r = run(ds, s)
+            r = run(ds, s, nh=args.nh)
             results.append(r)
-            print(f"DONE {ds} s{s}: favg={r['final_avg']} bwt={r['bwt']}",
+            print(f"DONE {ds} s{s}: lam={r['lam']} nh={r['nh']} "
+                  f"favg={r['final_avg']} bwt={r['bwt']}",
                   flush=True)
     json.dump({"results": results}, open(args.out, "w"), indent=1)
     print("WROTE", args.out)

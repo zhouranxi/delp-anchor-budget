@@ -1,0 +1,41 @@
+{
+ "note": "S1 result-file renaming: the merged c2_<ds>_b{1,3}.json files held the T=20 NEURON dose arms, not the T=10 arms whose shards carry the same stem; the b=1 files are renamed to c2t20_<ds>_b1_neuron.json (no shards exist for b=1), and the b=3 files were renamed then dropped because their records are fully contained in c2t20_<ds>_b3.json.part0..3.",
+ "renames": [
+  {
+   "from": "c2_mnist_b1.json",
+   "to": "c2t20_mnist_b1_neuron.json",
+   "records": 10,
+   "action": "renamed"
+  },
+  {
+   "from": "c2_mnist_b3.json",
+   "to": "c2t20_mnist_b3_neuron.json",
+   "records": 10,
+   "action": "renamed then removed (subset of the .part* shards)"
+  },
+  {
+   "from": "c2_fashion_b1.json",
+   "to": "c2t20_fashion_b1_neuron.json",
+   "records": 10,
+   "action": "renamed"
+  },
+  {
+   "from": "c2_fashion_b3.json",
+   "to": "c2t20_fashion_b3_neuron.json",
+   "records": 10,
+   "action": "renamed then removed (subset of the .part* shards)"
+  }
+ ],
+ "deleted_duplicates": [
+  "s3e2_t20_mnist_b1.json",
+  "s3e2_t20_mnist_b3.json",
+  "s3e2_t20_fashion_b1.json",
+  "s3e2_t20_fashion_b3.json"
+ ],
+ "final_state": {
+  "T=10 dose arms": "c2_<ds>_b{0,1,3,10}.json.part0..3",
+  "T=20 dose arms b=3/10": "c2t20_<ds>_b{3,10}.json.part0..3",
+  "T=20 dose arm b=1 (neuron only)": "c2t20_<ds>_b1_neuron.json",
+  "T=20 b=0 baseline": "c2t20_<ds>_b0.json.part0..3"
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "ds": "mnist",
+ "seed": 0,
+ "bias": 0.0,
+ "pred_flip_rate_mean": 0.062161113942662875,
+ "pred_flip_rate_max": 0.1770000010728836,
+ "gate_mean_own": 0.564853435754776,
+ "gate_mean_other": 0.564853435754776,
+ "dend_col_cosine_mean": 0.003091528054533733,
+ "dend_col_cosine_min": -0.03396916016936302
+}
+{
+ "ds": "mnist",
+ "seed": 0,
+ "bias": 10.0,
+ "pred_flip_rate_mean": 0.0,
+ "pred_flip_rate_max": 0.0,
+ "gate_mean_own": 0.5649671018123626,
+ "gate_mean_other": 0.5649671018123626,
+ "dend_col_cosine_mean": 0.0031297363703035644,
+ "dend_col_cosine_min": -0.03541950881481171
+}

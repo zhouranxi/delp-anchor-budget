@@ -1,0 +1,9 @@
+{
+ "seed": 0,
+ "init_gate_min": 0.5633586049079895,
+ "init_gate_max": 0.5653784871101379,
+ "init_gate_mean": 0.5645687341690063,
+ "init_sigma": 0.182975172996521,
+ "analytic_Emax": 0.281465263671875,
+ "analytic_sigmoid": 0.5699054161708271
+}

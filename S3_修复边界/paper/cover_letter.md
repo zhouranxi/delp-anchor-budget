@@ -6,7 +6,7 @@ Silently Reverses" for publication in Neural Networks.
 
 The paper is the companion to a dose–response audit of dendritic
 context-gated protection (submitted separately; preprint:
-doi:10.5281/zenodo.23637973). That audit found,
+doi:10.5281/zenodo.23685865). That audit found,
 on bare-MLP active-dendrite networks, that segment–task
 specialization fails to develop, that the standard
 dominant-segment diagnostic is contaminated by dead neurons, and

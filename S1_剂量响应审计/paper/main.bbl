@@ -6,72 +6,119 @@
   \def\href#1#2{#2} \def\path#1{#1}\fi
 
 \bibitem{poirazi2003}
-P.~Poirazi, B.~W. Mel, Pyramidal neuron as two-layer neural network, Neuron 37~(6) (2003) 989--999.
+P.~Poirazi, B.~W. Mel, Pyramidal neuron as two-layer neural network, Neuron
+  37~(6) (2003) 989--999.
 
 \bibitem{london2005}
-M.~London, M.~H{\"a}usser, Dendritic computation, Annual Review of Neuroscience 28 (2005) 503--532.
+M.~London, M.~H{\"a}usser, Dendritic computation, Annual Review of Neuroscience
+  28 (2005) 503--532.
 
 \bibitem{poirazi2020}
-P.~Poirazi, A.~Papoutsi, Illuminating dendritic function with computational models, Nature Reviews Neuroscience 21 (2020) 303--321.
+P.~Poirazi, A.~Papoutsi, Illuminating dendritic function with computational
+  models, Nature Reviews Neuroscience 21 (2020) 303--321.
 
 \bibitem{iyer2022}
-A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding catastrophe: Active dendrites enable multi-task learning in dynamic environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219 (2022).
+A.~Iyer, K.~Grewal, A.~Velu, L.~O. Souza, J.~Forest, S.~Ahmad, Avoiding
+  catastrophe: Active dendrites enable multi-task learning in dynamic
+  environments, Frontiers in Neurorobotics 16, doi:10.3389/fnbot.2022.846219
+  (2022).
 
 \bibitem{zhou2026delp}
-R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated protection for continual learning, Zenodo, version 2, doi:10.5281/zenodo.23602281, code: \url{https://github.com/zhouranxi/delp-audit} (2026).
+R.~Zhou, Where do the gains come from? {An} audit of dendritic context-gated
+  protection for continual learning, Zenodo, version 2,
+  doi:10.5281/zenodo.23685788, code:
+  \url{https://github.com/zhouranxi/delp-audit} (2026).
 
 \bibitem{kirkpatrick2017}
-J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al., Overcoming catastrophic forgetting in neural networks, Proceedings of the National Academy of Sciences 114~(13) (2017) 3521--3526.
+J.~Kirkpatrick, R.~Pascanu, N.~Rabinowitz, et~al., Overcoming catastrophic
+  forgetting in neural networks, Proceedings of the National Academy of
+  Sciences 114~(13) (2017) 3521--3526.
 
 \bibitem{parisi2019}
-G.~I. Parisi, R.~Kemker, J.~L. Part, C.~Kanan, S.~Wermter, Continual lifelong learning with neural networks: A review, Neural Networks 113 (2019) 54--71.
+G.~I. Parisi, R.~Kemker, J.~L. Part, C.~Kanan, S.~Wermter, Continual lifelong
+  learning with neural networks: A review, Neural Networks 113 (2019) 54--71.
 
 \bibitem{xiao2017}
-H.~Xiao, K.~Rasul, R.~Vollgraf, Fashion-{MNIST}: a novel image dataset for benchmarking machine learning algorithms, arXiv preprint arXiv:1708.07747 (2017).
+H.~Xiao, K.~Rasul, R.~Vollgraf, Fashion-{MNIST}: a novel image dataset for
+  benchmarking machine learning algorithms, arXiv preprint arXiv:1708.07747
+  (2017).
+
+\bibitem{zhou2026bypass}
+R.~Zhou, The repair bypasses the gate: Context noise exposes the mechanism of
+  own-segment bias in active-dendrite continual learning, Preprint, 2026,
+  companion paper (S4); code and raw records in
+  \url{https://github.com/zhouranxi/delp-anchor-budget} (2026).
 
 \bibitem{ujfalussy2018}
-B.~B. Ujfalussy, J.~K. Makara, M.~Lengyel, T.~Branco, Global and multiplexed dendritic computations under in vivo-like conditions, Neuron 100~(3) (2018) 579--592.
+B.~B. Ujfalussy, J.~K. Makara, M.~Lengyel, T.~Branco, Global and multiplexed
+  dendritic computations under in vivo-like conditions, Neuron 100~(3) (2018)
+  579--592.
 
 \bibitem{boyle2025}
-J.~A. Boyle, et~al., Exploring dendrites in large-scale neuromorphic architectures, in: Proc. Int. Conf. on Neuromorphic Systems (ICONS), 2025, pp. 49--56.
+J.~A. Boyle, et~al., Exploring dendrites in large-scale neuromorphic
+  architectures, in: Proc. Int. Conf. on Neuromorphic Systems (ICONS), 2025,
+  pp. 49--56.
 
 \bibitem{baek2024}
-E.~Baek, et~al., Neuromorphic dendritic network computation with silent synapses for visual motion perception, Nature ElectronicsDoi:10.1038/s41928-024-01171-7 (2024).
+E.~Baek, et~al., Neuromorphic dendritic network computation with silent
+  synapses for visual motion perception, Nature
+  ElectronicsDoi:10.1038/s41928-024-01171-7 (2024).
 
 \bibitem{boahen2022}
-K.~Boahen, Dendrocentric learning for synthetic intelligence, Nature 612 (2022) 43--50.
+K.~Boahen, Dendrocentric learning for synthetic intelligence, Nature 612 (2022)
+  43--50.
 
 \bibitem{zenke2017}
-F.~Zenke, B.~Poole, S.~Ganguli, Continual learning through synaptic intelligence, in: Proc. Int. Conf. on Machine Learning (ICML), 2017, pp. 3987--3995.
+F.~Zenke, B.~Poole, S.~Ganguli, Continual learning through synaptic
+  intelligence, in: Proc. Int. Conf. on Machine Learning (ICML), 2017, pp.
+  3987--3995.
 
 \bibitem{aljundi2018}
-R.~Aljundi, F.~Babiloni, M.~Elhoseiny, M.~Rohrbach, T.~Tuytelaars, Memory aware synapses: Learning what (not) to forget, in: Proc. European Conf. on Computer Vision (ECCV), 2018, pp. 144--161.
+R.~Aljundi, F.~Babiloni, M.~Elhoseiny, M.~Rohrbach, T.~Tuytelaars, Memory aware
+  synapses: Learning what (not) to forget, in: Proc. European Conf. on Computer
+  Vision (ECCV), 2018, pp. 144--161.
 
 \bibitem{chaudhry2018}
-A.~Chaudhry, P.~K. Dokania, T.~Ajanthan, P.~H.~S. Torr, Riemannian walk for incremental learning: Understanding forgetting and intransigence, in: Proceedings of the European Conference on Computer Vision (ECCV), 2018, pp. 556--572.
+A.~Chaudhry, P.~K. Dokania, T.~Ajanthan, P.~H.~S. Torr, Riemannian walk for
+  incremental learning: Understanding forgetting and intransigence, in:
+  Proceedings of the European Conference on Computer Vision (ECCV), 2018, pp.
+  556--572.
 
 \bibitem{mallya2018}
-A.~Mallya, S.~Lazebnik, {PackNet}: Adding multiple tasks to a single network by iterative pruning, in: Proc. IEEE Conf. on Computer Vision and Pattern Recognition (CVPR), 2018, pp. 7765--7773.
+A.~Mallya, S.~Lazebnik, {PackNet}: Adding multiple tasks to a single network by
+  iterative pruning, in: Proc. IEEE Conf. on Computer Vision and Pattern
+  Recognition (CVPR), 2018, pp. 7765--7773.
 
 \bibitem{serra2018}
-J.~Serra, D.~Sur{\'i}s, M.~Miron, A.~Karatzoglou, Overcoming catastrophic forgetting with hard attention to the task, in: Proc. Int. Conf. on Machine Learning (ICML), 2018, pp. 4548--4557.
+J.~Serra, D.~Sur{\'i}s, M.~Miron, A.~Karatzoglou, Overcoming catastrophic
+  forgetting with hard attention to the task, in: Proc. Int. Conf. on Machine
+  Learning (ICML), 2018, pp. 4548--4557.
 
 \bibitem{masse2018}
-N.~Y. Masse, G.~D. Grant, D.~J. Freedman, Alleviating catastrophic forgetting using context-dependent gating and synaptic stabilization, Proceedings of the National Academy of Sciences 115~(44) (2018) E10467--E10475.
+N.~Y. Masse, G.~D. Grant, D.~J. Freedman, Alleviating catastrophic forgetting
+  using context-dependent gating and synaptic stabilization, Proceedings of the
+  National Academy of Sciences 115~(44) (2018) E10467--E10475.
 
 \bibitem{musgrave2020}
-K.~Musgrave, S.~Belongie, S.-N. Lim, A metric learning reality check, in: European Conference on Computer Vision, 2020.
+K.~Musgrave, S.~Belongie, S.-N. Lim, A metric learning reality check, in:
+  European Conference on Computer Vision, 2020.
 
 \bibitem{lucic2018}
-M.~Lucic, K.~Kurach, M.~Michalski, S.~Gelly, O.~Bousquet, Are {GANs} created equal? {A} large-scale study, in: Advances in Neural Information Processing Systems, Vol.~31, 2018.
+M.~Lucic, K.~Kurach, M.~Michalski, S.~Gelly, O.~Bousquet, Are {GANs} created
+  equal? {A} large-scale study, in: Advances in Neural Information Processing
+  Systems, Vol.~31, 2018.
 
 \bibitem{melis2018}
-G.~Melis, C.~Dyer, P.~Blunsom, On the state of the art of evaluation in neural language models, in: Proceedings of EMNLP, 2018.
+G.~Melis, C.~Dyer, P.~Blunsom, On the state of the art of evaluation in neural
+  language models, in: Proceedings of EMNLP, 2018.
 
 \bibitem{agarwal2021}
-R.~Agarwal, M.~Schwarzer, P.~S. Castro, A.~Courville, M.~G. Bellemare, Deep reinforcement learning at the edge of the statistical precipice, in: Advances in Neural Information Processing Systems, Vol.~34, 2021.
+R.~Agarwal, M.~Schwarzer, P.~S. Castro, A.~Courville, M.~G. Bellemare, Deep
+  reinforcement learning at the edge of the statistical precipice, in: Advances
+  in Neural Information Processing Systems, Vol.~34, 2021.
 
 \bibitem{lipton2019}
-Z.~C. Lipton, J.~Steinhardt, Troubling trends in machine learning scholarship, Communications of the ACM 62~(6) (2019) 45--53.
+Z.~C. Lipton, J.~Steinhardt, Troubling trends in machine learning scholarship,
+  Communications of the ACM 62~(6) (2019) 45--53.
 
 \end{thebibliography}

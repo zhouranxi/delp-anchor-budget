@@ -14,6 +14,19 @@ Arms: (rho, b, ds) grid, seeds 0-9, lam=1000, T=10, neuron granularity.
 Mirrors branch_delp.run_gran exactly (anchors accumulated per phase, penalty
 summed over the stack, DataLoader shuffle, protect_grads) -- the ONLY deltas
 are (i) noisy final-phase eval and (ii) BiasADNet for b=10 arms.
+
+=== FIX 2026-10-27 (data-consistency audit) ===
+1. **lambda was never applied.** The original had
+       loss = loss + anchor_penalty(a, P, a["gran"])
+   but anchor_penalty does NOT include lambda (branch_delp.py:185-190), while
+   the reference implementation uses `loss = loss + lam * pen`
+   (branch_delp.py:259). Every S4 run so far therefore executed with an
+   effectively lambda=1 penalty while the record claimed "lam": 1000.0.
+   Now: `loss = loss + lam * pen`.
+2. **hidden width.** The paper declared n_h=2000; the real ADNet default is
+   exp4_branch_protection.NH = 256. nh is now an explicit argument and is
+   recorded in the output.
+3. The record now carries the true applied lam and nh.
 """
 
 import argparse, json, os, sys, time
@@ -41,6 +54,7 @@ NTASK = 10
 SEEDS = list(range(10))
 RHOS = [0.0, 0.1, 0.2, 0.4]
 BIASES = [0.0, 10.0]
+NH = e4.NH          # 256 -- the real default every bare-MLP arm uses
 
 
 def eval_noisy_final(model, xte, yte, perms, ntask, rho, soft, seed):
@@ -70,7 +84,7 @@ def eval_noisy_final(model, xte, yte, perms, ntask, rho, soft, seed):
     return acc
 
 
-def run_noise(ds, seed, own_bias, rhos, lam=LAM, soft=False):
+def run_noise(ds, seed, own_bias, rhos, lam=LAM, soft=False, nh=NH):
     torch.manual_seed(seed)
     data = load_data(ds)
     xtr, ytr, xte, yte = data
@@ -78,9 +92,9 @@ def run_noise(ds, seed, own_bias, rhos, lam=LAM, soft=False):
 
     if own_bias:
         model = BiasADNet(NTASK, NTASK, own_bias=own_bias,
-                          bias_mode="fixed").to(DEV)
+                          bias_mode="fixed", nh=nh).to(DEV)
     else:
-        model = ADNet(protected=True, nseg=NTASK, ntask=NTASK).to(DEV)
+        model = ADNet(protected=True, nseg=NTASK, ntask=NTASK, nh=nh).to(DEV)
     opt = torch.optim.Adam(model.parameters(), lr=LR)
     anchors, acc = [], {}
 
@@ -98,8 +112,10 @@ def run_noise(ds, seed, own_bias, rhos, lam=LAM, soft=False):
                 loss = F.cross_entropy(out, yb)
                 if anchors:
                     P = flat_params(model)
+                    pen = 0.0
                     for a in anchors:
-                        loss = loss + anchor_penalty(a, P, a["gran"])
+                        pen = pen + anchor_penalty(a, P, a["gran"])
+                    loss = loss + lam * pen   # FIX 2026-10-27: apply lambda
                 loss.backward()
                 model.protect_grads(phase)
                 opt.step()
@@ -121,7 +137,7 @@ def run_noise(ds, seed, own_bias, rhos, lam=LAM, soft=False):
                                  for c in range(NTASK)}
 
     return {"kind": "ctxnoise", "seed": seed, "dataset": ds, "ntask": NTASK,
-            "lam": lam, "bias": own_bias, "soft": soft,
+            "lam": lam, "nh": nh, "bias": own_bias, "soft": soft,
             "final_avg_by_rho": {str(k): round(v, 2) for k, v in favgs.items()},
             "acc_final_by_rho": accs_by_rho}
 
@@ -132,6 +148,7 @@ def main():
     ap.add_argument("--n-shards", type=int, default=1)
     ap.add_argument("--soft", action="store_true")
     ap.add_argument("--out", type=str, required=True)
+    ap.add_argument("--nh", type=int, default=NH)
     args = ap.parse_args()
 
     if args.soft:
@@ -144,9 +161,9 @@ def main():
     results = []
     t0 = time.time()
     for ds, b, s in jobs:
-        r = run_noise(ds, s, b, RHOS, soft=args.soft)
+        r = run_noise(ds, s, b, RHOS, soft=args.soft, nh=args.nh)
         results.append(r)
-        print(f"DONE: ds={ds} b={b} s={s} "
+        print(f"DONE: ds={ds} b={b} s={s} lam={r['lam']} nh={r['nh']} "
               f"favg(rho)={r['final_avg_by_rho']} "
               f"[{time.time()-t0:.0f}s]", flush=True)
 

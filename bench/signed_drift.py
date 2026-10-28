@@ -120,6 +120,8 @@ def run(seed, data, perms, bias):
     ell = sum(acc[(t, t)] for t in range(NTASK)) / NTASK
     return {"seed": seed, "bias": bias, "bwt": round(bwt, 2),
             "final_avg": round(favg, 2), "ell": round(ell, 2),
+            # record the applied protocol so the artifact is self-checking
+            "lam": LAM, "nh": NH, "ntask": NTASK,
             "phases": phases}
 
 

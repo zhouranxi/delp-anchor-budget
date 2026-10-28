@@ -78,6 +78,6 @@
 
 ## A3 — segment-resolved anchor construction variants
 
-| dataset | variant | n | ell | avg | bwt | Δℓ vs neuron | t | p_Holm | 90% CI |
+| dataset | variant | n | ell | avg | Δℓ vs neuron | t | p_Holm | 90% CI |
 |---|---|---|---|---|---|---|---|---|---|
 

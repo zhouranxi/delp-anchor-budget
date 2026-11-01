@@ -42,8 +42,14 @@ for ax, pol in zip(axes.ravel(), pols):
     for k, snap in enumerate(sh):
         for o in snap:
             G[o, k] = 1.0
-    ax.imshow(G, aspect="auto", interpolation="nearest", cmap="Blues",
-              vmin=0, vmax=3)
+    # pcolormesh keeps the heat map fully vector (no raster embedding);
+    # origin="upper" + inverted y reproduces imshow's orientation exactly.
+    ax.pcolormesh(np.arange(G.shape[1] + 1), np.arange(G.shape[0] + 1),
+                  G, cmap="Blues", vmin=0, vmax=3, edgecolors="none",
+                  shading="flat")
+    ax.set_xlim(0, G.shape[1])
+    ax.set_ylim(G.shape[0], 0)
+    ax.set_aspect("auto")
     ax.set_title(pol, fontsize=9)
     ax.set_xticks([0, 9, 19])
     ax.set_yticks([0, 9, 19])

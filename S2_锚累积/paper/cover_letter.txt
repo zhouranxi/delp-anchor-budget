@@ -1,0 +1,68 @@
+Cover letter — Pattern Recognition submission
+
+Manuscript title: The Anchor Accumulation Problem: Bounded Anchor Sets Recover Plasticity in Usage-Localized Elastic Weight Consolidation
+Article type: Research paper (Full Length Article)
+Corresponding author: Ranxi Zhou (Hunan University of Chinese Medicine, Changsha, China)
+Preprint / reproducibility package: doi:10.5281/zenodo.23668522
+
+Dear Editor-in-Chief,
+
+We are pleased to submit the above manuscript for consideration in Pattern Recognition.
+
+Usage-localized elastic weight consolidation (DeLP) protects dendritic segments with per-neuron elastic anchors accumulated over the task sequence. In a precursor audit study (archived as a Zenodo preprint), we showed that usage weighting survives a parameter-budget cap while other design choices add little. The present manuscript identifies and studies the cost that any such stack-building scheme pays as the task sequence grows: anchors from early tasks persist at full weight and act as an elastic drag on later learning. We call this the anchor accumulation problem and study it directly by bounding the anchor stack at M entries. The subject is the stability-plasticity trade-off that recent work in Pattern Recognition has addressed from the parameterization and replay sides; ours addresses the accumulation mechanism inside the regularizer itself, and the paper's headline result is a single law relating soft and hard protection bounds.
+
+This work sits squarely in the pattern-recognition literature the journal serves. It asks a question about how a recognizer should retain what it has learned while still acquiring new categories, and it answers it by showing that the accumulation mechanism inside a regularizer — not the eviction rule, not the discount schedule — is what costs plasticity, and by deriving a single law relating soft and hard protection bounds. Our diagnosis generalizes beyond the specific scheme: any recognizer that stores one regularization term per task pays the cost we measure.
+
+Responses to the three questions required in the Guide for Authors
+
+1. Was your study compared to the state-of-the-art? If so, please list five key references.
+
+Yes. We compare against, and report results for, the schemes that are state-of-the-art within the regularizer family our diagnosis targets — i.e. those that are able to accumulate the anchor stack we show to be costly — as well as against the strongest baselines that cannot accumulate it. The five key references are:
+
+1. Kirkpatrick et al., Overcoming catastrophic forgetting in neural networks (PNAS, 2017) — the accumulated-EWC baseline whose per-task quadratic stack is the object of our diagnosis.
+2. Chaudhry et al., Riemannian Walk for Incremental Learning (ECCV, 2018) — online EWC, the discounted-posterior arm; we show it is itself a soft bound on the same accumulated mass, and we sweep gamma in {0.5, 0.9, 1} against it.
+3. Buzzega et al., Dark Experience for General Continual Learning: a Strong, Simple Baseline (NeurIPS, 2020) — the rehearsal-side reference point. We include it because a strong baseline is what makes exemplar-free regularizer comparisons legible, and we report its regime boundary explicitly.
+4. Feng et al., TIPS: Two-level prompt selection for more stability-plasticity balance in continual learning (Pattern Recognition, 2026) — a recent same-journal treatment of the same trade-off, by a parameterization route; ours is complementary, targeting the accumulation mechanism rather than the network.
+5. Sun et al., Towards plastic and stable incremental learning: A dual-learner framework with cumulative parameter averaging (Pattern Recognition, 2026) — a recent same-journal solution that separates plastic and stable learners; also complementary, since we show that a single learner with a bounded protection stack recovers much of the same plasticity.
+
+We also compare against three further families for completeness: corrected SI, plain (non-accumulating) EWC, and a no-protection reference at lambda = 0; and we discuss the architectural/budgeting alternatives (PackNet, HAT) and the recent prompt-based and LoRA-based continual-learning methods in the related-work section.
+
+2. Which public datasets are used to evaluate the proposed approach?
+
+Three public benchmarks, all under a single identical protocol with paired seeds:
+
+- Permuted-MNIST — the primary benchmark (MLP backbone with dendritic segments; T = 10 and T = 20 tasks).
+- Fashion-MNIST — replication on a harder, non-digit visual domain.
+- Split-CIFAR-100 — class-incremental natural images with a ResNet-18 backbone. The protocol partitions the 100 classes into T contiguous slices of 100/T classes each (10 classes/task at T = 10, 5 classes/task at T = 20), matching the released code.
+
+No private or non-public data is used.
+
+3. Which measures are used in the validation framework?
+
+- Final average accuracy over the task sequence (primary metric).
+- Backward Transfer (BWT) — the standard forgetting measure.
+- The learning term l (ell) — from the retention decomposition a_bar_T = l + ((T-1)/T) BWT, which localizes where the loss originates; verified exact to rounding precision on all 260 CIFAR records.
+- Paired significance testing — the paired t statistic plus the two-sided Wilcoxon signed-rank p-value and the Shapiro-Wilk p-value on the paired differences. The two tests agree on every headline comparison (Wilcoxon p = 0.002 in all four primary cases, the smallest attainable two-sided value at n = 10); we report both because at n = 10 the parametric test's normality assumption is not always satisfied.
+- Memory footprint — anchor-stack size, to show the storage axis separately from the plasticity axis.
+
+Contributions
+
+1. A decomposition-based diagnosis. Writing average retention as a_bar_T = l + ((T-1)/T) BWT localizes the cost of long sequences not in the architecture but in the learning term l. The identity holds to rounding precision on every record across three benchmarks (about 650 paired runs).
+
+2. A bounded anchor set as the repair, with references that bound the claim. A FIFO budget recovers +4.5 / +9.0 points over unbounded DeLP at T = 10 / T = 20 (M = 5; n = 10 paired seeds; t(9) > 19; Wilcoxon p = 0.002), and +12.3 points at M = 2 (66.7%); monotone across a seven-point dose-response; replicated on Fashion-MNIST (+13.6). We also run the schemes that cannot accumulate the problem — plain EWC and online EWC over a gamma-sweep — plus a no-protection baseline, and we report an honest negative result for our own repair: a tuned online-EWC discount overtakes the budget at every grid cell at matched forgetting. The explanation is mechanism-level and is the paper's most transferable finding: discounting is itself a soft bound (mass converges to a horizon approx 1/(1-gamma)), and soft and hard bounds obey one log-linear law in the protected-mass horizon (R^2 = 0.99). Bounding accumulated anchor mass — not the eviction mechanism — is the active ingredient.
+
+3. A mechanistic study of eviction criteria. Anchor-stack survivor traces show that mass-keyed criteria inherit a grandfathering trap — eviction-time quality equals staleness — and freeze on the oldest anchors, bit-for-bit identically across seeds and domains; age is the only sound key. Merging removes exactly the redundant inter-anchor cross terms: the penalty's value drops one-sidedly (per-run maxima 18-64%) while accuracy stays indistinguishable from unbounded. We state explicitly that this is value-level only — merging preserves the first-order quadratic regularizer, so the gradient of the penalty is unchanged and only a parameter-independent constant shifts, with zero effect on SGD.
+
+4. Two orthogonal control axes, measured apart. The budget and the elastic weight lambda both trade protection for plasticity, but the budget controls the age structure of forgetting while lambda controls its amount. The budget is a set of named anchors rather than a scalar discount, so the protected mass is auditable: which tasks remain protected, which were evicted, and by which policy are readable directly from the stack trace. The contribution is therefore a measurable mechanism and a knob — not a drop-in accuracy win over a tuned baseline.
+
+Note on the manuscript's development
+
+An earlier version of this manuscript was submitted to Neurocomputing (NEUCOM-D-26-24422) and was declined following external review. The reviewer and associate-editor comments identified four specific issues, all of which have been addressed in the present version; we summarize them for the editor's convenience. (i) The Split-CIFAR-100 protocol was misstated as "10 classes per task"; it has been corrected to state that the 100 classes are split into T contiguous slices of 100/T classes each (10 classes/task at T = 10, 5 classes/task at T = 20), matching the released code, and all affected residual phrasings have been corrected accordingly. (ii) The blanket claim that every bounded policy outperforms unbounded stacking has been replaced throughout (abstract, contributions, and results) by the accurate statement that at T = 20 and the tightest budget M = 2, five of the six bounded policies do so (Wilcoxon p <= 0.037), with merge the exception at the looser M = 5. (iii) The claim that merging "reduces the penalty" has been rewritten to state that the change is value-level only, with the gradient unchanged and only a parameter-independent constant shifting, as described in contribution 3 above. (iv) The value proposition has been repositioned from a drop-in accuracy win over a tuned baseline to the mechanism and knob described in contributions 3-4. In addition, after the decision we re-derived every quantitative claim in the manuscript from the raw per-run records (roughly 150 numbers across the MNIST grid, the CIFAR grid, the EWC arms, the discount sweep, the merge instrumentation and the appendix matrices); the audit scripts are included in the accompanying package, and a 27-check regression over paper text, code and records passes with zero failures.
+
+Declarations. This manuscript is original, has not been published previously, and is not under consideration by any other journal. Precursor audit studies by the same author are archived as Zenodo preprints (doi:10.5281/zenodo.23572226 and doi:10.5281/zenodo.23637972) and are cited and clearly distinguished from the present work; all experiments, analysis, and text in this manuscript are new. The author declares no competing interests. All code and complete per-run result records are publicly available in the project repository linked in the manuscript, and the manuscript and its full reproducibility package are archived at doi:10.5281/zenodo.23668522.
+
+Sincerely,
+Ranxi Zhou
+Hunan University of Chinese Medicine
+300 Xueshi Avenue, Hanpu, Yuelu District, Changsha 410208, Hunan, China
+Email: zhouranxi@foxmail.com

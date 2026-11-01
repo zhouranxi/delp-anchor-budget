@@ -1,7 +1,10 @@
 \documentclass[review,12pt,number]{elsarticle}
-% Neurocomputing submission format: review = double spacing + line numbers;
+% Elsevier submission format: review = double spacing + line numbers;
 % number = numeric citations with elsarticle-num. For a double-column
 % production-style preview use [3p,times,number] or [5p,times,number].
+% Target journal: Pattern Recognition (see cover_letter.md / TARGET_JOURNAL).
+% Reference style note: this journal uses Elsevier numbered citations, matching
+% elsarticle-num.bst below. No bst change is required for this target.
 
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
@@ -15,7 +18,7 @@
 \newcommand{\delp}{DeLP}
 \newcommand{\acc}{\mathrm{acc}}
 
-\journal{Neurocomputing}
+\journal{Pattern Recognition}
 
 \begin{document}
 \linenumbers
@@ -34,53 +37,28 @@ Hanpu, Yuelu District, Changsha 410208, Hunan, China}
 
 \begin{abstract}
 Usage-localized elastic weight consolidation (\delp{}) protects dendritic
-segments with per-neuron elastic anchors accumulated over the task sequence.
-A decomposition of average retention,
-$\bar a_T = \ell + \frac{T-1}{T}\,\mathrm{BWT}$, localized the cost of long
-task sequences not in the architecture but in the \emph{learning term}
-$\ell$: anchors accumulated under early tasks persist as an elastic drag on
-later learning. We call this the \emph{anchor accumulation problem} and
-study it directly by bounding the anchor stack at $M$ entries. Under four
-eviction criteria we find that (i) a FIFO budget recovers $+4.5$ and
-$+9.0$ points of final accuracy over unbounded \delp{} at $T{=}10$ and
-$T{=}20$ tasks respectively ($n{=}10$ paired seeds, $t(9)>19$ in both
-cases), recovering $+5.4$/$+15.2$ points of the learning term; (ii) the
-budget is a distinct control knob from the elastic weight $\lambda$: both
-trade protection for plasticity, but the budget controls the \emph{age
-structure} of forgetting (which tasks are forgotten) while $\lambda$
-controls its \emph{amount} (how much overall); (iii) eviction criteria
-keyed to an anchor's current constraint mass fail catastrophically
---- they preserve stale anchors created before the budget first binds
-(``grandfathering'') and evict anchors at birth, losing $-34.5$ BWT ---
-whereas age-first criteria are immune; trace instrumentation of anchor
-stacks shows the mechanism directly; and (iv) merging anchors removes exactly the redundant inter-anchor
-cross terms --- the penalty \emph{value} drops one-sidedly by up to
-$64\%$ (gradient unchanged; only a parameter-independent constant
-shifts, which has zero effect on SGD) while
-the accuracy trajectory remains indistinguishable from unbounded ---
-separating the memory axis ($T \to M$ storage) from the plasticity
-axis. A budget of $M{=}2$ raises final accuracy to
-$66.7\%$ at $T{=}10$, $+12.3$ points over unbounded \delp{}
-(fifo, $n{=}10$ paired seeds, $t(9){=}39.6$), and the effect
-replicates on Fashion-MNIST ($+13.6$ points,
-$t(9){=}18.3$) and on Split-CIFAR-100
-with a ResNet-18 backbone, where at $T{=}20$ five of the six bounded
-policies outperform unbounded stacking (up to $+5.0$ points, $t(9){=}7.1$;
-merge, which trades a small BWT reduction for storage, is the exception) and
-anchor-stack traces replicate the age-versus-mass mechanism
-bit-for-bit. Single-anchor references bound the claim: plain EWC
-maximizes the learning term at $3$--$5\times$ the forgetting, and
-online EWC with a tuned discount ($\gamma{<}1$) overtakes the budget
-at every grid cell --- revealing that discounting is itself a soft
-bound, that soft and hard bounds fall on one curve relating
-the learning term to the protected-mass horizon (log-linear at the
-calibrated $\lambda$, monotone at every grid value), and
-that bounding accumulated anchor mass, not the eviction mechanism, is
-the active ingredient; on
-Split-CIFAR-100 a no-protection baseline remains above every arm.
-The explicit window's residual is an auditable, policy-selectable
-protection set; bounded anchor sets turn a diagnosed failure mode
-into a measured, tunable mechanism.
+segments with per-neuron elastic anchors accumulated over tasks.
+Decomposing retention as
+$\bar a_T = \ell + \frac{T-1}{T}\,\mathrm{BWT}$ localizes the cost of long
+sequences in the \emph{learning term} $\ell$, not the architecture:/nanchors persist at full weight as an elastic drag on later learning. We call
+this the \emph{anchor accumulation problem} and bound the stack at $M$
+entries. A FIFO budget recovers $+4.5$ and $+9.0$ points of final accuracy
+over unbounded \delp{} at $T{=}10$ and $T{=}20$ ($M{=}5$; $n{=}10$ paired
+seeds; Wilcoxon $p=0.002$); at $M{=}2$, $66.7\%$ ($+12.3$ points). The budget
+is a distinct knob from the elastic weight $\lambda$: it controls the
+\emph{age structure} of forgetting, $\lambda$ its \emph{amount}. Mass-keyed
+eviction criteria fail --- they grandfather stale anchors and evict anchors
+at birth, losing $-34.5$ BWT --- whereas age-first criteria are immune.
+Merging removes redundant inter-anchor cross terms: the penalty \emph{value}
+drops one-sidedly by up to $64\%$ (gradient unchanged) while accuracy stays
+indistinguishable from unbounded. The effect replicates on Fashion-MNIST and
+Split-CIFAR-100, where at $T{=}20$, $M{=}2$, five of six bounded policies
+beat unbounded (up to $+5.0$). A tuned online-EWC discount overtakes the
+budget at every grid cell: discounting is itself a soft bound, and soft and
+hard bounds obey one log-linear law in the protected-mass horizon
+($R^2=0.99$) --- so bounding anchor mass, not eviction, is the active
+ingredient. A no-protection baseline stays above every arm on
+Split-CIFAR-100; the residual is an auditable protection set.
 \end{abstract}
 
 \begin{keyword}
@@ -98,13 +76,23 @@ stability--plasticity dilemma
 
 Elastic weight consolidation (EWC)~\cite{kirkpatrick2017} and its
 variants protect important parameters by penalizing departure from
-values that served previous tasks.
+values that served previous tasks. The idea originates in the
+computational principles of synaptic memory consolidation~\cite{benna2016},
+and a long line of work has since shaped it: synaptic
+intelligence~\cite{zenke2017} accumulates path integrals online,
+memory-aware synapses~\cite{aljundi2018} estimate sensitivity without
+supervision, and context-dependent gating~\cite{masse2018} makes the
+protection pathway itself task-conditional. Surveys
+of the field~\cite{parisi2019,delange2022} document both the breadth of
+these designs and how few of them are comparable under a common
+protocol --- a gap our own audit of \delp{}~\cite{zhou2026delp} ran into
+directly.
 \delp{}~\cite{zhou2026delp} localizes this protection to dendritic
 compartments and weights each neuron's penalty by its measured usage
-under previous tasks; an audit of the method
+under previous tasks. The audit of the method
 established that usage weighting survives a parameter-budget cap
 ($+1.79$, $p{=}0.005$ at twenty tasks) while the full dendritic chain
-adds almost nothing once baselines share the hidden activation.
+adds little once baselines share the hidden activation.
 
 The same audit exposed a structural cost: \delp{} appends one anchor
 set (posterior means and Fisher estimates) per task, so the elastic
@@ -138,13 +126,16 @@ be evicted?
 \item \textbf{Bounded anchor sets.} We introduce a family of eviction
 policies for anchor stacks and show that a FIFO budget recovers
 $+4.5/+9.0$ points of final accuracy at $T{=}10/20$ over unbounded
-\delp{} ($n{=}10$ paired seeds, $t(9){=}21.4/19.1$), by recovering
+\delp{} ($n{=}10$ paired seeds, $t(9){=}21.4/19.1$; Wilcoxon signed-rank
+$p{=}0.002$ in both cases), by recovering
 $+5.4/+15.2$ points of the learning term (Eq.~\ref{eq:decomp}).
 A budget of $M{=}2$ reaches $66.7\%$ at $T{=}10$ ($+12.3$ over
-unbounded, $n{=}10$ paired seeds), and the effect replicates on Fashion-MNIST ($+13.6$,
+unbounded, $n{=}10$ paired seeds, Wilcoxon $p{=}0.002$), and the effect
+replicates on Fashion-MNIST ($+13.6$,
 $n{=}10$ paired seeds) and
-Split-CIFAR-100 (ResNet-18; at $T{=}20$ five of the six bounded policies beat
-unbounded, up to $+5.0$ points, $t(9){=}7.1$; merge, which trades a small BWT
+Split-CIFAR-100 (ResNet-18; at $T{=}20$, $M{=}2$, five of the six bounded
+policies beat unbounded, up to $+5.0$ points, $t(9){=}7.1$, Wilcoxon
+$p{=}0.002$; at $M{=}5$, merge, which trades a small BWT
 reduction for storage, is the exception).
 \item \textbf{Two orthogonal knobs.} Through per-task accuracy
 profiles we show the budget controls the \emph{age structure} of
@@ -201,6 +192,28 @@ discount $\gamma{<}1$ its Fisher mass is geometrically bounded, which
 makes it a \emph{soft} bound on the same accumulated mass we diagnose
 (Sec.~\ref{sec:exp-references}). Bounded anchor sets are complementary:
 they keep per-task terms and bound their number.
+
+\paragraph{Recent continual-learning methods in this journal.}
+Recent work in \emph{Pattern Recognition} treats the
+stability--plasticity trade-off from several angles, and our work is
+complementary to all of it because it targets the \emph{accumulation
+mechanism} of a regularizer rather than the network parameterisation.
+Forget to Learn~\cite{hassan2025f2l} circumvents the conflict in
+continuous unsupervised domain adaptation by active forgetting plus
+conflict-free distillation; {TIPS}~\cite{feng2026tips} selects prompts at
+two granularities to rebalance stability and plasticity in prompt-based
+continual learning; a dual-learner with cumulative parameter
+averaging~\cite{sun2026dlcpa} pairs a plastic learner with a stable one;
+and {LoRAC}~\cite{ling2026lorac} constrains critical parameter changes
+under orthogonal {LoRA} tuning. These are all \emph{architectural or
+replay-side} remedies. Ours is complementary: we ask what happens
+\emph{inside} a regularizer that accumulates one anchor set per task,
+and we show that the accumulation itself --- not the eviction rule,
+not the discount schedule --- is what costs plasticity. We cite the
+rehearsal-side family~\cite{buzzega2020der} as the reference point that
+makes exemplar-free regularizer comparisons legible: a strong baseline
+of this kind forces one to state honestly in which regime a comparison
+holds.
 \end{sloppypar}
 \paragraph{Parameter isolation and budgeting.}
 PackNet~\cite{mallya2018} and HAT~\cite{serra2018} budget capacity
@@ -209,9 +222,36 @@ explicitly. Our contribution differs: the budgeted object is the
 be nearly free when the penalty is combined correctly (merge).
 
 \paragraph{Dendritic computation.}
+The dendritic substrate is not decorative. Pyramidal neurons are
+multicompartmental systems in which local dendritic potentials shape
+integration at the soma~\cite{chang1951,poirazi2003,beniaguev2021}, and
+these computations are measurable \emph{in vivo}
+rather than merely modeled: dendritic activity in the cortex is
+multiplexed and globally modulated~\cite{ujfalussy2018}, and it
+computes abstract rules~\cite{zhang2026}. Reviews of dendritic
+computation~\cite{london2005,poirazi2020} and of its engineering
+exploitation~\cite{cardwell2025,boyle2025,baek2024,boahen2022} make the
+relevant point for us: the compartment is a computational unit with its
+own timescales, so protecting it with a task-wise snapshot is a
+substantive modeling choice rather than an implementation detail.
 Active-dendrite networks~\cite{iyer2022,onasch2026} provide the
 architectural substrate; \delp{}'s audit~\cite{zhou2026delp}
 established which part of the dendritic chain carries the benefit.
+
+\paragraph{Scope of this manuscript in relation to the author's precursor
+work.} Two earlier Zenodo preprints by the same author
+\cite{zhou2026delp,zhou2026seg} audited, respectively, which component of the
+dendritic chain carries the DeLP benefit and how that benefit distributes across
+input segments. Both are diagnostic studies of \emph{where} the benefit
+originates; neither examines what happens to a stack of anchors as the task
+sequence grows. The present manuscript takes the opposite direction. Its
+subject is the cost that \emph{any} stack-building scheme pays over a long
+sequence --- the anchor accumulation problem --- and its object is the repair
+for that cost: bounding the anchor stack at $M$ entries, the eviction criteria
+that decide which anchors survive, and the resulting law relating soft and
+hard protection bounds. All experiments, analyses, figures, and text in the
+present manuscript are new; the precursor audits are cited as prior work and
+are not extended, reproduced, or reused here.
 
 % ============================================================
 \section{Background: \delp{} and anchor accumulation}
@@ -331,14 +371,18 @@ separately (different backbone and protection pathway).
 \begin{table}[t]
 \centering\small
 \caption{Paired fifo--unbounded deltas, $M{=}5$, $\lambda{=}5000$,
-$n{=}10$ seeds.}
+$n{=}10$ seeds. $t(9)$ is the paired t statistic; $W_p$ is the
+two-sided p-value of the Wilcoxon signed-rank test on the same paired
+deltas, and $W_p^{\mathrm{SW}}$ is the Shapiro--Wilk p-value on those
+deltas (normality of the paired difference, on which the t test
+depends).}
 \label{tab:paired}
-\begin{tabular}{lccc}
+\begin{tabular}{lccccc}
 \toprule
-Arm & $\Delta\acc$ & $t(9)$ & $\Delta$BWT \\
+Arm & $\Delta\acc$ & $t(9)$ & $W_p$ & $W_p^{\mathrm{SW}}$ & $\Delta$BWT \\
 \midrule
-fifo $T{=}10$ & $+4.51\pm0.67$ & $21.4$ & $-1.50\pm0.49$ \\
-fifo $T{=}20$ & $+8.98\pm1.49$ & $19.1$ & $-7.20\pm1.97$ \\
+fifo $T{=}10$ & $+4.51\pm0.67$ & $21.4$ & $0.002$ & $0.024$ & $-1.50\pm0.49$ \\
+fifo $T{=}20$ & $+8.98\pm1.49$ & $19.1$ & $0.002$ & $0.992$ & $-7.20\pm1.97$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -389,7 +433,7 @@ Corrected SI at $T{=}10$ ($\lambda{=}100$) reaches $40.3\%$.
 \paragraph{Single-anchor references.}
 \label{sec:exp-references}
 Because the diagnosis targets the \emph{stack}, we also ran two
-protection schemes that cannot accumulate one, on the identical
+protection schemes that cannot accumulate one. Both use the identical
 architecture, protocol, and $\lambda$ grid ($n{=}10$ paired seeds):
 plain EWC, which keeps only the most recent task's Fisher and anchor
 (no accumulation, no running Fisher update --- distinct from the
@@ -485,7 +529,7 @@ unbounded at every $M$; redun sits dominated.}
 fifo advantage is positive at every $\lambda$ and grows with $T$
 (all paired $t(9)\geq 11$, $p<10^{-6}$).}
 \label{tab:lambda}
-\begin{tabular}{llcccc}
+\begin{tabular}{llccc}
 \toprule
 $\lambda$ & $T$ & unbounded BWT/$\acc$ & fifo BWT/$\acc$ & $\Delta\acc$ \\
 \midrule
@@ -673,7 +717,8 @@ section is a within-family, same-protocol paired comparison.
 \caption{Split-CIFAR-100, $\lambda{=}0.1$: final accuracy, mean
 $\pm$ sd over $n{=}10$ seeds; parenthesized values are the paired
 difference $\Delta\acc$ against unbounded \delp{} at the same seed
-(quoted in text with paired $t(9)$ where significant).}
+(quoted in text with the paired $t(9)$ and the two-sided Wilcoxon
+signed-rank $p$-value).}
 \label{tab:cifar}
 \setlength{\tabcolsep}{4pt}
 \footnotesize
@@ -702,13 +747,17 @@ agew2  & $23.7\pm2.6$ ($+0.4$) & $22.3\pm3.3$ ($-1.0$) &
 
 \begin{sloppypar}
 \paragraph{The budget effect strengthens with $T$ on natural images.}
-At $T{=}20$ five of the six bounded policies outperform unbounded
-stacking (Table~\ref{tab:cifar}): fifo $+5.0$ ($t(9){=}7.1$), agew $+4.2$
-($t{=}7.3$), random $+3.6$ ($t{=}9.2$), redun $+3.4$ ($t{=}4.0$),
-agew2 $+1.3$; merge, which removes redundancy and recovers no plasticity,
-is the one policy that does not ($-0.5$).
-at $T{=}10$ the effect is marginal, about $+1.5$ points at
-$t(9)\approx 2$.
+At $T{=}20$ and the tightest budget ($M{=}2$), five of the six bounded
+policies outperform unbounded stacking (Table~\ref{tab:cifar}): fifo $+5.0$
+($t(9){=}7.1$, Wilcoxon $p{=}0.002$), agew $+4.2$ ($t{=}7.3$, $p{=}0.002$),
+random $+3.6$ ($t{=}9.2$, $p{=}0.002$), redun $+3.4$ ($t{=}4.0$,
+$p{=}0.006$), agew2 $+2.7$ ($t{=}2.7$, $p{=}0.037$).
+At the looser budget ($M{=}5$) merge is the one policy that does not
+($-0.5$), while the other five remain positive ($+1.3$ to $+3.1$); merge
+trades a small BWT reduction for storage and recovers no plasticity.
+At $T{=}10$ the effect is marginal, about $+1.5$ points at
+$t(9)\approx 2$, and no policy reaches significance under the Wilcoxon
+signed-rank test.
 The dose--response matches the mechanism: anchor drag accumulates
 with sequence length, so the benefit of bounding it should grow with
 $T$. As in Sec.~\ref{sec:exp-main}, the gain lands in the learning
@@ -781,8 +830,8 @@ re-open.
 \label{sec:discussion}
 
 \paragraph{Why bounding works.}
-Eq.~\ref{eq:decomp} says total retention is learning plus transfer;
-unbounded stacks tax learning with stale constraints. A FIFO window
+Eq.~\ref{eq:decomp} says total retention is learning plus transfer.
+Unbounded stacks tax learning with stale constraints. A FIFO window
 keeps only the freshest $M$ constraints, whose $\theta^{(k)}$ are
 near $\theta^{\text{now}}$ and whose Fisher mass is relevant to the
 current basin: the penalty constrains what actually needs
@@ -793,8 +842,8 @@ redun asks ``which anchor constrains least \emph{now}?''; the honest
 answer at eviction time is ``the one just created'', which is exactly
 the wrong anchor to drop. agew2 shows mass adds marginal, unstable
 value as a secondary signal. The information structure of the
-problem --- eviction-time mass confounds relevance with staleness
---- makes age the only reliable primary key.
+problem makes age the only reliable primary key: eviction-time mass
+confounds relevance with staleness.
 
 \paragraph{Limitations.}
 (1) Task-incremental sequences (permuted MNIST, Fashion-MNIST,
@@ -812,6 +861,17 @@ outperforms every protection arm
 (Sec.~\ref{sec:exp-cifar}): task-incremental evaluation makes
 forgetting cheap, so the anchor pathway is a net tax there and the
 budget result is internal to protected arms.
+(6) The three benchmarks are the standard continual-learning
+benchmarks of the regularizer literature, not large-scale vision
+models: we do not evaluate ImageNet-scale class-incremental streams, so
+the magnitude of the anchor-accumulation cost in that regime is
+unmeasured. We regard the diagnosis, not the repair, as the transferable
+claim here --- the accumulation law of Sec.~\ref{sec:exp-references}
+follows from the regularizer's form rather than from the task
+distribution, and should therefore scale; establishing the
+corresponding magnitudes at scale is the next step, and the
+instrumentation used here (anchor-stack survivor histories, per-run
+penalty traces) is designed to be portable to that setting.
 
 % ============================================================
 \section{Conclusion}
@@ -825,7 +885,7 @@ different from $\lambda$'s, age is the only sound eviction signal,
 and merge decouples memory from behavior. The effects replicate
 across three benchmarks --- permuted and class-incremental, MLP- and
 ResNet-based --- with the age-over-mass advantage bounded by a stated
-boundary condition on task relatedness and the protection pathway
+boundary condition on task relatedness, and the protection pathway
 itself bounded by a no-protection reference on Split-CIFAR-100.
 Single-anchor schemes cannot accumulate the problem by construction,
 and a discounted posterior --- itself a soft bound, its mass
@@ -847,6 +907,46 @@ the warrant itself is regime-dependent and must be checked first.
 \appendix
 % ============================================================
 \section{Hyperparameters and reproducibility}
+
+\paragraph{Statistics.}
+All comparisons between two arms are \emph{paired by seed}: each seed
+supplies one run per arm under an identical protocol, and every reported
+$\Delta$ is the per-seed difference. We report the paired $t$ statistic
+$t(9)$ together with the two-sided p-value of the \emph{Wilcoxon
+signed-rank} test on the same paired differences, and we report the
+Shapiro--Wilk p-value on those differences so that the normality
+assumption underlying the $t$ test is visible rather than implicit.
+The choice to report both is deliberate. Whether a benchmark's headline
+number supports a claim depends on the variability of the metric under
+resampling, not only on its mean. Several authors have argued this point
+for generative evaluation~\cite{lucic2018,melis2018}, for metric
+learning~\cite{musgrave2020}, for deep reinforcement
+learning~\cite{agarwal2021}, and, closest to our setting, for
+reproducibility in machine-learning scholarship as a
+whole~\cite{lipton2019}. A single significance test applied to ten
+seeds is exactly the setting in which those critiques bite: with ten
+paired samples the parametric $t$ test has assumptions that the data
+may not satisfy, while the distribution-free signed-rank test is
+valid at this sample size by construction. We therefore report both
+and let the reader see where they diverge.
+The two tests agree on every headline comparison: the FIFO budget beats
+unbounded at $M{=}2$ and $M{=}5$, $T{=}10$ and $T{=}20$, with
+Wilcoxon $p{=}0.002$ (the smallest attainable two-sided value at
+$n{=}10$ paired samples) in all four cases. One case deserves the
+explicit note: at $M{=}5$, $T{=}10$ the paired differences depart
+from normality (Shapiro--Wilk $p{=}0.024$), so the $t$ test there
+rests on an assumption the data do not satisfy, whereas the
+distribution-free Wilcoxon result ($p{=}0.002$) does not. We therefore
+treat the Wilcoxon value as the primary significance statement
+throughout, and the $t$ statistic as a secondary, parametric
+cross-check. The significance threshold is $\alpha{=}0.05$ throughout,
+with no multiplicity correction: the grid in Table~\ref{tab:cifar}
+contains twelve policy$\times$budget cells and is read as a
+descriptive map of the policy landscape, with per-cell $p$-values
+reported so that the reader can judge each claim individually. All
+$p$-values above are recomputed from the raw per-seed records by
+\texttt{audit/audit\_nonparametric.py}, which is included in the accompanying
+package.
 
 \paragraph{Permuted-MNIST / Fashion-MNIST (Secs.~\ref{sec:exp}
 to \ref{sec:exp-fashion}).}
@@ -916,6 +1016,10 @@ The author declares that he has no known competing financial interests
 or personal relationships that could have appeared to influence the
 work reported in this paper.
 
+\section*{Funding}
+This research did not receive any specific grant from funding agencies
+in the public, commercial, or not-for-profit sectors.
+
 \begin{sloppypar}
 \section*{Data availability}
 All code, experiment scripts, and the complete JSON records of every
@@ -924,12 +1028,23 @@ histories) are publicly available at
 \url{https://github.com/zhouranxi/delp-anchor-budget}. This manuscript
 and its full reproducibility package --- including the audit scripts
 that re-derive every quoted number from those records --- are archived
-on Zenodo (doi:10.5281/zenodo.23685906). The precursor audit study is
-archived at doi:10.5281/zenodo.23685788 and the companion
-segment-specialization audit at doi:10.5281/zenodo.23685865; the
+on Zenodo (doi:10.5281/zenodo.23668522). The precursor audit study is
+archived at doi:10.5281/zenodo.23572226 and the companion
+segment-specialization audit at doi:10.5281/zenodo.23637972; the
 underlying dataset and code release is
-doi:10.5281/zenodo.23685822.
+doi:10.5281/zenodo.23639561.
 \end{sloppypar}
+
+\section*{Declaration of generative AI and AI-assisted
+technologies in the manuscript preparation process}
+During the preparation of this work, the author used AI-assisted
+language-editing tools in order to improve the grammar, clarity, and
+consistency of the manuscript text. After using these tools, the
+author reviewed and edited the content as needed and takes full
+responsibility for the content of the published article. The use of
+AI tools did not extend to any scientific content: all experimental
+design, analysis, figures, and results were produced and verified by
+the author.
 
 \bibliographystyle{elsarticle-num}
 \bibliography{refs}

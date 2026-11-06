@@ -111,6 +111,35 @@ def rel(ident, relation, scheme='doi'):
             'relation_type': {'id': relation}}
 
 
+def public_relations(rec):
+    """Read relations through the PUBLIC api and convert them to the
+    write schema.
+
+    Two traps here, both of which silently produce a wrong result:
+      * the public api returns the relation as a camelCase string
+        ('isNewVersionOf'); the write schema wants lower case.
+      * the draft endpoint returns a different schema entirely
+        ('relation' string), which the PUT rejects with 400.
+    """
+    s, d = call('GET', f'/records/{rec}')
+    if s != 200:
+        return []
+    out = []
+    seen = set()
+    for e in ((d.get('metadata') or {}).get('related_identifiers') or []):
+        ident = e.get('identifier')
+        relation = e.get('relation')
+        if isinstance(relation, dict):
+            relation = relation.get('id')
+        if not ident or ident in seen:
+            continue
+        seen.add(ident)
+        out.append({'identifier': ident,
+                    'scheme': e.get('scheme') or 'doi',
+                    'relation_type': {'id': (relation or 'references').lower()}})
+    return out
+
+
 def build(entries):
     """De-duplicate by identifier, keeping the LAST relation given."""
     out = {}
@@ -143,6 +172,9 @@ def update(rid, title, version, entries):
                       'affiliations': [{'name': 'Hunan University of Chinese '
                                           'Medicine, Changsha, China'}]}],
         'rights': [{'id': 'cc-by-4.0'}],
+        # 'subjects' is the field to WRITE; Zenodo normalizes it and the
+        # record then reads back under 'keywords'.  Writing 'keywords'
+        # directly is accepted but comes back empty.
         'subjects': [{'subject': k} for k in KEYWORDS],
         'related_identifiers': build(entries),
         'version': version,

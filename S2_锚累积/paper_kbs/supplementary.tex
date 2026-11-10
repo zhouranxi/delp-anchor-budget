@@ -1,0 +1,155 @@
+\documentclass[11pt]{article}
+% Supplementary material for:
+% "The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft--Hard
+%  Protection Law, and the Auditable Cost of Regularized Continual
+%  Learning"
+% Appendix A: statistics rationale, hyperparameters, reproducibility.
+% Appendix B: full per-task accuracy matrices (Permuted-MNIST).
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{url}
+\graphicspath{{figs/}}
+
+\newcommand{\delp}{DeLP}
+\newcommand{\acc}{\mathrm{acc}}
+
+\title{Supplementary Material:\\
+The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft--Hard
+Protection Law, and the Auditable Cost of Regularized Continual
+Learning}
+\author{Ranxi Zhou}
+\date{}
+
+\begin{document}
+\maketitle
+
+\appendix
+
+% ============================================================
+\section{Hyperparameters and reproducibility}
+% ============================================================
+\label{appx:hyper}
+
+\paragraph{Statistics.}
+All comparisons between two arms are \emph{paired by seed}: each seed
+supplies one run per arm under an identical protocol, and every reported
+$\Delta$ is the per-seed difference. We report the paired $t$ statistic
+$t(9)$ together with the two-sided p-value of the \emph{Wilcoxon
+signed-rank} test on the same paired differences, and we report the
+Shapiro--Wilk p-value on those differences so that the normality
+assumption underlying the $t$ test is visible rather than implicit.
+The choice to report both is deliberate. Whether a benchmark's headline
+number supports a claim depends on the variability of the metric under
+resampling, not only on its mean. Several authors have argued this point
+for generative evaluation~\cite{lucic2018,melis2018}, for metric
+learning~\cite{musgrave2020}, for deep reinforcement
+learning~\cite{agarwal2021}, and, closest to our setting, for
+reproducibility in machine-learning scholarship as a
+whole~\cite{lipton2019}. A single significance test applied to ten
+seeds is exactly the setting in which those critiques bite: with ten
+paired samples the parametric $t$ test has assumptions that the data
+may not satisfy, while the distribution-free signed-rank test is
+valid at this sample size by construction. We therefore report both
+and let the reader see where they diverge.
+The two tests agree on every headline comparison: the FIFO budget beats
+unbounded at $M{=}2$ and $M{=}5$, $T{=}10$ and $T{=}20$, with
+Wilcoxon $p{=}0.002$ (the smallest attainable two-sided value at
+$n{=}10$ paired samples) in all four cases. One case deserves the
+explicit note: at $M{=}5$, $T{=}10$ the paired differences depart
+from normality (Shapiro--Wilk $p{=}0.024$), so the $t$ test there
+rests on an assumption the data do not satisfy, whereas the
+distribution-free Wilcoxon result ($p{=}0.002$) does not. We therefore
+treat the Wilcoxon value as the primary significance statement
+throughout, and the $t$ statistic as a secondary, parametric
+cross-check. The significance threshold is $\alpha{=}0.05$ throughout,
+with no multiplicity correction: the policy$\times$budget grid of the
+Split-CIFAR-100 table in the main text contains twelve cells and is
+read as a descriptive map of the policy landscape, with per-cell
+$p$-values reported so that the reader can judge each claim
+individually. All $p$-values are recomputed from the raw per-seed
+records by \texttt{audit/audit\_nonparametric.py}, which is included in
+the accompanying package.
+
+\paragraph{Permuted-MNIST / Fashion-MNIST (main-text experiment
+sections).}
+Architecture as in the audit~\cite{zhou2026delp}: a 784--256 fully
+connected trunk whose pre-activation is modulated by $K{=}T$ dendritic
+segments (linear context-to-segment map, winning-segment readout),
+hidden activity sparsified by $k$-WTA with $k{=}64 = N/4$, linear
+10-way head. Adam, lr $10^{-3}$, batch 256, two epochs and 10{,}000
+samples per task; permutation matrices drawn once per seed and shared
+by all arms. Diagonal Fisher and usage statistics from 300 and 500
+samples per task respectively (max-log-probability Fisher variant);
+$\lambda_{\delp}{=}5000$, corrected-SI reference $\lambda{=}100$.
+Paired arms use seeds 0--9; the policy grid seeds 0--2 (policy grid
+table in the main text); the $\lambda$ grid as in the $\lambda$-interaction
+table of the main text. Every run seeds
+\texttt{torch.manual\_seed} before model construction. Code and
+per-seed JSON records (including \texttt{survivor\_history} and
+\texttt{acc\_matrix}) are released with the repository.
+
+\begin{sloppypar}
+\paragraph{Split-CIFAR-100 (main text, Sec.~on generalization).}
+ResNet-18 adapted for $32{\times}32$ inputs ($3{\times}3$ stem,
+stride 1, no max-pool) with all BatchNorm layers replaced by GroupNorm
+(32 groups). SGD, momentum 0.9, weight decay $5{\times}10^{-4}$, lr
+$0.05$, batch 128, five epochs per task. Masked cross-entropy over the
+task's $100/T$ classes; task-incremental evaluation over the same classes.
+EWC penalty over backbone parameters only, $\lambda{=}0.1$; diagonal
+Fisher estimated from 50 single-sample draws of the squared gradient
+of the max log-softmax on the finished task, rescaled to unit global
+mean; gradient clipping at max norm 5. Tasks are contiguous
+$100/T$-class blocks of a fixed random permutation of the 100 classes
+(generator seed $100{+}\mathrm{seed}$, matching the released code);
+seeds $0$--$9$ control init,
+shuffle, and eviction randomness. Per-job crash-safe checkpoints and
+the full JSON records (including \texttt{survivor\_history} and
+\texttt{acc\_matrix}) are released with the code.
+\end{sloppypar}
+
+% ============================================================
+\section{Full per-task accuracy matrices}
+% ============================================================
+\label{appx:matrices}
+
+\begin{sloppypar}
+Final-phase accuracy (\%) per task, Permuted-MNIST, $\lambda{=}5000$,
+$M{=}5$: mean over seeds ($n{=}10$ for unbounded and fifo, $n{=}3$ for
+random/redun/merge). These underlie Fig.~3a and the grandfathering
+analysis of the main text.
+\end{sloppypar}
+
+\begin{table}[h]
+\centering\small
+\caption{$T{=}10$.}
+\label{tab:appx-t10}
+\input{appx_mat_t10.tex}
+\end{table}
+
+\begin{table}[h]
+\centering\small
+\caption{$T{=}20$.}
+\label{tab:appx-t20}
+\input{appx_mat_t20.tex}
+\end{table}
+
+\section*{Data availability}
+All code, experiment scripts, and the complete JSON records of every
+run (including per-phase accuracy matrices and anchor-stack survivor
+histories) are publicly available at
+\url{https://github.com/zhouranxi/delp-anchor-budget}. This manuscript
+and its full reproducibility package --- including the audit scripts
+that re-derive every quoted number from those records --- are archived
+on Zenodo (doi:10.5281/zenodo.23668522). The precursor audit study is
+archived at doi:10.5281/zenodo.23572226 and the companion
+segment-specialization audit at doi:10.5281/zenodo.23637972; the
+underlying dataset and code release is
+doi:10.5281/zenodo.23639561.
+
+\bibliographystyle{plain}
+\bibliography{refs}
+
+\end{document}

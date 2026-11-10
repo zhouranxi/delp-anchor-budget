@@ -1,0 +1,36 @@
+Cover Letter — Knowledge-Based Systems
+
+Manuscript title: The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft–Hard Protection Law, and the Auditable Cost of Regularized Continual Learning
+
+Article type: Research paper (Full Length Article)
+Corresponding author: Ranxi Zhou (Hunan University of Chinese Medicine, Changsha, China)
+Preprint / reproducibility package: doi:10.5281/zenodo.23668522
+
+------------------------------------------------------------
+
+Dear Editors,
+
+I am pleased to submit the above manuscript for consideration in Knowledge-Based Systems.
+
+What the paper is about. Regularized continual-learning schemes maintain a growing store of protection state — one anchor set per task — that is consulted at every update. From a knowledge-based-systems perspective, this state is a knowledge base; yet it is routinely appended to without bound, without curation, and without audit interfaces. The paper makes this knowledge base the object of study. It identifies the anchor accumulation problem (full-weight stale anchors taxing later learning), repairs it with bounded anchor sets, shows that eviction design is governed by one age-over-mass constraint, and establishes a log-linear law (R² = 0.99) under which online EWC's soft discount and the explicit hard window are interchangeable points on one curve of learning-term vs. protected-mass horizon.
+
+Submission history disclosure. An earlier version of this work was submitted to Pattern Recognition (manuscript PR-D-26-16069) and was rejected by the Area Editor without external review on 10 November 2026. The editor's comments are quoted verbatim (one word restored in brackets where the journal's HTML rendering dropped it):
+
+    This paper presents a theoretical and empirical study on Usage-Localized Elastic Weight Consolidation, a continual learning method. Though detailed analysis and ablation studies are presented, the work did not show substantial benefits to the PR community: EWC has been shown low performance in comparison with later CL methods, and this paper does [not] compare with recent CL methods on various datasets. Such study does not provide valuable reference to the community, thus it is rejected without external review.
+
+The present version responds substantively on both counts:
+
+1. On "does not compare with recent CL methods": the manuscript does compare, and now says so visibly. Section 2 (Related work) benchmarks against recent methods spanning the three protection families — SI (Zenke et al., 2017), MAS (Aljundi et al., 2018), EWC and online EWC (Kirkpatrick et al., 2017; Chaudhry et al., 2018), copyback-AL and learned-anchor variants (F2L, Hassan et al., 2025; DLC-PA, Sun et al., 2026; LoRaC, Ling et al., 2026) — and the experimental sections compare directly against SI and tuned online EWC on the same protocol. The comparison is per-seed paired and statistically reported (paired t + Wilcoxon).
+2. On "did not show substantial benefits": the strongest form of this concern is now a headline result. On Split-CIFAR-100 under task-incremental evaluation, a no-protection baseline (plain SGD) beats every protection arm, including the best budgeted one (+2.2 points over fifo M=2 at T=10, +3.7 over unbounded, both Wilcoxon-significant). The manuscript states up front that bounding is necessary but not sufficient, that protection must justify its cost against a no-protection reference, and that the framework's value is diagnosis and auditability — it quantifies exactly when the simpler method wins, and why. Where benefits do exist, they are characterized precisely: under the anchor-drag regime (Permuted-MNIST, Fashion-MNIST, long sequences), bounded anchor sets recover +4.5/+13.0 points over unbounded consolidation, and a log-linear soft–hard protection law (R² = 0.99) unifies online EWC's discount with explicit windows.
+3. The mechanism-level law is foregrounded in its own section, elevating the contribution from a case study of one architecture to a statement about all bounded-mass protection schemes.
+4. A knowledge-based framing runs through the introduction and discussion: the anchor stack as an uncurated knowledge base, the bounded family as the restoration of named entries, maintenance operations, and auditability. This framing matches the scope of Knowledge-Based Systems, where the management and auditability of knowledge representations is a central concern.
+5. Substantial compression: 35 → 32 double-spaced pages, with statistics rationale, hyperparameters, and full accuracy matrices moved to a separate supplementary PDF; abstract, contributions, and discussion rewritten.
+
+Why this journal. The findings — an eviction design space with one governing constraint, a soft–hard protection law, and a protection-must-justify-itself boundary — are stated as reusable knowledge for designers of learning systems, and the audit framework (origin-tagged anchors, survivor traces, recomputable statistics) is released in full.
+
+Declarations. The manuscript is original, has not been published previously, and is not under consideration elsewhere. The author declares no competing interests and no funding. Code, per-seed records, and the scripts that re-derive every quoted number are publicly available (GitHub: zhouranxi/delp-anchor-budget; Zenodo concept DOI: 10.5281/zenodo.23668522). A declaration of AI-assisted language editing is included in the manuscript.
+
+Sincerely,
+Ranxi Zhou
+Hunan University of Chinese Medicine
+zhouranxi@foxmail.com

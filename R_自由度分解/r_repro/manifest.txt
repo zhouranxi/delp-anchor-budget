@@ -1,0 +1,124 @@
+# R 系列复现数据/依赖清单 (r_repro/manifest.txt)
+
+# 生成于 2026-11-12 01:40；一键校验：python r_repro/verify_package.py（25/25 PASS）
+
+## R1 训练脚本
+  [OK] bench/r1_ctxnoise_train.py  md5=a94dfa8aaa8893940edddac2ee1276e0  11948B
+  [OK] bench/r1_ctxnoise_train.v1.py  md5=420ce304260f8cc5ad95aa01c3069d37  9965B
+  [OK] bench/r1_ctxnoise_train.v2.py  md5=470bfef0f815f516754052df86753056  11474B
+
+## R1 判读/启动
+  [OK] bench/analyze_r1.py  md5=e07d7299487b5f6bd9da4dbec1ee50e0  12326B
+  [OK] bench/analyze_r1_b3.py  md5=593f259cb132fa4d7f297e66e41609b2  5118B
+  [OK] bench/summarize_r1.py  md5=d04c578d509c2dc6f209fd5bdaa2e011  9531B
+  [OK] bench/verify_r1_labels.py  md5=791ff143695cf24f149917a43c4e9126  3106B
+  [OK] bench/launch_r1.sh  md5=6b2ef88aee84e6bac8503c603e0476b8  1173B
+  [OK] bench/launch_r1_v2.sh  md5=755d68827fbef2753fc10ca2287e2eeb  1325B
+  [OK] bench/launch_r1_b3.sh  md5=6246285a8fb40973e37621942be869f9  1314B
+
+## R1 预注册/修订/报告
+  [OK] bench/results_r1/R1_预注册.md  md5=f88805d139ae61cf59c18e345965407c  9429B
+  [OK] bench/results_r1/R1_修订说明.md  md5=c66a9a1aad6aa7395f0d9456cf53ee2e  6235B
+  [OK] bench/results_r1/R1_收数报告.md  md5=753dfccbc02605e74eb4e71f46b4170f  19230B
+
+## R1 原始数据(权威v2)
+  [OK] bench/results_r1/r1_grid_v2.part0.json  md5=87e058b8810b2b542d39c402ab5bc020  210273B
+  [OK] bench/results_r1/r1_grid_v2.part1.json  md5=1b170fdc9f3265431b5644181eaefdbf  210282B
+
+## R1 其它留档
+  [OK] bench/results_r1/r1_grid.part0.json  md5=f0c908553d602fdce14c44f74eaa37db  205842B
+  [OK] bench/results_r1/r1_grid.part1.json  md5=14f6c85ada0e5aa7f46ef364d2ef5697  205844B
+  [OK] bench/results_r1/r1_b3.part0.json  md5=05a16693965af6383301bb42f75e3b5d  105306B
+  [OK] bench/results_r1/r1_b3.part1.json  md5=e126cb1b9ff3f95ac64b8c70944fc3cd  105321B
+  [OK] bench/results_r1/r1_pilot.json  md5=75f898833fe24b8e73f3c99c2daafe14  17811B
+  [OK] bench/results_r1/r1_stats.json  md5=8a31ab21771afed87fd7f1c12a423358  20000B
+  [OK] bench/results_r1/r1_stats_v2.json  md5=0ca352f2d484f366d328f662c7708677  19990B
+  [OK] bench/results_r1/r1_summary.json  md5=06383f909626336f5be53f82840ac518  11392B
+  [OK] bench/results_r1/r1_b3_stats.json  md5=d15bbc8d16f1b3db4c43ae560594455d  8850B
+
+## R2 训练/判读/启动
+  [OK] bench/r2_recency.py  md5=12a521fb750b5d79758154d8ebecb26e  9403B
+  [OK] bench/analyze_r2.py  md5=b42e71b9c6cd9f98a9a8e1e2b05ee557  18938B
+  [OK] bench/summarize_r2.py  md5=d641b848920c991db656563fd320f8b2  22004B
+  [OK] bench/launch_r2.sh  md5=fcc8196ef004e5dfddd8d580c90054ee  1086B
+  [OK] bench/launch_r2_ref.sh  md5=b7a8f009c850d67c0278f1668ff7ae6f  1438B
+  [OK] bench/launch_r2_alpha0.sh  md5=7fd17fa3354e43b8af6010b4d3d5b5bb  1121B
+  [OK] bench/launch_r2_anti.sh  md5=856b06aa9ae4c02d8555e42ef2b0f184  1323B
+
+## R2 预注册/修订/报告
+  [OK] bench/results_r2/R2_预注册.md  md5=bb667de1a824740dc6696d1dbe9d756a  12976B
+  [OK] bench/results_r2/R2_修订说明.md  md5=d8a505ac29cc39599b03120fcc83509f  5497B
+  [OK] bench/results_r2/R2_修订说明_2.md  md5=6e00b7f5ca5dc4ea94988e1277c3c668  5821B
+  [OK] bench/results_r2/R2_收数报告.md  md5=bbb9f4ba303316d5da7e817e03f6f2d7  21917B
+  [OK] bench/results_r2/新论文素材账本.md  md5=014afcf6300c235d9c461d3d809dc269  11629B
+
+## R2 原始数据
+  [OK] bench/results_r2/r2_grid.part0.json  md5=67da9c53ea04cbce9738699261afc132  264542B
+  [OK] bench/results_r2/r2_grid.part1.json  md5=070152a02dfd2ae006590aa648f8d22c  264509B
+  [OK] bench/results_r2/r2_alpha0.part0.json  md5=8a9abefb1baa274b0905ec1b61815dfb  77021B
+  [OK] bench/results_r2/r2_alpha0.part1.json  md5=28d9679c09d9e6be5593cb201aa4a03d  76989B
+  [OK] bench/results_r2/r2_anti.part0.json  md5=fcb44880aad45c770336e8aa866d991b  50048B
+  [OK] bench/results_r2/r2_anti.part1.json  md5=fbce1a32a28b3d01b0ee8f2a58350d90  50075B
+  [OK] bench/results_r2/r2_e5gpu_ref.part0.json  md5=21ac99891f49edccf9eeee374de6ae30  120246B
+  [OK] bench/results_r2/r2_e5gpu_ref.part1.json  md5=19c0108be8ad8d03c13ffdd4a8a42dd1  120254B
+  [OK] bench/results_r2/r2_stats.json  md5=0b9f57a16c9422fe38a8db1b33e0ed67  38323B
+  [OK] bench/results_r2/e5_cpu_ref.json  md5=3c9923081556fd754ebdce0263d31cb7  8880B
+  [OK] bench/results_r2/e5_gpu_ref.json  md5=d93307581f3cc9659782ba4a49307b08  8901B
+  [OK] bench/results_r2/r2_pilot.json  md5=cffe28cca1145644fe392812c60219cc  33269B
+
+## R2T 训练/判读/启动
+  [OK] bench/r2t_resnet.py  md5=59a314a8ad431a00406307236a8d7472  7931B
+  [OK] bench/analyze_r2t.py  md5=ab94399d2a106d4dbab231144d650c34  11759B
+  [OK] bench/summarize_r2t.py  md5=334e670abb69139809ed1d1cbc40d5dc  15812B
+  [OK] bench/launch_r2t.sh  md5=90fa9e926094516606e9887569e9edaf  1234B
+  [OK] bench/launch_r2t_ext.sh  md5=ee792f04356b06a7c43da84bb9b65d31  1581B
+
+## R2T 预注册/修订/报告
+  [OK] bench/results_r2t/R2T_预注册.md  md5=ba094115a9458ba230e661ca36bddc24  11218B
+  [OK] bench/results_r2t/R2T_修订说明.md  md5=f2dd364dda3bb4eb5800330f16b8c263  3974B
+  [OK] bench/results_r2t/R2T_收数报告.md  md5=d0b7e37a735f713259d785fe9633124a  14429B
+
+## R2T 原始数据
+  [OK] bench/results_r2t/r2t_grid.part0.json  md5=1d72de3f239f3074efc43818dd655c63  43424B
+  [OK] bench/results_r2t/r2t_grid.part1.json  md5=9686c6cd667e867bfbc2cff369adc8e8  43422B
+  [OK] bench/results_r2t/r2t_ext.part0.json  md5=0e0b5e3e3c2db2e376ac71827d9cfc32  43468B
+  [OK] bench/results_r2t/r2t_ext.part1.json  md5=c49350e6bb26a72aa0d5cc1c5dff8fb2  43460B
+  [OK] bench/results_r2t/r2t_ctrl_ext.part0.json  md5=b106b1189eacfb615ca149ee8d02bd5e  22308B
+  [OK] bench/results_r2t/r2t_ctrl_ext.part1.json  md5=501048fd7c5dce0ff61cd81e720d6fb5  22296B
+  [OK] bench/results_r2t/r2t_stats.json  md5=793e05d3f62d3f388f9eb6e956df9145  4895B
+  [OK] bench/results_r2t/r2t_stats_ext.json  md5=ce639ac4abedb91ec0447b49647c63e7  4862B
+  [OK] bench/results_r2t/r2t_pilot.json  md5=1f45a7918545d1b78e42717b0d116a81  3019B
+
+## R2T 复用的 E9 对照(未改动)
+  [OK] bench/results_e9/e9_grid_s0.json  md5=efa208cede0082fc8b4f40ac0bb68f53  37949B
+  [OK] bench/results_e9/e9_grid_s1.json  md5=526ada3812d18d5c3e2518e4ac41031e  39617B
+  [OK] bench/results_e9/e9_grid_s2.json  md5=a1f76301f8356f65c57c996a58fffbaa  39615B
+
+## R3 训练/判读/启动
+  [OK] bench/r3_lamsweep.py  md5=5dcbc1e709ff08af4a07de5b17c76d93  3352B
+  [OK] bench/analyze_r3.py  md5=547736ea6274740f8171124f1648a69d  9963B
+  [OK] bench/summarize_r3.py  md5=8580b4ead2d42835c3574d930b9ae843  10796B
+  [OK] bench/launch_r3.sh  md5=4b0f7ce64cb8615d19a48741011b88b6  1071B
+
+## R3 预注册/修订/报告
+  [OK] bench/results_r3/R3_预注册.md  md5=7e7688c4470759544ea96818965ad1fe  8507B
+  [OK] bench/results_r3/R3_修订说明.md  md5=87d6d9ad5d9508db0b67669200da70a0  3242B
+  [OK] bench/results_r3/R3_收数报告.md  md5=8915f6c612caf2ee259c3edbefd8aa00  10561B
+
+## R3 原始数据
+  [OK] bench/results_r3/r3_grid.part0.json  md5=310816f1ca9b124772e9766a19fe0546  130996B
+  [OK] bench/results_r3/r3_grid.part1.json  md5=8f7a261e0b8b49528dd89fa9e22fe503  131026B
+  [OK] bench/results_r3/r3_stats.json  md5=212e7735459053a1ae394083025da2bf  6462B
+  [OK] bench/results_r3/r3_pilot.json  md5=05938d616299cde73ca53ce6b0269c3e  4392B
+
+## 共享基座(逐字复用,MD5与上游一致)
+  [OK] bench/e5_arms.py  md5=1f0581136862b9bd2b18a7d85870dbab  22575B
+  [OK] bench/cnn_delp.py  md5=71c2b6286ea709361ff4ba60bc06f300  10759B
+  [OK] bench/e9_resnet.py  md5=a48db9cddfe22a28738ec2f6a9686665  12957B
+  [OK] bench/branch_delp.py  md5=da0cdd42a3311c7ace7261de38a23229  21464B
+  [OK] bench/exp6_baselines.py  md5=90fcf8b22f868fbc0f3a5f3511c4c3e1  17554B
+  [OK] bench/exp4_branch_protection.py  md5=85cb2a7f6321538e7865fd1b1a5ad326  8375B
+
+## 复现包入口
+  [OK] r_repro/README.md  md5=5c70a17cdd36018de9d9dc6aabb9537d  5823B
+  [OK] r_repro/verify_package.py  md5=f69570f172adba641dc574b087fb7aa7  14394B

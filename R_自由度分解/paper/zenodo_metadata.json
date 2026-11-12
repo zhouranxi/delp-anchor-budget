@@ -1,0 +1,61 @@
+{
+  "title": "One Degree of Freedom Moves the Frontier, the Other Four Do Not: A Preregistered Factorization of an Active-Dendrite Repair, Its Architecture-Bound Supply, and Five Failed Escapes",
+  "upload_type": "publication",
+  "publication_type": "Preprint (not peer-reviewed)",
+  "publication_date": "2026-11-12",
+  "version": "2",
+  "description": "Version 2 adds experiment R4 (a 2-layer Transformer backbone, 326 newly collected runs) to the reproduction package and updates the manuscript accordingly; everything else is unchanged from version 1. This record deposits the manuscript and the complete reproduction package for a preregistered factorization of an active-dendrite continual-learning repair into its protection-budget degrees of freedom. Across 1,539 newly collected training runs plus 60 reused controls, six preregistered experiments test five escapes and four fail: the strength of the protection, its temporal decay schedule, a forward-pass-only intervention, and the context pathway leave the frontier unchanged (R1: 24 Holm-corrected cells, minimum p = 0.585). The one degree of freedom that works -- reallocating a fixed total anchor budget toward recent tasks under exact weight conservation -- moves the Pareto frontier on its home MLP architecture (T=20: +8.08 accuracy over the un-repaired baseline while improving retention over the repair itself, Holm p = 6.4e-5, four preregistered criteria met in full), with direction specificity confirmed by a preregistered reverse-weighting arm (worse on retention in all 20/20 paired seeds, |d_z| = 4.0). The supply of this freedom is architecture-bound, now mapped on three real trunk families: on a calibrated ResNet-18+GN backbone the same reallocation reaches neither preregistered verdict level (R2T, T3), after a first-round apparent transfer (+1.94, Holm p = 0.041 at n = 10) was overturned by the preregistered sample-extension clause (n = 20: +0.72, p = 0.34) -- a flip reported in full; and in the new R4, on a 2-layer Transformer with both architecture constants re-measured from scratch (gate constant G = 0.5827 frozen by probe; lambda recalibrated to 100 by a 120-run sweep over six decades), the reallocation is again inert at n = 40 (+0.07/+0.09, n.s. at a detectable threshold near 0.2 points) while the gate normalization itself transfers cleanly (+7.01, 40/40 paired seeds positive): the two freedoms the MLP conflates separate across architectures. Every experiment ran under a written preregistration with implementation-correctness gates whose failure voids the data; eight gates fired across the program and none was resolved by relaxing a criterion; all eight are tabulated in the paper. Two independent machine-checkable verifiers are included: r_repro/verify_package.py (25 package-level checks) and paper/check_paper_numbers.py (27 paper-level checks, rebuilding the 1,539-run ledger from raw JSON).",
+  "keywords": [
+    "continual learning",
+    "catastrophic forgetting",
+    "elastic weight consolidation",
+    "anchor recency weighting",
+    "preregistration",
+    "reproducibility",
+    "dose-response",
+    "transfer failure",
+    "active dendrites",
+    "transformer",
+    "multiple comparison correction",
+    "preprint"
+  ],
+  "creators": [
+    {
+      "given_name": "Ranxi",
+      "family_name": "Zhou",
+      "affiliation": "Hunan University of Chinese Medicine, Changsha, China",
+      "role": "Researcher"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.23685906",
+      "relation": "references"
+    },
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.23685788",
+      "relation": "references"
+    },
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.24017966",
+      "relation": "references"
+    },
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.24148621",
+      "relation": "isvariantformof"
+    },
+    {
+      "scheme": "url",
+      "identifier": "https://github.com/zhouranxi/delp-anchor-budget",
+      "relation": "issupplementto"
+    }
+  ],
+  "access_right": "open",
+  "license": {
+    "id": "cc-by-4.0"
+  }
+}

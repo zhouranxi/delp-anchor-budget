@@ -415,17 +415,6 @@ the same $\lambda$ ($67.4$; paired $t(9){=}-0.3$); at $T{=}20$ fifo is
 $+3.5$ ahead ($t(9){=}7.0$). A collapsed posterior thus recovers most of
 the plasticity, but it posts neither the best long-sequence accuracy
 nor, by construction, any anchor accumulation problem to cure. Its
-forgetting is not unstructured: per-task forgetting concentrates on
-older tasks for every arm, with drop--age correlations of $-0.94$
-(plain), $-0.79$ (\delp{}-fifo), $-0.70$ (online EWC), and $-0.43$
-(unbounded).
-
-Online EWC at its best grid value ($\lambda{=}1000$) reaches $67.5/46.0$:
-at $T{=}10$ it is statistically indistinguishable from \delp{}-fifo at
-the same $\lambda$ ($67.4$; paired $t(9){=}-0.3$); at $T{=}20$ fifo is
-$+3.5$ ahead ($t(9){=}7.0$). A collapsed posterior thus recovers most of
-the plasticity, but it posts neither the best long-sequence accuracy
-nor, by construction, any anchor accumulation problem to cure. Its
 forgetting is not unstructured: per-task forgetting (peak minus final
 accuracy; $T{=}20$, $\lambda{=}1000$, $n{=}10$) concentrates on older
 tasks for every arm, with drop--age correlations of $-0.94$ (plain),
@@ -732,68 +721,46 @@ re-open.
 \label{sec:discussion}
 
 \paragraph{Why bounding works.}
-Eq.~\ref{eq:decomp} says total retention is learning plus transfer.
-Unbounded stacks tax learning with stale constraints. A FIFO window
-keeps only the freshest $M$ constraints, whose $\theta^{(k)}$ are near
-$\theta^{\text{now}}$ and whose Fisher mass is relevant to the
-current basin: the penalty constrains what actually needs constraining.
+Eq.~\ref{eq:decomp} splits retention into learning plus transfer; unbounded
+stacks tax learning with stale constraints. A FIFO window keeps the freshest
+$M$ constraints, whose $\theta^{(k)}$ are near $\theta^{\text{now}}$ with
+Fisher mass relevant to the current basin, so the penalty hits what needs
+constraining.
 
 \paragraph{The mass signal is not useless --- it is mis-keyed.}
-redun asks ``which anchor constrains least \emph{now}?''; the honest
-answer at eviction time is ``the one just created'', which is exactly
-the wrong anchor to drop. agew2 shows mass adds marginal, unstable
-value as a secondary signal. The information structure of the problem
-makes age the only reliable primary key: eviction-time mass confounds
-relevance with staleness.
-
-\paragraph{The mass signal is not useless --- it is mis-keyed.}
-redun asks ``which anchor constrains least \emph{now}?''; the honest
-answer at eviction time is ``the one just created'', which is exactly
-the wrong anchor to drop. agew2 shows mass adds marginal, unstable
-value as a secondary signal. The information structure of the
-problem makes age the only reliable primary key: eviction-time mass
-confounds relevance with staleness.
+redun asks ``which anchor constrains least \emph{now}?''; at eviction the
+answer is ``the one just created'' --- the wrong anchor to drop. agew2 shows
+mass adds marginal, unstable value as a secondary signal, so age alone is a
+reliable primary key: eviction-time mass confounds relevance with staleness.
 
 \paragraph{Protection state as a knowledge base.}
-The perspective that unifies these findings is to treat the anchor
-stack as a knowledge base rather than an accumulator. A knowledge base
-is expected to state \emph{what} it knows, \emph{since when}, and to
-support explicit maintenance operations --- eviction, merge, audit ---
-over named entries. An unbounded anchor stack violates all three
-expectations: it grows without bound, weights all entries equally
-regardless of age, and offers no interface for inspection. The
-bounded-stack family restores them: each anchor carries an origin tag,
-the survivor history records every maintenance event, the eviction
-policy is an explicit, swappable choice, and the log-linear law of
-Sec.~\ref{sec:exp-law} prices the knowledge retained per horizon
-unit. In this reading, the anchor accumulation problem is not an
-implementation bug in \delp{}; it is what happens to \emph{any}
-protection scheme whose knowledge base lacks a curation policy ---
-and the same reading explains why the discounted posterior of online
-EWC, which answers the same curation question with an implicit decay,
-is interchangeable with the explicit window in accuracy but inferior
-in auditability.
+The anchor stack is a knowledge base, not an accumulator: it states \emph{what}
+it knows, \emph{since when}, and supports explicit maintenance --- eviction,
+merge, audit --- over named entries. An unbounded stack violates all three ---
+unbounded growth, age-blind weighting, no inspection interface --- where the
+bounded family restores them: origin tag per anchor, survivor history of
+maintenance events, swappable eviction policy, and the log-linear law of
+Sec.~\ref{sec:exp-law} pricing knowledge per horizon unit. The accumulation
+problem is thus no bug in \delp{} but what befalls \emph{any} protection
+scheme lacking a curation policy --- also why online EWC's discounted
+posterior, an implicit decay, matches the explicit window in accuracy yet
+loses on auditability.
 
 \paragraph{Limitations.}
-(1) All three benchmarks are task-incremental; domain-incremental
-settings, where tasks share nearly all low-level structure, may shrink
-the age-over-mass gap further (Sec.~\ref{sec:exp-cifar}). (2) $T \le 20$;
-the $\ell$-recovery trend grows with $T$ but the BWT cost does too.
-(3) All MNIST arms share an uncalibrated hidden gain, as in the audit;
-the CIFAR study uses its own protocol with $\lambda$ calibrated on
-unbounded \delp{} only; conclusions are within-family comparisons.
-(4) Merge's penalty change is measured by instrumentation
-(Sec.~\ref{sec:exp-merge}), not bounded formally. (5) On Split-CIFAR-100
-the no-protection reference outperforms every protection arm
-(Sec.~\ref{sec:exp-cifar}), so the budget result is internal to
-protected arms there. (6) These are the standard continual-learning
-benchmarks of the regularizer literature, not large-scale vision models:
-the magnitude of the anchor-accumulation cost at ImageNet scale is
-unmeasured. We regard the diagnosis, not the repair, as the transferable
-claim --- the accumulation law of Sec.~\ref{sec:exp-law} follows from
-the regularizer's form rather than from the task distribution, and the
-instrumentation used here (survivor histories, penalty traces) is
-designed to be portable to that setting.
+(1) All three benchmarks are task-incremental; domain-incremental settings,
+sharing nearly all low-level structure, may shrink the age-over-mass gap
+further (Sec.~\ref{sec:exp-cifar}). (2) $T \le 20$; the $\ell$-recovery trend
+grows with $T$, but so does the BWT cost. (3) MNIST arms share an uncalibrated
+hidden gain; the CIFAR protocol calibrates $\lambda$ on unbounded \delp{} only,
+so conclusions are within-family. (4) Merge's penalty change is measured by
+instrumentation (Sec.~\ref{sec:exp-merge}), not bounded formally. (5) On
+Split-CIFAR-100 no-protection beats every protection arm
+(Sec.~\ref{sec:exp-cifar}), so the budget result holds only within protected
+arms. (6) Standard regularizer-literature benchmarks, not large-scale models:
+the ImageNet-scale cost is unmeasured; the transferable claim is the diagnosis,
+since the law of Sec.~\ref{sec:exp-law} follows from the regularizer's form,
+not the task distribution, and the instrumentation (survivor histories, penalty
+traces) is portable there.
 
 % ============================================================
 \section{Conclusion}

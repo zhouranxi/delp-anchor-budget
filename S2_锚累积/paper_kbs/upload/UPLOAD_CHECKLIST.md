@@ -16,7 +16,7 @@
 
 | 顺序 | Item Type | 文件 | 规格核验 |
 |---|---|---|---|
-| 1 | `Manuscript` | `main.pdf` | 双倍行距 27 页。期刊为**偏好性**建议 ≤20 页（"preferably no more than 20 double line spaced manuscript pages"），非硬上限；本稿以论证完整性优先，若编辑要求可再压缩 |
+| 1 | `Manuscript` | `main.pdf` | 双倍行距 26 页。期刊为**偏好性**建议 ≤20 页（"preferably no more than 20 double line spaced manuscript pages"），非硬上限；本稿以论证完整性优先，若编辑要求可再压缩 |
 | 2 | `Supplementary material` | `supplementary.pdf` | **7 页**：附录 A（统计理由+超参数）+ 附录 B（完整逐任务精度矩阵）+ 附录 C（三张完整数值网格表）+ 附录 D（eviction 策略定义表）+ 2 张补充图 |
 | 3 | `Highlights` | `highlights.docx` | 5 条，每条 ≤85 字符（含空格），**文件名含 "highlights"** ✅（官方措辞 "encouraged"，鼓励非强制） |
 | 4 | `Declaration of competing interest` | `declarations.docx` | **强制**。官方要求走声明工具生成："The declarations tool should always be completed."；上传于 "attach/upload files" 步骤，.doc/.docx，无需签名 |

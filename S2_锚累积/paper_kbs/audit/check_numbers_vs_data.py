@@ -327,6 +327,37 @@ def main():
         print(f"  [{'PASS' if ok else 'FAIL'}] {pol} {ds} T={T} 最终栈: "
               f"声称 {list(claim)} / 实算 {got} (n={top[1]})")
 
+    print("\n[10] 跨文档一致性（本轮修正项）")
+    for T, claim in [(10, -5.2), (20, -4.5)]:
+        u = delp("unbounded", None, T, 5000)
+        check(f"unbounded BWT T={T} (n=10, 两文档统一)", claim,
+              st.mean([r["bwt"] for r in u.values()]), tol=0.06)
+    for T, claim in [(10, 5.9), (20, 15.8)]:
+        u = delp("unbounded", None, T, 5000)
+        f = delp("fifo", 5, T, 5000)
+        c = sorted(set(u) & set(f))
+        check(f"ell 上升量 T={T} (n=10)", claim,
+              st.mean([f[s]["ell"] for s in c]) - st.mean([u[s]["ell"] for s in c]), tol=0.06)
+    for T, claim in [(10, 3.0), (20, 5.7)]:
+        pl = list(ewc("plain", None, T, 1000).values())
+        u = list(delp("unbounded", None, T, 5000).values())
+        check(f"plain EWC 遗忘倍数 T={T}", claim,
+              abs(st.mean([r["bwt"] for r in pl])) / abs(st.mean([r["bwt"] for r in u])), tol=0.06)
+    o1 = ewc("online", None, 10, 1000)
+    f5 = delp("fifo", 5, 10, 1000)
+    c = sorted(set(o1) & set(f5))
+    t = stats.ttest_rel([f5[s]["final_avg"] for s in c], [o1[s]["final_avg"] for s in c])
+    check("fifo − online t(9) @T=10", -0.3, t.statistic, tol=0.05)
+    u = delp("unbounded", None, 20, 0.1, "cifar100")
+    signs = []
+    for pol in ["fifo", "agew", "random", "redun", "merge", "agew2"]:
+        d = delp(pol, 2, 20, 0.1, "cifar100")
+        if not d:
+            continue
+        cc = sorted(set(d) & set(u))
+        signs.append(st.mean([d[s]["final_avg"] - u[s]["final_avg"] for s in cc]))
+    check("CIFAR T=20 M=2 六个臂符号全为正", 6, sum(1 for v in signs if v > 0), tol=0)
+
     print("\n" + "=" * 74)
     npass = sum(1 for r in RESULTS if r[3])
     nfail = len(RESULTS) - npass

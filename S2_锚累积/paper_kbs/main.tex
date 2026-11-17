@@ -152,9 +152,9 @@ the binding constraint on the learning term of long sequences, and
 introduce a family of eviction policies. A FIFO budget recovers
 $+4.5/+9.0$ points of final accuracy at $T{=}10/20$ over unbounded
 \delp{} ($n{=}10$ paired seeds; Wilcoxon $p{=}0.002$) by recovering
-$+5.4/+15.2$ points of the learning term (Eq.~\ref{eq:decomp}); the
+$+5.9/+15.8$ points of the learning term (Eq.~\ref{eq:decomp}); the
 effect replicates on Fashion-MNIST ($+13.0$ at $M{=}2$) and, within the
-protected family, on Split-CIFAR-100 (five of the six bounded policies beat
+protected family, on Split-CIFAR-100 (five of the six bounded policies significantly beat
 unbounded at $T{=}20$, $M{=}2$, up to $+5.0$ points).
 \item \textbf{An eviction design space with one governing constraint.}
 Per-task accuracy profiles show the budget controls the \emph{age
@@ -376,7 +376,7 @@ fifo $T{=}20$ & $+8.98\pm1.49$ & $19.1$ & $0.002$ & $0.992$ & $-7.20\pm1.97$ \\
 
 Table~\ref{tab:paired}: a FIFO budget at $M{=}5$ trades $1.5/7.2$ points
 of BWT for $+4.5/+9.0$ accuracy. The mechanism is the learning term:
-$\ell$ rises by $+5.4$ and $+15.2$, exactly the recovery predicted if
+$\ell$ rises by $+5.9$ and $+15.8$, exactly the recovery predicted if
 accumulated elastic drag were the binding constraint
 (Sec.~\ref{sec:background}); the policy grid in the supplementary
 material shows the same signature for every bounded arm.
@@ -403,16 +403,17 @@ $\lambda$ grid and are compared at each scheme's best grid value, so
 no scheme is disadvantaged by another's tuning.
 
 Plain EWC posts the highest final accuracy
-of any arm ($68.8$--$73.4$ at $T{=}10$, $57.7$--$61.7$ at $T{=}20$,
+at $T{=}20$ ($68.8$--$73.4$ at $T{=}10$, $57.7$--$61.7$ at $T{=}20$,
 best at $\lambda{=}1000$) by maximizing $\ell$ ($83$--$86$): with no
 stack there is no accumulation --- and no retention either, at
-$3$--$5\times$ the forgetting of unbounded \delp{} (BWT
-$-18.6/-27.3$ at its best $\lambda$ vs.\ $-5.5/-4.4$). A reader who
+$3$--$6\times$ the forgetting of unbounded \delp{} (BWT
+$-18.6/-27.3$ at its best $\lambda$ vs.\ $-5.2/-4.5$). A reader who
 weights BWT equally would rank it last.
 
 Online EWC at its best grid value ($\lambda{=}1000$) reaches $67.5/46.0$:
 at $T{=}10$ it is statistically indistinguishable from \delp{}-fifo at
-the same $\lambda$ ($67.4$; paired $t(9){=}-0.3$); at $T{=}20$ fifo is
+the same $\lambda$ ($67.4$; paired $t(9){=}-0.3$ for fifo minus online);
+at $T{=}20$ fifo is
 $+3.5$ ahead ($t(9){=}7.0$). A collapsed posterior thus recovers most of
 the plasticity, but it posts neither the best long-sequence accuracy
 nor, by construction, any anchor accumulation problem to cure. Its
@@ -447,9 +448,10 @@ the window, $h{=}10$ for $\gamma{=}0.9$, $h{=}20$ unbounded):
 a fit that holds for
 every seed individually (per-seed $R^2 \geq 0.98$, slope
 $-10.9\pm0.6$); the same four-arm fit at $T{=}10$ (excluding
-$\gamma{=}0.9$, whose $\ell$ sits $0.7$ below the line) gives a
-shallower slope ($-3.7$, $R^2{=}0.95$), consistent with a 10-task
-sequence probing a shorter stretch of the horizon. Bounding accumulated
+$\gamma{=}0.9$, whose $\ell$ sits $0.7$ below the line; the unbounded
+arm keeps $h{=}20$, so the horizon variable is comparable across the two
+fits) gives a shallower slope ($-3.7$, $R^2{=}0.95$), consistent with a
+10-task sequence probing a shorter stretch of the horizon. Bounding accumulated
 anchor mass --- not the mechanism that enforces the bound --- is the
 active ingredient, and the soft bound is the stronger remedy on final
 accuracy in this regime.
@@ -501,7 +503,7 @@ plasticity recovery, the two knobs produce \emph{different age
 structures} of forgetting (Fig.~\ref{fig:age}):
 $\lambda{=}1000$ scales down protection uniformly --- the profile
 keeps its steep age gradient ($41.8$-point spread, oldest tasks at
-66--83\%, newest at 41--50\%) --- while fifo $M{=}2$
+66--83\%, newest three at 41--50\%) --- while fifo $M{=}2$
 redistributes forgetting onto the oldest tasks, flattening the
 profile ($22.1$-point spread).
 No value of $\lambda$ produces the flat profile, and no value of $M$
@@ -544,7 +546,7 @@ and evicts new ones \emph{at birth}: redun's stack freezes at
 $\{\mathcal{A}_1, \mathcal{A}_2\}$ (Figs.~\ref{fig:stack} and
 \ref{fig:criteria}), the first two tasks keep strong protection
 (87/83\% final accuracy at $M{=}2$), and tasks created later lose all
-protection within one phase --- the earliest of them fall to 22--30\%
+protection within one phase --- the earliest of them fall to 23--30\%
 final accuracy against the 80\%-plus of the two survivors --- driving
 BWT to $-34.5$ at $T{=}20$ despite the \emph{highest} $\ell$ of any arm. Multiplicative age
 re-weighting does not help: agew (mass $\times$ age-rank) is
@@ -635,8 +637,8 @@ material.
 
 \begin{sloppypar}
 \paragraph{The budget effect strengthens with $T$ on natural images.}
-At $T{=}20$ and the tightest budget ($M{=}2$), five of the six bounded
-policies outperform unbounded stacking (supplementary material): fifo $+5.0$
+At $T{=}20$ and the tightest budget ($M{=}2$), all six bounded
+policies outperform unbounded stacking, five of them significantly (supplementary material): fifo $+5.0$
 ($t(9){=}7.1$, Wilcoxon $p{=}0.002$), agew $+4.2$ ($t{=}7.3$, $p{=}0.002$),
 random $+3.6$ ($t{=}9.2$, $p{=}0.002$), redun $+3.4$ ($t{=}4.0$,
 $p{=}0.006$), agew2 $+2.7$ ($t{=}2.7$, $p{=}0.037$). At the looser budget

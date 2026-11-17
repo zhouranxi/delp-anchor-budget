@@ -117,8 +117,8 @@ the full JSON records (including \texttt{survivor\_history} and
 
 \begin{sloppypar}
 Final-phase accuracy (\%) per task, Permuted-MNIST, $\lambda{=}5000$,
-$M{=}5$: mean over seeds ($n{=}10$ for unbounded and fifo, $n{=}3$ for
-random/redun/merge). These underlie Fig.~3a and the grandfathering
+$M{=}5$: mean over the same three seeds (0--2) for every arm,
+so that policies are directly comparable. These underlie Fig.~3a and the grandfathering
 analysis of the main text.
 \end{sloppypar}
 
@@ -164,14 +164,14 @@ $T$ & Arm & BWT & $\acc$ & $\ell$ \\
 \midrule
 10 & unbounded & $-5.5\pm0.6$   & $55.3$ & $60.2$ \\
 10 & fifo      & $-6.6\pm0.9$   & $59.7$ & $65.6$ \\
-10 & random    & $-9.1\pm2.6$   & $60.2$ & $68.4$ \\
+10 & random    & $-9.1\pm2.6$   & $60.1$ & $68.4$ \\
 10 & redun     & $-18.3\pm0.8$  & $53.6$ & $70.1$ \\
 10 & agew      & $-18.3\pm0.8$  & $53.6$ & $70.1$ \\
 10 & agew2     & $-8.4\pm0.9$   & $60.8$ & $68.3$ \\
 10 & merge     & $-5.5\pm0.6$   & $55.3$ & $60.3$ \\
 \midrule
 20 & unbounded & $-4.4\pm1.0$   & $33.7$ & $37.9$ \\
-20 & fifo      & $-10.2\pm1.9$  & $43.4$ & $53.1$ \\
+20 & fifo      & $-10.2\pm1.9$  & $43.4$ & $53.0$ \\
 20 & random    & $-13.5\pm0.4$  & $42.0$ & $54.8$ \\
 20 & redun     & $-30.2\pm0.4$  & $36.3$ & $65.0$ \\
 20 & agew      & $-30.2\pm0.4$  & $36.3$ & $65.0$ \\
@@ -307,7 +307,7 @@ signed-rank $p$-value).}
 Policy & $M{=}2$ & $M{=}5$ & $M{=}2$ & $M{=}5$ \\
 \midrule
 unbounded & \multicolumn{2}{c}{$23.3\pm2.6$} & \multicolumn{2}{c}{$29.8\pm4.2$} \\
-fifo   & $24.8\pm2.8$ ($+1.5$) & $23.5\pm2.6$ ($+0.2$) &
+fifo   & $24.7\pm2.8$ ($+1.5$) & $23.5\pm2.6$ ($+0.2$) &
          $\mathbf{34.8\pm4.8}$ ($+5.0$) & $32.2\pm4.3$ ($+2.4$) \\
 random & $24.7\pm2.4$ ($+1.5$) & $22.4\pm2.7$ ($-0.9$) &
          $33.4\pm3.9$ ($+3.6$) & $32.2\pm4.7$ ($+2.4$) \\
@@ -317,7 +317,7 @@ merge  & $22.3\pm1.7$ ($-1.0$) & $21.8\pm3.2$ ($-1.5$) &
          $30.8\pm5.2$ ($+1.0$) & $29.3\pm3.4$ ($-0.5$) \\
 agew   & $24.0\pm3.8$ ($+0.7$) & $22.7\pm3.4$ ($-0.6$) &
          $34.0\pm4.3$ ($+4.2$) & $31.6\pm3.7$ ($+1.8$) \\
-agew2  & $23.7\pm2.6$ ($+0.4$) & $22.3\pm3.3$ ($-1.0$) &
+agew2  & $23.7\pm2.6$ ($+0.4$) & $22.3\pm3.2$ ($-1.0$) &
          $32.5\pm3.7$ ($+2.7$) & $31.1\pm3.4$ ($+1.3$) \\
 \bottomrule
 \end{tabular}

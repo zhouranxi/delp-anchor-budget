@@ -52,11 +52,11 @@ check("260 条 CIFAR 记录在册", len(cifar) == 260, f"got {len(cifar)}")
 
 print()
 print("========== 意见2：'every bounded' 全称量词 ==========")
-check("摘要 five of the six", FLAT.count("five of the six") >= 1)
-check("贡献段 five of the six", FLAT.count("five of the six") >= 2 or "five of the six bounded policies beat" in FLAT)
-check("正文 Table6 段 five of the six", "five of the six bounded policies outperform" in FLAT)
+check("摘要 five of the six significantly", FLAT.count("five of the six") >= 1 and "significantly beat" in FLAT)
+check("贡献段 five of the six significantly", "five of the six bounded policies significantly beat" in FLAT)
+check("正文 Table6 段 all six / five significant", "all six bounded" in FLAT and "five of them significantly" in FLAT)
 check("无残留 'every bounded policy outperform'", "every bounded policy outperforms" not in FLAT)
-check("无残留 'all six bounded'", "all six bounded" not in FLAT)
+check("CIFAR 段用显著性而非纯符号", "outperform unbounded stacking" in FLAT and "five of them significantly" in FLAT)
 # 数据: T=20 merge M=5 Δ = -0.5 < 0（支撑 'merge is the exception'）
 c20 = {r["seed"]: r for r in cifar if r["ntask"]==20 and r["policy"]=="unbounded"}
 mg = {r["seed"]: r for r in cifar if r["ntask"]==20 and r["policy"]=="merge" and r["M"]==5}

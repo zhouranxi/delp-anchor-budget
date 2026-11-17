@@ -45,7 +45,13 @@ def get(policy, M, ntask, kind="delp", dataset="mnist", lam=LAM, files=None):
             continue
         if policy != "unbounded" and r.get("M") != M:
             continue
-        out[r["seed"]] = r
+        # 同一 (arm, seed) 可能在多个文件里各有一份：anchor_budget_all.json
+        # 里的 merge 记录没有 merge_drifts / survivor_history，而 r8_merge.json
+        # 里有。若直接覆盖，merge 插桩会静默从 40 runs 掉到 37。
+        # 保留字段更全的那条。
+        prev = out.get(r["seed"])
+        if prev is None or len(r) > len(prev):
+            out[r["seed"]] = r
     return out
 
 

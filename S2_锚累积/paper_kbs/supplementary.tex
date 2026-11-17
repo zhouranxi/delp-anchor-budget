@@ -216,6 +216,105 @@ age   & median mass & agew2 $\approx$ fifo ($\pm1.5$ pts) \\
 \end{tabular}
 \end{table}
 
+
+% ============================================================
+\section{Additional figure: anchor-stack composition on Split-CIFAR-100}
+% ============================================================
+\label{appx:fig}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig5_cifar_stacktrace.pdf}
+\caption{Supplementary Anchor-stack composition on Split-CIFAR-100 ($T{=}20$,
+$M{=}2$, seed 0; all seeds agree on the final sets). Same rendering as
+the corresponding stack-trace figure in the main text. fifo is a sliding window; redun and agew freeze
+on the first anchors (grandfathering); agew2 pairs the oldest with the
+newest; merge partially grandfather-protects; random walks down.}
+\label{fig:supp-stackcifar}
+\end{figure*}
+
+
+\section{Additional figure: accuracy--forgetting Pareto plane}
+\label{appx:fig2}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.72\linewidth]{fig1_pareto.pdf}
+\caption{Supplementary Accuracy--forgetting trade-off on Permuted-MNIST. Color
+encodes policy; marker encodes budget $M$. Error bars: sd over seeds
+($n{=}10$ for unbounded/fifo $M{=}5$; else $n{=}3$). The smaller
+budget $M{=}2$ trades BWT for accuracy at both budgets in the same
+direction; merge coincides with
+unbounded at every $M$; redun sits dominated.}
+\label{fig:supp-pareto}
+\end{figure}
+
+
+\section{Eviction policies}
+\label{appx:policies}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Supplementary Eviction policies for a stack over budget. Constraint mass
+$m_k = \sum_i F^{(k)}_i (\theta^{\text{now}}_i-\theta^{(k)}_i)^2$ is
+measured at eviction time.}
+\label{tab:supp-policies}
+\begin{tabular}{llp{8.2cm}}
+\toprule
+Policy & Key & Rule (when $|\mathcal{A}|>M$) \\
+\midrule
+unbounded & --- & never evict (original \delp{}) \\
+fifo      & age & evict the oldest anchor \\
+random    & --- & evict uniformly at random \\
+redun     & mass & evict $\arg\min_k m_k$ \\
+agew      & mass $\times$ age & evict $\arg\min_k m_k \cdot (k{+}1)$,
+    oldest $k{=}0$ \\
+agew2     & age $\to$ mass & evict oldest anchor with below-median $m_k$;
+    fallback fifo \\
+merge     & redundancy & merge the pair with most similar $F$
+    (cosine): $F \leftarrow F_i + F_j$, $\theta \leftarrow$ weighted
+    mean; repeat \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\section{Split-CIFAR-100 policy grid}
+\label{appx:cifar}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Supplementary Split-CIFAR-100, $\lambda{=}0.1$: final accuracy, mean
+$\pm$ sd over $n{=}10$ seeds; parenthesized values are the paired
+difference $\Delta\acc$ against unbounded \delp{} at the same seed
+(quoted in text with the paired $t(9)$ and the two-sided Wilcoxon
+signed-rank $p$-value).}
+\label{tab:supp-cifar}
+\setlength{\tabcolsep}{4pt}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{$T{=}10$} & \multicolumn{2}{c}{$T{=}20$} \\
+\cmidrule(r){2-3}\cmidrule(l){4-5}
+Policy & $M{=}2$ & $M{=}5$ & $M{=}2$ & $M{=}5$ \\
+\midrule
+unbounded & \multicolumn{2}{c}{$23.3\pm2.6$} & \multicolumn{2}{c}{$29.8\pm4.2$} \\
+fifo   & $24.8\pm2.8$ ($+1.5$) & $23.5\pm2.6$ ($+0.2$) &
+         $\mathbf{34.8\pm4.8}$ ($+5.0$) & $32.2\pm4.3$ ($+2.4$) \\
+random & $24.7\pm2.4$ ($+1.5$) & $22.4\pm2.7$ ($-0.9$) &
+         $33.4\pm3.9$ ($+3.6$) & $32.2\pm4.7$ ($+2.4$) \\
+redun  & $24.0\pm2.5$ ($+0.7$) & $23.6\pm2.0$ ($+0.3$) &
+         $33.2\pm4.7$ ($+3.4$) & $32.9\pm3.3$ ($+3.1$) \\
+merge  & $22.3\pm1.7$ ($-1.0$) & $21.8\pm3.2$ ($-1.5$) &
+         $30.8\pm5.2$ ($+1.0$) & $29.3\pm3.4$ ($-0.5$) \\
+agew   & $24.0\pm3.8$ ($+0.7$) & $22.7\pm3.4$ ($-0.6$) &
+         $34.0\pm4.3$ ($+4.2$) & $31.6\pm3.7$ ($+1.8$) \\
+agew2  & $23.7\pm2.6$ ($+0.4$) & $22.3\pm3.3$ ($-1.0$) &
+         $32.5\pm3.7$ ($+2.7$) & $31.1\pm3.4$ ($+1.3$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section*{Data availability}
 All code, experiment scripts, and the complete JSON records of every
 run (including per-phase accuracy matrices and anchor-stack survivor

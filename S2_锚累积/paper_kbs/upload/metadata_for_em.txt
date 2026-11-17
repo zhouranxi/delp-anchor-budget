@@ -1,0 +1,101 @@
+TARGET JOURNAL
+Knowledge-Based Systems (Elsevier; ISSN 0950-7051 print / 1872-7409 online)
+Submission entry: https://submit.elsevier.com/KNOSYS
+Journal homepage: https://www.sciencedirect.com/journal/knowledge-based-systems
+
+ARTICLE TYPE
+Original high-quality research paper
+(the guide lists two types: "Original high-quality research and review papers"
+and "Short communications" capped at 10 pages -- NOT this manuscript's type)
+
+TITLE
+The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft–Hard Protection Law, and the Auditable Cost of Regularized Continual Learning
+
+ABSTRACT (198 words -- KBS limit 250)
+Regularized continual learning stores one protection state per task, whose cost grows with sequence length. In usage-localized elastic weight consolidation (DeLP), full-weight anchors drag later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem, repairing it by bounding the stack at M entries. A FIFO budget recovers +4.5/+9.0 accuracy points over unbounded DeLP at T = 10/20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002). The budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design obeys one constraint: criteria keyed to constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Online EWC's Fisher discount is a soft bound, and both obey one log-linear law in protected-mass horizon (l = 84 - 11 ln h, R^2 = 0.99): bounding anchor mass, not eviction, is the active ingredient. On Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-based diagnosis and audit framework, not an accuracy gain.
+
+KEYWORDS (5 -- KBS requires 1 to 7)
+continual learning, elastic weight consolidation, catastrophic forgetting, knowledge-based protection, stability–plasticity dilemma
+
+AUTHORS
+Given name: Ranxi
+Family name: Zhou
+Affiliation: Hunan University of Chinese Medicine, 300 Xueshi Avenue, Hanpu, Yuelu District, Changsha 410208, Hunan, China
+Email: zhouranxi@foxmail.com
+Role: Corresponding author (also sole author)
+CRediT: Conceptualization, Methodology, Software, Investigation, Formal analysis, Data curation, Writing - original draft, Writing - review & editing, Visualization
+
+MANUSCRIPT STATS
+Pages: 27 double-spaced (11pt) (guide: "preferably no more than 20 double line spaced
+        manuscript pages, including tables and figures" -- a preference, not a hard limit)
+Figures: 3
+Tables: 1
+Supplementary: separate PDF (statistics rationale, hyperparameters, 3 numerical grids,
+              complete per-task accuracy matrices, 2 auxiliary figures)
+References: 30 (main text)
+Keywords: 5
+
+REVIEW MODEL
+Single anonymized (single-blind). Author names stay on the title page.
+The guide does NOT require an anonymized manuscript as a separate file.
+The guide does NOT require a separate title-page file.
+
+CITATION STYLE
+No strict requirement at submission -- any consistent style is accepted; the journal's
+numbered square-bracket style is applied at proof stage. Current numbered output is
+already consistent -- no change needed.
+
+HIGHLIGHTS
+Encouraged (not mandatory). 3 to 5 bullets, each <= 85 characters including spaces.
+File: highlights.docx  (filename must contain "highlights")
+
+GRAPHICAL ABSTRACT
+The KBS guide has NO graphical-abstract section at all -- neither required nor offered.
+Optional to upload. Current graphical_abstract.png: 3900 x 2280 px, 300 dpi, landscape.
+
+ARTWORK
+Vector: EPS or PDF (fonts embedded or text converted to outlines).
+Raster: >= 300 dpi; single column >= 1063 px, full page >= 2244 px.
+Current Figure_1-3.pdf (manuscript) and Figure_S1/S2.pdf (supplementary) are
+pure vector. All artwork must have a caption and be numbered in order of
+appearance. No maximum number of figures/tables is stated by the guide.
+
+COVER LETTER
+Not mentioned anywhere in the KBS guide (no section, no checklist item).
+Uploading it is optional and therefore a bonus. Our version is KBS-specific:
+it anchors the contribution to KBS's knowledge-based scope and quotes the
+Pattern Recognition decision verbatim with item-by-item responses.
+
+AUTHOR VITAE / PHOTO
+Not required by KBS (this is a Pattern Recognition / Information Sciences
+requirement). Do not upload vitae.docx.
+
+GENAI DECLARATION
+Required at submission by the KBS guide: "Authors must declare the use of
+generative AI tools in the manuscript preparation process upon submission of
+the paper." Statement goes in its own section before the reference list; the
+manuscript already has it.
+
+DECLARATIONS (upload as separate files)
+- Declaration of competing interest: declarations.docx  (MANDATORY, .doc/.docx,
+  via the Elsevier declarations tool)
+- CRediT authorship contribution statement: in main.tex end matter and in declarations.docx
+- Data availability: GitHub + Zenodo DOI (KBS uses Option C: deposit + link REQUIRED)
+- Funding: none
+- Generative AI declaration: in main.tex end matter
+
+PRIOR SUBMISSIONS (for the prior-publication / concurrent-submission questions)
+- Pattern Recognition: PR-D-26-16069, declined without external review, 10 November 2026
+- Neurocomputing: NEUCOM-D-26-24422, declined, 26 October 2026
+Neither is under consideration. Zenodo preprints do not count as prior publication.
+
+COST
+Hybrid journal. Subscription route: "No publication fee charged to authors" -- FREE.
+Open-access route: USD 3,240 APC for full length articles (USD 700 for short
+articles), excluding taxes. DO NOT select OA if you want to avoid the fee.
+Journal metrics: Impact Factor 8.0, CiteScore 13.7.
+Publishing timeline: 3 days to first decision, 56 days to decision after review,
+158 days to acceptance, 8 days acceptance to online publication.
+Self-archiving: accepted manuscript may be shared via an institutional
+repository after a 24-month embargo; the published article itself must not be
+posted publicly (e.g. ResearchGate).

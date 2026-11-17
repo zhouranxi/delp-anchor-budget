@@ -1,36 +1,35 @@
-Information Sciences 投稿 — EM 逐屏填值（照着点即可）
+Knowledge-Based Systems 投稿 — EM 逐屏填值（照着点即可）
 
-入口：https://submit.elsevier.com/INS
-提示：登录后选 "Start a new submission" → Journal = Information Sciences →
-      Article Type = Original research work。
-InfoSci 是 hybrid 期刊，**投稿不收费**；录用后若选 Open Access 则要 $3,040 —— 记得选 Subscription。
+入口：https://submit.elsevier.com/KNOSYS
+提示：登录后 "Start a new submission" → Journal = Knowledge-Based Systems →
+      Article Type = Original high-quality research paper。
+KBS 是 hybrid 期刊，**订阅路线对作者 0 费用**；录用后若选 Open Access 则要 $3,240 —— 记得选 Subscription。
 
 ================================================================
 屏幕 1 — Article Type
 ================================================================
-Article Type: Original research work
-（指南只列了这一个类型名，没有其它选项）
+Article Type: Original high-quality research paper
+（另一个选项是 Short communications，限 10 页 —— 本稿不适用）
 
 ================================================================
 屏幕 2 — Title
 ================================================================
 The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft–Hard Protection Law, and the Auditable Cost of Regularized Continual Learning
 
-提示：不要手动加换行符，不要输入 LaTeX 的 \ 或 -- （上面已用真正的 en-dash）。
+提示：不要手动加换行符；不要输入 LaTeX 的 \ 或 --（上面已用真正的 en-dash）。
 
 ================================================================
-屏幕 3 — Abstract（197 词；官方上限 250 与 200 并存，197 同时满足）
+屏幕 3 — Abstract（197 词，上限 250）
 ================================================================
-Regularized continual learning stores one protection state per task, whose cost grows with sequence length. In usage-localized elastic weight consolidation (DeLP), full-weight anchors drag later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem, repairing it by bounding the stack at M entries. A FIFO budget recovers +4.5/+9.0 accuracy points over unbounded DeLP at T = 10/20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002). The budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design obeys one constraint: criteria keyed to constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Online EWC's Fisher discount is a soft bound, and both obey one log-linear law in protected-mass horizon (l = 84 - 11ln h, R^2 = 0.99): bounding anchor mass, not eviction, is the active ingredient. On Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-centric diagnosis and audit framework, not an accuracy gain.
+Regularized continual learning stores one protection state per task, whose cost grows with sequence length. In usage-localized elastic weight consolidation (DeLP), full-weight anchors drag later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem, repairing it by bounding the stack at M entries. A FIFO budget recovers +4.5/+9.0 accuracy points over unbounded DeLP at T = 10/20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002). The budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design obeys one constraint: criteria keyed to constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Online EWC's Fisher discount is a soft bound, and both obey one log-linear law in protected-mass horizon (l = 84 - 11 ln h, R^2 = 0.99): bounding anchor mass, not eviction, is the active ingredient. On Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-based diagnosis and audit framework, not an accuracy gain.
 
 ================================================================
-屏幕 4 — Keywords（6 个，要求 1–7）
+屏幕 4 — Keywords（5 个，要求 1–7）
 ================================================================
 continual learning
 elastic weight consolidation
 catastrophic forgetting
-knowledge management
-protection-state curation
+knowledge-based protection
 stability–plasticity dilemma
 
 ================================================================
@@ -40,14 +39,16 @@ Item Type: Manuscript             → upload/main.pdf
 Item Type: Supplementary material → upload/supplementary.pdf
 Item Type: Highlights             → upload/highlights.docx
 Item Type: Declaration of competing interest → upload/declarations.docx
-Item Type: Vitae                  → upload/vitae.docx        <-- InfoSci 特有
-Item Type: Figure  (传 5 次)      → upload/Figure_1.pdf ... Figure_5.pdf
-Item Type: Figure  (再传 1 次)    → 你的证件照文件             <-- InfoSci 特有
 Item Type: Cover Letter           → upload/cover_letter.docx
-Item Type: Graphical Abstract     → upload/graphical_abstract.png（可选，官方未要求）
+Item Type: Figure  (传 3 次)      → upload/Figure_1.pdf ... Figure_3.pdf
+                                          （正文保留 3 张：age profile / criteria / stack trace；
+                                            按正文出现顺序编号，每张单独传）
+Item Type: Figure  (传 2 次，可选) → upload/Figure_S1.pdf, upload/Figure_S2.pdf
+                                          （补充材料内的 2 张图，随 supplementary 提交）
+Item Type: Graphical Abstract     → upload/graphical_abstract.png（可选，KBS 官方无此要求）
 
-图表合计 = 5 图 + 3 表 = 8，正好达到官方 guideline 上限。
-Figure 需重复添加 6 次（5 张论文图 + 1 张证件照）。
+注意：KBS 的 artwork 规范 —— 矢量图用 EPS/PDF（嵌入字体）；位图 ≥300 dpi。
+每张图都必须有 caption 并按出现顺序编号。
 
 ================================================================
 屏幕 6 — Authors
@@ -61,14 +62,14 @@ Figure 需重复添加 6 次（5 张论文图 + 1 张证件照）。
   ☐ Corresponding author: 勾选
   ORCID: 如有则填，没有可留空
 
-InfoSci 不要求单独拆标题页文件 —— main.pdf 首页已含完整标题页信息。
+KBS 是单盲，作者名照常写在标题页；不要求单独拆标题页文件，也不要求匿名稿。
 
 ================================================================
 屏幕 7 — Details（常见问答）
 ================================================================
 Q: 稿件类型与篇幅说明
-A: Original research work。正文 31 页双倍行距，5 图 3 表（合计 8，≤ 官方 guideline 的 8），
-   另有 5 页补充材料。
+A: Original high-quality research paper。正文 27 页双倍行距（11pt），3 图 3 表，另有补充材料。
+   （期刊建议不超过 20 页，属偏好性建议；本稿篇幅偏长但论证完整，若编辑要求可再压缩。）
 
 Q: 是否同时投给其他期刊
 A: No —— 当前无其他在审稿件。
@@ -77,7 +78,7 @@ A: No —— 当前无其他在审稿件。
      Zenodo 预印本按 Elsevier 政策不算 prior publication）
 
 Q: 之前是否投过本刊
-A: No（首次投 Information Sciences）
+A: No（首次投 Knowledge-Based Systems）
 
 Q: 预印本
 A: 见 Zenodo doi:10.5281/zenodo.23668522，已在正文 Data availability 与 Related work 中引用并区分。
@@ -85,7 +86,7 @@ A: 见 Zenodo doi:10.5281/zenodo.23668522，已在正文 Data availability 与 R
 Q: 是否使用生成式 AI
 A: Yes，仅用于语言润色 —— main.tex 末尾有专节声明。
 
-Q: 研究数据（InfoSci 为 Option C，强制 deposit + link）
+Q: 研究数据（KBS 为 Option C，强制 deposit + link）
 A: GitHub https://github.com/zhouranxi/delp-anchor-budget
    Zenodo doi:10.5281/zenodo.23668522
 
@@ -113,8 +114,7 @@ A: 可留空
   □ 首页标题含 "Soft–Hard Protection Law"
   □ 摘要为新版（197 词，开头是 "Regularized continual learning stores one protection state"）
   □ 参考文献 30 条、编号连续
-  □ 共 31 页
-  □ 5 张论文图都嵌进去了
+  □ 3 张正文图都嵌进去了
   □ 有独立的 Conclusion 节
   □ 末尾有 CRediT / competing interest / funding / data availability / GenAI 五段声明
 
@@ -126,5 +126,5 @@ A: 可留空
 1. 记下稿件编号
 2. 查邮箱确认邮件
 3. 不要重复提交
-4. 若录用：**选 Subscription 路线（0 费用）**，不要误选 OA（$3,040）
+4. 若录用：**选 Subscription 路线（0 费用）**，不要误选 OA（$3,240）
 5. 同步：GitHub 打 tag，Zenodo 归档升到 v8

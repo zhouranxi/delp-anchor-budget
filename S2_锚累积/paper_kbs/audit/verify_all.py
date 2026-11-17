@@ -51,6 +51,36 @@ run("non-parametric tests",
     ["audit/audit_nonparametric.py"],
     check=contains("p = 0.0020"))
 
+# ---- 2a. PDF text layer must be extractable (no broken ligature maps) ---
+# The CM "fi" ligature has a broken ToUnicode mapping: it extracts as
+# "(cid:28)" (age-first -> age-(cid:28)rst, benefit -> bene(cid:28)t).
+# That silently breaks copy-paste, Elsevier text mining and indexing, and it
+# does NOT show up as an undefined reference or a LaTeX error. lmodern fixes
+# it without changing the layout. Guard against regressions.
+def _check_pdf_text_layer():
+    try:
+        from pdfminer.high_level import extract_text
+    except ImportError:
+        return True, "pdfminer unavailable (skipped)"
+    bad = 0
+    for f in ("main.pdf", "supplementary.pdf"):
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", f)
+        if not os.path.exists(p):
+            continue
+        t = extract_text(p)
+        n = t.count("(cid:")
+        if n:
+            bad += n
+    if bad:
+        return False, f"{bad} broken glyph mappings (cid:) in the PDF text layer"
+    return True, "0 broken glyph mappings"
+
+
+# ---- 2a. PDF text layer must be extractable (no broken ligature maps) ---
+_ok, _msg = _check_pdf_text_layer()
+print(f"  [{'PASS' if _ok else 'FAIL'}] PDF text layer extractable   {_msg}")
+results.append(("PDF text layer extractable", _msg, _ok))
+
 # ---- 2b. every headline number re-derived from the raw records ----------
 # 61 项独立复算：头牌结果、剂量响应、保护律拟合（含 per-seed）、λ=0 参考、
 # plain EWC、drop-age 相关、8.6/27.7、merge 插桩、栈组成、跨文档一致性。

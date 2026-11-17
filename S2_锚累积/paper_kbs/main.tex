@@ -10,6 +10,12 @@
 % Appendices A/B (statistics rationale, hyperparameters, full accuracy
 % matrices) live in supplementary.tex, compiled separately.
 
+% lmodern replaces the Computer Modern fonts: the CM "fi" ligature has a
+% broken ToUnicode mapping, which makes the PDF text layer extract as
+% "(cid:28)" (age-first -> age-(cid:28)rst, benefit -> bene(cid:28)t, ...).
+% That breaks copy-paste, Elsevier text mining and indexing. lmodern is
+% metrically identical to CM, so the layout and page count are unchanged.
+\usepackage{lmodern}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -312,7 +318,8 @@ After appending the anchor for task $t$, if $|\mathcal{A}| > M$ an
 \end{equation}
 
 \paragraph{Policies.}
-We compare six policies, defined in the supplementary material. They
+We compare six policies, defined in the supplementary material
+(Appendix~F). They
 span the design space along one axis: \emph{what signal drives the
 choice} --- age (fifo), chance (random), current constraint mass
 (redun), pairwise redundancy (merge), or combinations of age and mass
@@ -470,8 +477,8 @@ wins.
 \label{sec:exp-knobs}
 
 Fig.~\ref{fig:age} shows the per-task accuracy profiles; the
-accuracy--forgetting Pareto plane and the $\lambda$ interaction are
-reported in the supplementary material.
+accuracy--forgetting Pareto plane (Appendix~E) and the $\lambda$
+interaction (Appendix~C) are reported in the supplementary material.
 
 \paragraph{Dose--response.}
 A seven-point sweep at $T{=}20$, $\lambda{=}5000$ ($n{=}10$) shows the
@@ -563,8 +570,8 @@ agew2 (oldest anchor with below-median mass; fallback fifo) behaves
 like fifo ($\pm 1.5$ points): at $M{=}2$ its stack is
 $\{\mathcal{A}_1, \mathcal{A}_T\}$ --- the oldest anchor's mass is
 always above median and survives, everything in between dies at
-birth. The supplementary material summarizes the resulting
-$2{\times}2$: the primary key, not the secondary signal, determines
+birth. The supplementary material (Appendix~C) summarizes the
+resulting $2{\times}2$: the primary key, not the secondary signal, determines
 whether a criterion works.
 
 
@@ -595,7 +602,7 @@ only}: merging preserves the first-order quadratic regularizer (the
 gradient $\nabla_\theta$ of the penalty is unchanged), shifting only the
 parameter-independent constant, which has zero effect on SGD. The
 accuracy trajectory nonetheless remains indistinguishable from unbounded
-at every $M$ (policy grid in the supplementary material) while storing
+at every $M$ (policy grid in Appendix~C) while storing
 $M \ll T$ anchors ($-75\%$ at $T{=}20$, $M{=}5$). Merge and fifo are
 complementary: merge buys storage at a measured, behaviorally invisible
 penalty reduction but recovers no plasticity; fifo buys plasticity at a
@@ -638,7 +645,8 @@ material.
 \begin{sloppypar}
 \paragraph{The budget effect strengthens with $T$ on natural images.}
 At $T{=}20$ and the tightest budget ($M{=}2$), all six bounded
-policies outperform unbounded stacking, five of them significantly (supplementary material): fifo $+5.0$
+policies outperform unbounded stacking, five of them significantly
+(Appendix~G): fifo $+5.0$
 ($t(9){=}7.1$, Wilcoxon $p{=}0.002$), agew $+4.2$ ($t{=}7.3$, $p{=}0.002$),
 random $+3.6$ ($t{=}9.2$, $p{=}0.002$), redun $+3.4$ ($t{=}4.0$,
 $p{=}0.006$), agew2 $+2.7$ ($t{=}2.7$, $p{=}0.037$). At the looser budget
@@ -692,8 +700,8 @@ as does agew, which inherits the same freeze (eviction-time mass swamps
 the age factor); agew2 holds $\{\mathcal{A}_1, \mathcal{A}_{T}\}$ in 6 of
 10 seeds (the age-primary hybrid); merge grandfather-protects partially. The mechanism isolated
 on Permuted-MNIST (Fig.~\ref{fig:stack}) is not an artifact of that
-domain: the same rendering on Split-CIFAR-100 is reported in the
-supplementary material.
+domain: the same rendering on Split-CIFAR-100 is reported in
+Appendix~D of the supplementary material.
 
 
 

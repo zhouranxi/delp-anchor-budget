@@ -7,6 +7,9 @@
 % Appendix B: full per-task accuracy matrices (Permuted-MNIST).
 
 \usepackage[margin=1in]{geometry}
+% lmodern: fixes the broken ToUnicode mapping of the CM "fi" ligature,
+% so the PDF text layer extracts cleanly (age-first, benefit, profile, ...).
+\usepackage{lmodern}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -124,14 +127,16 @@ analysis of the main text.
 
 \begin{table}[h]
 \centering\small
-\caption{$T{=}10$.}
+\caption{Final-phase accuracy (\%) per task on Permuted-MNIST at
+$T{=}10$, $\lambda{=}5000$, $M{=}5$, mean over seeds 0--2 for every arm.}
 \label{tab:appx-t10}
 \input{appx_mat_t10.tex}
 \end{table}
 
 \begin{table}[h]
 \centering\small
-\caption{$T{=}20$.}
+\caption{Final-phase accuracy (\%) per task on Permuted-MNIST at
+$T{=}20$, $\lambda{=}5000$, $M{=}5$, mean over seeds 0--2 for every arm.}
 \label{tab:appx-t20}
 \input{appx_mat_t20.tex}
 \end{table}

@@ -285,8 +285,9 @@ $\mathcal{A}_1, \dots, \mathcal{A}_{t-1}$: the penalty is
 
 \paragraph{Where the cost lands.}
 Following~\cite{zhou2026delp}, average retention decomposes as
-Eq.~\ref{eq:decomp}. % cite numbers: at T=10 unbounded DeLP:
-% acc 55.3, BWT -5.5, ell 60.2; at T=20: 33.7 / -4.4 / 37.9
+Eq.~\ref{eq:decomp}.
+% cite numbers (n=10, matching the text below): at T=10 unbounded DeLP
+% acc 54.5, BWT -5.2, ell 59.2; at T=20: 33.4 / -4.5 / 37.7
 At fixed $\lambda{=}5000$ the learning term of unbounded \delp{}
 falls from $59.2$ at $T{=}10$ to $37.7$ at $T{=}20$ --- a
 $21.5$-point drop that compounds with sequence length, exactly the
@@ -402,11 +403,11 @@ $\lambda$ grid and are compared at each scheme's best grid value, so
 no scheme is disadvantaged by another's tuning.
 
 Plain EWC posts the highest final accuracy
-of any arm ($68.3$--$71.1$ at $T{=}10$, $56.4$--$59.4$ at $T{=}20$,
-best at $\lambda{=}1000$) by maximizing $\ell$ ($81$--$85$): with no
+of any arm ($68.8$--$73.4$ at $T{=}10$, $57.7$--$61.7$ at $T{=}20$,
+best at $\lambda{=}1000$) by maximizing $\ell$ ($83$--$86$): with no
 stack there is no accumulation --- and no retention either, at
 $3$--$5\times$ the forgetting of unbounded \delp{} (BWT
-$-15.8/-25.7$ at its best $\lambda$ vs.\ $-5.5/-4.4$). A reader who
+$-18.6/-27.3$ at its best $\lambda$ vs.\ $-5.5/-4.4$). A reader who
 weights BWT equally would rank it last.
 
 Online EWC at its best grid value ($\lambda{=}1000$) reaches $67.5/46.0$:
@@ -417,8 +418,8 @@ the plasticity, but it posts neither the best long-sequence accuracy
 nor, by construction, any anchor accumulation problem to cure. Its
 forgetting is not unstructured: per-task forgetting (peak minus final
 accuracy; $T{=}20$, $\lambda{=}1000$, $n{=}10$) concentrates on older
-tasks for every arm, with drop--age correlations of $-0.94$ (plain),
-$-0.79$ (\delp{}-fifo), $-0.70$ (online EWC), and $-0.43$ (unbounded).
+tasks for every arm, with drop--age correlations of $0.93$ (plain),
+$0.75$ (\delp{}-fifo), $0.70$ (online EWC), and $0.32$ (unbounded).
 
 \subsection{The soft--hard protection law}
 \label{sec:exp-law}
@@ -473,9 +474,9 @@ reported in the supplementary material.
 \paragraph{Dose--response.}
 A seven-point sweep at $T{=}20$, $\lambda{=}5000$ ($n{=}10$) shows the
 budget's effect is monotone across the whole interior, not an artifact
-of two extreme points: final accuracy $52.1, 48.9, 45.0, 42.4, 40.2,
+of two extreme points: final accuracy $52.4, 48.9, 44.9, 42.4, 40.2,
 36.5, 35.1$ for $M{=}2,3,4,5,6,8,10$, with BWT recovering
-$-25.0 \to -5.2$ as the window widens toward $M{=}10$; every $M$
+$-24.5 \to -5.2$ as the window widens toward $M{=}10$; every $M$
 remains significantly above unbounded at the same
 $\lambda{=}5000$ ($33.4$; paired $t\geq 9.1$ at every $M$,
 from $t{=}55.4$ at $M{=}3$ down to $t{=}9.1$ at $M{=}10$, approaching
@@ -540,11 +541,12 @@ and permanently large $m_k$; anchors created \emph{after} the stack is
 full have $\theta^{(k)} \approx \theta^{\text{now}}$ and $m_k \approx
 0$. Mass-keyed eviction therefore preserves exactly the stalest anchors
 and evicts new ones \emph{at birth}: redun's stack freezes at
-$\{\mathcal{A}_1, \mathcal{A}_2\}$ (Fig.~\ref{fig:stack}), the first
-two tasks keep strong protection (87/85\% final accuracy at
-$M{=}2$), and tasks created later lose all protection within one
-phase (final accuracy 19--25\%), driving BWT to $-34.5$ at $T{=}20$
-despite the \emph{highest} $\ell$ of any arm. Multiplicative age
+$\{\mathcal{A}_1, \mathcal{A}_2\}$ (Figs.~\ref{fig:stack} and
+\ref{fig:criteria}), the first two tasks keep strong protection
+(87/83\% final accuracy at $M{=}2$), and tasks created later lose all
+protection within one phase --- the earliest of them fall to 22--30\%
+final accuracy against the 80\%-plus of the two survivors --- driving
+BWT to $-34.5$ at $T{=}20$ despite the \emph{highest} $\ell$ of any arm. Multiplicative age
 re-weighting does not help: agew (mass $\times$ age-rank) is
 \emph{bit-identical} to redun across all seeds and configurations,
 because mass differences span orders of magnitude and swamp the age
@@ -553,12 +555,6 @@ an age-first, mass-second criterion (agew2) does not --- at $M{=}2$ its
 stack is $\{\mathcal{A}_1, \mathcal{A}_T\}$, behaving like fifo
 ($\pm 1.5$ points). The primary key, not the secondary signal,
 determines whether a criterion works.
-
-\paragraph{Re-weighting mass by age does not help.}
-agew (mass $\times$ age-rank) is \emph{bit-identical} to redun across
-all seeds and configurations: mass differences span orders of
-magnitude and swamp the age factor, so the argmin never flips.
-Any criterion with mass as the primary key inherits the trap.
 
 \paragraph{Age-first criteria close the matrix.}
 agew2 (oldest anchor with below-median mass; fallback fifo) behaves
@@ -575,11 +571,11 @@ whether a criterion works.
 \centering
 \includegraphics[width=0.52\linewidth]{fig4_stacktrace.pdf}
 \caption{Anchor-stack composition over the task sequence ($T{=}20$,
-$M{=}2$, seed 0; identical for other seeds). Each column lists which
-anchors (by creation task) are alive at the end of each phase. fifo
-is a pure sliding window; redun freezes on the first two anchors
-(evicting every later anchor at birth); agew2 protects the oldest and
-the newest; merge partially grandfather-protects.}
+$M{=}2$, seed 0). Each column lists which anchors (by creation task)
+are alive at the end of each phase. fifo is a pure sliding window and
+redun freezes on the first two anchors (evicting every later anchor at
+birth) in every seed; agew2 keeps the oldest anchor and, in all three of
+its seeds, the newest as well; merge partially grandfather-protects.}
 \label{fig:stack}
 \end{figure}
 
@@ -686,13 +682,13 @@ the protected family, but on this benchmark bounding is necessary, not
 sufficient: protection itself must be checked against a no-protection
 reference before the mechanism is credited.
 
-\paragraph{Stack traces replicate bit-for-bit.}
-At $T{=}20$, $M{=}2$, all ten seeds agree: fifo's stack is the sliding
-window $\{\mathcal{A}_{T-1}, \mathcal{A}_{T}\}$; redun freezes on
-$\{\mathcal{A}_1, \mathcal{A}_2\}$ (grandfathering); agew inherits the
-same freeze (eviction-time mass swamps the age factor); agew2 holds
-$\{\mathcal{A}_1, \mathcal{A}_{T}\}$ in 6/10 seeds (the age-primary
-hybrid); merge grandfather-protects partially. The mechanism isolated
+\paragraph{Stack traces replicate on the mass-keyed failure.}
+At $T{=}20$, $M{=}2$, fifo's stack is the sliding window
+$\{\mathcal{A}_{T-1}, \mathcal{A}_{T}\}$ and redun freezes on
+$\{\mathcal{A}_1, \mathcal{A}_2\}$ (grandfathering) in all ten seeds,
+as does agew, which inherits the same freeze (eviction-time mass swamps
+the age factor); agew2 holds $\{\mathcal{A}_1, \mathcal{A}_{T}\}$ in 6 of
+10 seeds (the age-primary hybrid); merge grandfather-protects partially. The mechanism isolated
 on Permuted-MNIST (Fig.~\ref{fig:stack}) is not an artifact of that
 domain: the same rendering on Split-CIFAR-100 is reported in the
 supplementary material.

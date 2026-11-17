@@ -150,9 +150,13 @@ number quoted in the main text is a cell of one of these tables.
 \begin{table}[htbp]
 \centering\small
 \caption{Supplementary Policy grid, $M{=}5$, $\lambda{=}5000$, mean $\pm$ sd over
-$n{=}3$ seeds. $\ell$ = learning term (mean accuracy at task
-boundaries). agew is bit-identical to redun, as predicted in the
-mass-keyed-eviction analysis of the main text.}
+$n{=}3$ seeds. Every arm in this table is reported over the same three
+seeds (0--2), so that policies are directly comparable; the main text
+quotes unbounded and fifo over all $n{=}10$ seeds, whose values differ
+slightly (e.g. unbounded $\ell$ is $59.2$ over ten seeds and $60.2$ over
+three). $\ell$ = learning term (mean accuracy at task boundaries). agew is
+bit-identical to redun, as predicted in the mass-keyed-eviction analysis
+of the main text.}
 \label{tab:supp-grid}
 \begin{tabular}{llccc}
 \toprule
@@ -226,12 +230,13 @@ age   & median mass & agew2 $\approx$ fifo ($\pm1.5$ pts) \\
 \centering
 \includegraphics[width=\linewidth]{fig5_cifar_stacktrace.pdf}
 \caption{Supplementary Anchor-stack composition on Split-CIFAR-100 ($T{=}20$,
-$M{=}2$, seed 0; all seeds agree on the final sets). Same rendering as
-the corresponding stack-trace figure in the main text. fifo is a sliding window; redun and agew freeze
-on the first anchors (grandfathering); agew2 pairs the oldest with the
-newest; merge partially grandfather-protects; random walks down.}
+$M{=}2$, seed 0). Same rendering as
+the corresponding stack-trace figure in the main text. fifo is a sliding
+window; redun and agew freeze on the first anchors (grandfathering);
+agew2 keeps the oldest anchor and, in 6 of 10 seeds, the newest as well;
+merge partially grandfather-protects; random walks down.}
 \label{fig:supp-stackcifar}
-\end{figure*}
+\end{figure}
 
 
 \section{Additional figure: accuracy--forgetting Pareto plane}
@@ -245,7 +250,10 @@ encodes policy; marker encodes budget $M$. Error bars: sd over seeds
 ($n{=}10$ for unbounded/fifo $M{=}5$; else $n{=}3$). The smaller
 budget $M{=}2$ trades BWT for accuracy at both budgets in the same
 direction; merge coincides with
-unbounded at every $M$; redun sits dominated.}
+unbounded at every $M$; redun is dominated by the age-first criteria at
+both budgets, although its $M{=}2$ arm still reaches the second-highest
+accuracy of any arm at $T{=}20$ ($48.8$) at the cost of the largest
+forgetting.}
 \label{fig:supp-pareto}
 \end{figure}
 

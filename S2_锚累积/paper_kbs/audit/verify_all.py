@@ -51,6 +51,13 @@ run("non-parametric tests",
     ["audit/audit_nonparametric.py"],
     check=contains("p = 0.0020"))
 
+# ---- 2b. every headline number re-derived from the raw records ----------
+# 53 项独立复算：头牌结果、剂量响应、保护律拟合（含 per-seed）、λ=0 参考、
+# plain EWC、drop-age 相关、8.6/27.7、merge 插桩、栈组成。
+run("numbers vs raw records (53 checks)",
+    ["audit/check_numbers_vs_data.py"],
+    check=contains("PASS 53", "FAIL 0"))
+
 
 # ---- 3. LaTeX pre-flight ------------------------------------------------
 def _latex_ok(out):

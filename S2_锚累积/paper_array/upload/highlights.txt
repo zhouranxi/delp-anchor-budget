@@ -1,0 +1,7 @@
+Highlights (each <= 85 characters, incl. spaces)
+
+- Anchor stacks of regularized CL are knowledge bases that need curation
+- Unbounded anchor mass taxes learning; a FIFO budget recovers up to +9 points
+- Mass-keyed eviction fails by design; age must be the primary key
+- Soft (discount) and hard (window) bounds obey one log-linear mass law
+- A no-protection baseline beats all protection on task-incremental CIFAR

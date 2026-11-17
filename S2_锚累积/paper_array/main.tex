@@ -2,7 +2,7 @@
 % Elsevier submission format: review = double spacing + line numbers;
 % number = numeric citations with elsarticle-num. For a double-column
 % production-style preview use [3p,times,number] or [5p,times,number].
-% Target journal: Knowledge-Based Systems (see cover_letter.md).
+% Target journal: Array (Elsevier; see cover_letter.md).
 % Reference style note: this journal uses Elsevier numbered citations, matching
 % elsarticle-num.bst below. No bst change is required for this target.
 % Appendices A/B (statistics rationale, hyperparameters, full accuracy
@@ -20,7 +20,7 @@
 \newcommand{\delp}{DeLP}
 \newcommand{\acc}{\mathrm{acc}}
 
-\journal{Knowledge-Based Systems}
+\journal{Array}
 
 \begin{document}
 \linenumbers
@@ -37,40 +37,38 @@ Hanpu, Yuelu District, Changsha 410208, Hunan, China}
 \ead{zhouranxi@foxmail.com}
 
 \begin{abstract}
-Regularized continual-learning schemes that store one protection state
-per task pay a cost that grows with sequence length. In usage-localized
+Regularized continual-learning schemes storing one protection state
+per task pay a cost growing with sequence length. In usage-localized
 elastic weight consolidation (\delp{}), per-neuron elastic anchors
-persist at full weight as an elastic drag on later learning; a retention
+persist at full weight, dragging later learning; a retention
 decomposition $\bar a_T = \ell + \frac{T-1}{T}\,\mathrm{BWT}$ localizes
-the cost in the \emph{learning term} $\ell$. We call this the
-\emph{anchor accumulation problem} and study its repair: bounding the
-anchor stack at $M$ entries. A FIFO budget recovers $+4.5$ and $+9.0$
-points of final accuracy over unbounded \delp{} at $T{=}10$ and
-$T{=}20$ ($M{=}5$; $n{=}10$ paired seeds; Wilcoxon $p{=}0.002$), and the
-budget is a distinct knob from the elastic weight $\lambda$: it
-controls the \emph{age structure} of forgetting, $\lambda$ its
-\emph{amount}. Eviction design is ruled by one constraint: any criterion
-keyed to current constraint mass grandfather-protects stale anchors and
-evicts new ones at birth ($-34.5$ BWT), whereas age-first criteria are
-immune. Sweeping online EWC's discount shows that discounting is itself
-a \emph{soft} bound, and soft and hard bounds obey one log-linear law
+the cost in the learning term $\ell$. We call this the
+\emph{anchor accumulation problem} and repair it by bounding the stack at
+$M$ entries. A FIFO budget recovers $+4.5$ and $+9.0$ final-accuracy
+points over unbounded \delp{} at $T{=}10$ and $20$ ($M{=}5$;
+$n{=}10$ paired seeds; Wilcoxon $p{=}0.002$), and the budget is distinct
+from the elastic weight $\lambda$: it controls the age structure of
+forgetting, $\lambda$ its amount. Eviction design is ruled by one
+constraint: criteria keyed to current constraint mass
+grandfather-protect stale anchors and evict new ones at birth
+($-34.5$ BWT); age-first criteria are immune. Discounting online EWC's
+Fisher mass is itself a soft bound, and both obey one log-linear law
 between the learning term and the protected-mass horizon
 ($\ell \approx 84 - 11\ln h$, $R^2{=}0.99$): bounding accumulated anchor
-mass, not eviction, is the active ingredient, and the explicit window
-retains what a scalar discount cannot --- a discrete, named, policy-
-selectable protection set readable from the stack trace. We report the
-boundary honestly: on Split-CIFAR-100 under task-incremental evaluation,
-a no-protection baseline stays above every protection arm, so the
-budget result is internal to the protected family; the paper's
-contribution is a \emph{knowledge-based diagnosis and audit framework}
---- when to protect, how to bound, which anchors survive --- not a
-drop-in accuracy win.
+mass, not eviction, is the active ingredient, while the explicit window
+retains what a scalar discount cannot: a discrete, named,
+policy-selectable protection set readable from the stack trace. We
+report the boundary honestly: on Split-CIFAR-100 a no-protection
+baseline stays above every protection arm, so the budget result is
+internal to the protected family. The contribution is a
+\emph{knowledge-centric diagnosis and audit framework}, not a drop-in
+accuracy win.
 \end{abstract}
 
 \begin{keyword}
 continual learning \sep elastic weight consolidation \sep
-catastrophic forgetting \sep knowledge-based protection \sep
-stability--plasticity dilemma
+catastrophic forgetting \sep knowledge management \sep
+protection-state curation \sep stability--plasticity dilemma
 \end{keyword}
 
 \end{frontmatter}
@@ -94,7 +92,7 @@ these designs and how few of them are comparable under a common
 protocol --- a gap our own audit of \delp{}~\cite{zhou2026delp} ran into
 directly.
 
-From a knowledge-based-systems perspective, the protection state that
+From a knowledge-management perspective, the protection state that
 these methods maintain \emph{is} a knowledge base: a growing, structured
 store of what has been learned, consulted at every update, and
 trusted in proportion to its age. Yet this knowledge base is rarely

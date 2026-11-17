@@ -1,26 +1,27 @@
-Array 投稿 — EM 逐屏填值（照着点即可）
+Information Sciences 投稿 — EM 逐屏填值（照着点即可）
 
-入口：https://submit.elsevier.com/ARRAY
-提示：登录后选 "Start a new submission" → Journal = Array → Article Type = Regular paper。
-Array 是全 Gold OA，投稿本身不收费；录用后才需付 APC（USD 2,770）。
+入口：https://submit.elsevier.com/INS
+提示：登录后选 "Start a new submission" → Journal = Information Sciences →
+      Article Type = Original research work。
+InfoSci 是 hybrid 期刊，**投稿不收费**；录用后若选 Open Access 则要 $3,040 —— 记得选 Subscription。
 
 ================================================================
 屏幕 1 — Article Type
 ================================================================
-Article Type: Regular paper
-  （不要选 technical notes —— 那个限 10 页，本稿 33 页会被直接退回）
+Article Type: Original research work
+（指南只列了这一个类型名，没有其它选项）
 
 ================================================================
 屏幕 2 — Title
 ================================================================
 The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft–Hard Protection Law, and the Auditable Cost of Regularized Continual Learning
 
-提示：标题不要手动加换行符，EM 会自动折行；不要输入 LaTeX 的 \ 或 -- 。
+提示：不要手动加换行符，不要输入 LaTeX 的 \ 或 -- （上面已用真正的 en-dash）。
 
 ================================================================
-屏幕 3 — Abstract（247 词，上限 250）
+屏幕 3 — Abstract（197 词；官方上限 250 与 200 并存，197 同时满足）
 ================================================================
-Regularized continual-learning schemes storing one protection state per task pay a cost growing with sequence length. In usage-localized elastic weight consolidation (DeLP), per-neuron elastic anchors persist at full weight, dragging later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem and repair it by bounding the stack at M entries. A FIFO budget recovers +4.5 and +9.0 final-accuracy points over unbounded DeLP at T = 10 and 20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002), and the budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design is ruled by one constraint: criteria keyed to current constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Discounting online EWC's Fisher mass is itself a soft bound, and both obey one log-linear law between the learning term and the protected-mass horizon (l = 84 - 11ln h, R^2 = 0.99): bounding accumulated anchor mass, not eviction, is the active ingredient, while the explicit window retains what a scalar discount cannot: a discrete, named, policy-selectable protection set readable from the stack trace. We report the boundary honestly: on Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-centric diagnosis and audit framework, not a drop-in accuracy win.
+Regularized continual learning stores one protection state per task, whose cost grows with sequence length. In usage-localized elastic weight consolidation (DeLP), full-weight anchors drag later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem, repairing it by bounding the stack at M entries. A FIFO budget recovers +4.5/+9.0 accuracy points over unbounded DeLP at T = 10/20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002). The budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design obeys one constraint: criteria keyed to constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Online EWC's Fisher discount is a soft bound, and both obey one log-linear law in protected-mass horizon (l = 84 - 11ln h, R^2 = 0.99): bounding anchor mass, not eviction, is the active ingredient. On Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-centric diagnosis and audit framework, not an accuracy gain.
 
 ================================================================
 屏幕 4 — Keywords（6 个，要求 1–7）
@@ -32,23 +33,21 @@ knowledge management
 protection-state curation
 stability–plasticity dilemma
 
-（每个单独一行输入，回车分隔）
-
 ================================================================
-屏幕 5 — Attach Files（上传顺序建议）
+屏幕 5 — Attach Files
 ================================================================
-Item Type: Manuscript              → upload/main.pdf
-Item Type: Supplementary material  → upload/supplementary.pdf
-Item Type: Highlights              → upload/highlights.docx
-Item Type: Cover Letter            → upload/cover_letter.docx
-Item Type: Graphical Abstract      → upload/graphical_abstract.png
+Item Type: Manuscript             → upload/main.pdf
+Item Type: Supplementary material → upload/supplementary.pdf
+Item Type: Highlights             → upload/highlights.docx
 Item Type: Declaration of competing interest → upload/declarations.docx
-Item Type: Figure (传 5 次)        → upload/Figure_1.pdf ... Figure_5.pdf
+Item Type: Vitae                  → upload/vitae.docx        <-- InfoSci 特有
+Item Type: Figure  (传 5 次)      → upload/Figure_1.pdf ... Figure_5.pdf
+Item Type: Figure  (再传 1 次)    → 你的证件照文件             <-- InfoSci 特有
+Item Type: Cover Letter           → upload/cover_letter.docx
+Item Type: Graphical Abstract     → upload/graphical_abstract.png（可选，官方未要求）
 
-上传 Figure 时注意：
-  - 每张单独传，不要合并
-  - Caption 栏可留空（正文图注已在 main.pdf 内），若必填就填图注首句
-  - 一次只能选一个 Item Type，Figure 需重复添加 5 次
+图表合计 = 5 图 + 3 表 = 8，正好达到官方 guideline 上限。
+Figure 需重复添加 6 次（5 张论文图 + 1 张证件照）。
 
 ================================================================
 屏幕 6 — Authors
@@ -61,32 +60,33 @@ Item Type: Figure (传 5 次)        → upload/Figure_1.pdf ... Figure_5.pdf
   Email:       zhouranxi@foxmail.com
   ☐ Corresponding author: 勾选
   ORCID: 如有则填，没有可留空
-  Role: 对应作者，同时是唯一作者
+
+InfoSci 不要求单独拆标题页文件 —— main.pdf 首页已含完整标题页信息。
 
 ================================================================
 屏幕 7 — Details（常见问答）
 ================================================================
-Q: 篇幅 / 稿件类型说明
-A: Regular paper，正文 33 页双倍行距，5 图 6 表，另有 3 页补充材料。
+Q: 稿件类型与篇幅说明
+A: Original research work。正文 31 页双倍行距，5 图 3 表（合计 8，≤ 官方 guideline 的 8），
+   另有 5 页补充材料。
 
-Q: 是否一稿多投（是否同时投给其他期刊）
+Q: 是否同时投给其他期刊
 A: No —— 当前无其他在审稿件。
    （PR 稿 PR-D-26-16069 已于 2026-11-10 拒稿关闭；
      Neurocomputing 稿 NEUCOM-D-26-24422 已于 2026-10-26 拒稿关闭；
      Zenodo 预印本按 Elsevier 政策不算 prior publication）
 
 Q: 之前是否投过本刊
-A: No（首次投 Array）
+A: No（首次投 Information Sciences）
 
-Q: 是否为会议论文 / 已公开的预印本
-A: 预印本见 Zenodo doi:10.5281/zenodo.23668522，已在正文 Data availability 与 Related work 中明确引用并区分。
+Q: 预印本
+A: 见 Zenodo doi:10.5281/zenodo.23668522，已在正文 Data availability 与 Related work 中引用并区分。
 
-Q: 是否使用了生成式 AI 工具
-A: Yes，仅用于语言润色 —— 已在 main.tex 末尾设专节声明（Declaration of generative AI and
-   AI-assisted technologies in the manuscript preparation process）。
+Q: 是否使用生成式 AI
+A: Yes，仅用于语言润色 —— main.tex 末尾有专节声明。
 
-Q: 是否有研究数据可共享
-A: Yes —— GitHub https://github.com/zhouranxi/delp-anchor-budget
+Q: 研究数据（InfoSci 为 Option C，强制 deposit + link）
+A: GitHub https://github.com/zhouranxi/delp-anchor-budget
    Zenodo doi:10.5281/zenodo.23668522
 
 Q: CRediT 作者贡献
@@ -94,7 +94,7 @@ A: Ranxi Zhou: Conceptualization, Methodology, Software, Investigation, Formal a
    Data curation, Writing – original draft, Writing – review & editing, Visualization.
 
 Q: 利益冲突
-A: 无 —— 已生成 declarations.docx 上传（Array 强制，即使无冲突也要上传）
+A: 无 —— 已生成 declarations.docx 上传（强制）。
 
 Q: 资助
 A: 无特定资助
@@ -111,10 +111,11 @@ A: 可留空
 点 "Build PDF for Approval" → 下载生成的 PDF 逐页检查：
   □ 无 "??"（未定义引用）
   □ 首页标题含 "Soft–Hard Protection Law"
-  □ 摘要为新版（247 词，开头是 "Regularized continual-learning schemes storing one protection state"）
+  □ 摘要为新版（197 词，开头是 "Regularized continual learning stores one protection state"）
   □ 参考文献 30 条、编号连续
-  □ 共 33 页
-  □ 5 张图都嵌进去了
+  □ 共 31 页
+  □ 5 张论文图都嵌进去了
+  □ 有独立的 Conclusion 节
   □ 末尾有 CRediT / competing interest / funding / data availability / GenAI 五段声明
 
 勾选同意条款 → 点 SUBMIT
@@ -122,8 +123,8 @@ A: 可留空
 ================================================================
 提交后
 ================================================================
-1. 记下稿件编号（形如 ARRAY-XXXX-XXXXXXX）
+1. 记下稿件编号
 2. 查邮箱确认邮件
-3. 不要重复提交（会触发 duplicate 审查）
-4. 若录用：确认 APC 与 licence（CC BY / CC BY-NC / CC BY-NC-ND）
+3. 不要重复提交
+4. 若录用：**选 Subscription 路线（0 费用）**，不要误选 OA（$3,040）
 5. 同步：GitHub 打 tag，Zenodo 归档升到 v8

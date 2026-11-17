@@ -2,7 +2,7 @@
 % Elsevier submission format: review = double spacing + line numbers;
 % number = numeric citations with elsarticle-num. For a double-column
 % production-style preview use [3p,times,number] or [5p,times,number].
-% Target journal: Array (Elsevier; see cover_letter.md).
+% Target journal: Information Sciences (Elsevier; see cover_letter.md).
 % Reference style note: this journal uses Elsevier numbered citations, matching
 % elsarticle-num.bst below. No bst change is required for this target.
 % Appendices A/B (statistics rationale, hyperparameters, full accuracy
@@ -20,7 +20,7 @@
 \newcommand{\delp}{DeLP}
 \newcommand{\acc}{\mathrm{acc}}
 
-\journal{Array}
+\journal{Information Sciences}
 
 \begin{document}
 \linenumbers
@@ -37,32 +37,26 @@ Hanpu, Yuelu District, Changsha 410208, Hunan, China}
 \ead{zhouranxi@foxmail.com}
 
 \begin{abstract}
-Regularized continual-learning schemes storing one protection state
-per task pay a cost growing with sequence length. In usage-localized
-elastic weight consolidation (\delp{}), per-neuron elastic anchors
-persist at full weight, dragging later learning; a retention
-decomposition $\bar a_T = \ell + \frac{T-1}{T}\,\mathrm{BWT}$ localizes
-the cost in the learning term $\ell$. We call this the
-\emph{anchor accumulation problem} and repair it by bounding the stack at
-$M$ entries. A FIFO budget recovers $+4.5$ and $+9.0$ final-accuracy
-points over unbounded \delp{} at $T{=}10$ and $20$ ($M{=}5$;
-$n{=}10$ paired seeds; Wilcoxon $p{=}0.002$), and the budget is distinct
-from the elastic weight $\lambda$: it controls the age structure of
-forgetting, $\lambda$ its amount. Eviction design is ruled by one
-constraint: criteria keyed to current constraint mass
-grandfather-protect stale anchors and evict new ones at birth
-($-34.5$ BWT); age-first criteria are immune. Discounting online EWC's
-Fisher mass is itself a soft bound, and both obey one log-linear law
-between the learning term and the protected-mass horizon
-($\ell \approx 84 - 11\ln h$, $R^2{=}0.99$): bounding accumulated anchor
-mass, not eviction, is the active ingredient, while the explicit window
-retains what a scalar discount cannot: a discrete, named,
-policy-selectable protection set readable from the stack trace. We
-report the boundary honestly: on Split-CIFAR-100 a no-protection
-baseline stays above every protection arm, so the budget result is
-internal to the protected family. The contribution is a
-\emph{knowledge-centric diagnosis and audit framework}, not a drop-in
-accuracy win.
+Regularized continual learning stores one protection state per task,
+whose cost grows with sequence length. In usage-localized elastic weight
+consolidation (\delp{}), full-weight anchors drag later learning; a
+retention decomposition $\bar a_T = \ell + \frac{T-1}{T}\,\mathrm{BWT}$
+localizes the cost in the learning term $\ell$. We call this the
+\emph{anchor accumulation problem}, repairing it by bounding the stack at
+$M$ entries. A FIFO budget recovers $+4.5/+9.0$ accuracy points over
+unbounded \delp{} at $T{=}10/20$ ($M{=}5$; $n{=}10$ paired seeds;
+Wilcoxon $p{=}0.002$). The budget is distinct from the elastic weight
+$\lambda$: it controls the age structure of forgetting, $\lambda$ its
+amount. Eviction design obeys one constraint: criteria keyed to constraint
+mass grandfather-protect stale anchors and evict new ones at birth
+($-34.5$ BWT); age-first criteria are immune. Online EWC's Fisher discount
+is a soft bound, and both obey one log-linear law in protected-mass horizon
+($\ell \approx 84 - 11\ln h$, $R^2{=}0.99$): bounding anchor mass, not
+eviction, is the active ingredient. On Split-CIFAR-100 a no-protection
+baseline stays above every protection arm, so the budget result is internal
+to the protected family. The contribution is a
+\emph{knowledge-centric diagnosis and audit framework}, not an accuracy
+gain.
 \end{abstract}
 
 \begin{keyword}
@@ -409,42 +403,14 @@ fifo $T{=}20$ & $+8.98\pm1.49$ & $19.1$ & $0.002$ & $0.992$ & $-7.20\pm1.97$ \\
 \end{tabular}
 \end{table}
 
-\begin{table}[t]
-\centering\small
-\caption{Policy grid, $M{=}5$, $\lambda{=}5000$, mean $\pm$ sd over
-$n{=}3$ seeds. $\ell$ = learning term (mean accuracy at task
-boundaries). agew is bit-identical to redun, as predicted in
-Sec.~\ref{sec:exp-criteria}.}
-\label{tab:grid}
-\begin{tabular}{llccc}
-\toprule
-$T$ & Arm & BWT & $\acc$ & $\ell$ \\
-\midrule
-10 & unbounded & $-5.5\pm0.6$   & $55.3$ & $60.2$ \\
-10 & fifo      & $-6.6\pm0.9$   & $59.7$ & $65.6$ \\
-10 & random    & $-9.1\pm2.6$   & $60.2$ & $68.4$ \\
-10 & redun     & $-18.3\pm0.8$  & $53.6$ & $70.1$ \\
-10 & agew      & $-18.3\pm0.8$  & $53.6$ & $70.1$ \\
-10 & agew2     & $-8.4\pm0.9$   & $60.8$ & $68.3$ \\
-10 & merge     & $-5.5\pm0.6$   & $55.3$ & $60.3$ \\
-\midrule
-20 & unbounded & $-4.4\pm1.0$   & $33.7$ & $37.9$ \\
-20 & fifo      & $-10.2\pm1.9$  & $43.4$ & $53.1$ \\
-20 & random    & $-13.5\pm0.4$  & $42.0$ & $54.8$ \\
-20 & redun     & $-30.2\pm0.4$  & $36.3$ & $65.0$ \\
-20 & agew      & $-30.2\pm0.4$  & $36.3$ & $65.0$ \\
-20 & agew2     & $-16.5\pm0.3$  & $42.3$ & $58.0$ \\
-20 & merge     & $-4.5\pm0.9$   & $33.6$ & $37.9$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+
 
 Table~\ref{tab:paired}: a FIFO budget at $M{=}5$ trades $1.5/7.2$ points
 of BWT for $+4.5/+9.0$ accuracy. The mechanism is the learning term:
 $\ell$ rises by $+5.4$ and $+15.2$, exactly the recovery predicted if
 accumulated elastic drag were the binding constraint
-(Sec.~\ref{sec:background}); the grid in Table~\ref{tab:grid} shows the
-same signature for every bounded arm.
+(Sec.~\ref{sec:background}); the policy grid in the supplementary
+material shows the same signature for every bounded arm.
 Eq.~\ref{eq:decomp} is an accounting identity, so the decomposition
 alone is not evidence; the causal claim rests on the eviction traces
 (Sec.~\ref{sec:exp-criteria}) and on the $\lambda$-by-budget
@@ -537,8 +503,8 @@ benchmark the simpler one wins.
 \label{sec:exp-knobs}
 
 Fig.~\ref{fig:pareto} shows the Pareto plane; Fig.~\ref{fig:age} the
-per-task accuracy profiles; Table~\ref{tab:lambda} the $\lambda$
-interaction.
+per-task accuracy profiles; the $\lambda$
+interaction is reported in the supplementary material.
 
 \paragraph{Dose--response.}
 A seven-point sweep at $T{=}20$, $\lambda{=}5000$ ($n{=}10$) shows the
@@ -563,25 +529,7 @@ unbounded at every $M$; redun sits dominated.}
 \label{fig:pareto}
 \end{figure}
 
-\begin{table}[t]
-\centering\small
-\caption{$\lambda$ interaction ($M{=}5$, $n{=}10$ paired seeds): the
-fifo advantage is positive at every $\lambda$ and grows with $T$
-(all paired $t(9)\geq 11$, $p<10^{-6}$).}
-\label{tab:lambda}
-\begin{tabular}{llccc}
-\toprule
-$\lambda$ & $T$ & unbounded BWT/$\acc$ & fifo BWT/$\acc$ & $\Delta\acc$ \\
-\midrule
-1000  & 10 & $-11.6 / 63.9$ & $-10.8 / 67.4$ & $+3.5$ \\
-5000  & 10 & $-5.2 / 54.5$  & $-6.7 / 59.0$  & $+4.5$ \\
-20000 & 10 & $-1.9 / 49.0$  & $-4.0 / 53.1$  & $+4.1$ \\
-1000  & 20 & $-13.8 / 38.6$ & $-19.7 / 49.5$ & $+10.9$ \\
-5000  & 20 & $-4.5 / 33.4$  & $-11.7 / 42.4$ & $+9.0$ \\
-20000 & 20 & $-1.5 / 29.8$  & $-6.6 / 37.3$  & $+7.5$ \\
-\bottomrule
-\end{tabular}
-\end{table}
+
 
 The fifo advantage is robust to the choice of $\lambda$: even granting
 unbounded \delp{} its best grid value at each $T$ ($\lambda{=}1000$, the
@@ -657,28 +605,11 @@ agew2 (oldest anchor with below-median mass; fallback fifo) behaves
 like fifo ($\pm 1.5$ points): at $M{=}2$ its stack is
 $\{\mathcal{A}_1, \mathcal{A}_T\}$ --- the oldest anchor's mass is
 always above median and survives, everything in between dies at
-birth. Table~\ref{tab:criteria} summarizes the resulting
+birth. The supplementary material summarizes the resulting
 $2{\times}2$: the primary key, not the secondary signal, determines
 whether a criterion works.
 
-\begin{table}[t]
-\centering\small
-\caption{Criteria $2{\times}2$: primary key (rows) $\times$ secondary
-signal (columns). Only age-first criteria avoid the trap.
-$T{=}10$/$T{=}20$ BWT and accuracy, $M{=}2$ or $M{=}5$ as marked,
-$n{=}3$.}
-\label{tab:criteria}
-\begin{tabular}{lll}
-\toprule
-Primary key & Secondary & Outcome \\
-\midrule
-mass  & ---   & redun: grandfathering, BWT $-30.2$ ($M5$, T20) \\
-mass  & $\times$ age & agew $\equiv$ redun (bit-identical) \\
-age   & ---   & fifo: sliding window, BWT $-10.2$ ($M5$, T20) \\
-age   & median mass & agew2 $\approx$ fifo ($\pm1.5$ pts) \\
-\bottomrule
-\end{tabular}
-\end{table}
+
 
 \begin{figure*}[t]
 \centering
@@ -708,7 +639,7 @@ unchanged), shifting only the parameter-independent constant, which
 has zero effect on SGD. The removed mass is precisely the redundancy
 the merge detected; the
 accuracy trajectory nonetheless remains indistinguishable from
-unbounded at every $M$ (Table~\ref{tab:grid}) while storing
+unbounded at every $M$ (policy grid in the supplementary material) while storing
 $M \ll T$ anchors ($-75\%$ at $T{=}20$, $M{=}5$).
 Merge and fifo are complementary: merge buys storage at a measured,
 behaviorally invisible penalty reduction but recovers no plasticity;

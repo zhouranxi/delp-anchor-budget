@@ -85,8 +85,8 @@ by all arms. Diagonal Fisher and usage statistics from 300 and 500
 samples per task respectively (max-log-probability Fisher variant);
 $\lambda_{\delp}{=}5000$, corrected-SI reference $\lambda{=}100$.
 Paired arms use seeds 0--9; the policy grid seeds 0--2 (policy grid
-table in the main text); the $\lambda$ grid as in the $\lambda$-interaction
-table of the main text. Every run seeds
+table in Appendix C); the $\lambda$ grid as in the $\lambda$-interaction
+table of Appendix C. Every run seeds
 \texttt{torch.manual\_seed} before model construction. Code and
 per-seed JSON records (including \texttt{survivor\_history} and
 \texttt{acc\_matrix}) are released with the repository.
@@ -134,6 +134,86 @@ analysis of the main text.
 \caption{$T{=}20$.}
 \label{tab:appx-t20}
 \input{appx_mat_t20.tex}
+\end{table}
+
+
+% ============================================================
+\section{Full policy grids and interaction tables}
+% ============================================================
+\label{appx:tables}
+
+These three tables are the complete numerical grids behind the three
+comparisons discussed in the main text. They are placed here so that the
+main text can state the finding without reproducing every cell; every
+number quoted in the main text is a cell of one of these tables.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Supplementary Policy grid, $M{=}5$, $\lambda{=}5000$, mean $\pm$ sd over
+$n{=}3$ seeds. $\ell$ = learning term (mean accuracy at task
+boundaries). agew is bit-identical to redun, as predicted in the
+mass-keyed-eviction analysis of the main text.}
+\label{tab:supp-grid}
+\begin{tabular}{llccc}
+\toprule
+$T$ & Arm & BWT & $\acc$ & $\ell$ \\
+\midrule
+10 & unbounded & $-5.5\pm0.6$   & $55.3$ & $60.2$ \\
+10 & fifo      & $-6.6\pm0.9$   & $59.7$ & $65.6$ \\
+10 & random    & $-9.1\pm2.6$   & $60.2$ & $68.4$ \\
+10 & redun     & $-18.3\pm0.8$  & $53.6$ & $70.1$ \\
+10 & agew      & $-18.3\pm0.8$  & $53.6$ & $70.1$ \\
+10 & agew2     & $-8.4\pm0.9$   & $60.8$ & $68.3$ \\
+10 & merge     & $-5.5\pm0.6$   & $55.3$ & $60.3$ \\
+\midrule
+20 & unbounded & $-4.4\pm1.0$   & $33.7$ & $37.9$ \\
+20 & fifo      & $-10.2\pm1.9$  & $43.4$ & $53.1$ \\
+20 & random    & $-13.5\pm0.4$  & $42.0$ & $54.8$ \\
+20 & redun     & $-30.2\pm0.4$  & $36.3$ & $65.0$ \\
+20 & agew      & $-30.2\pm0.4$  & $36.3$ & $65.0$ \\
+20 & agew2     & $-16.5\pm0.3$  & $42.3$ & $58.0$ \\
+20 & merge     & $-4.5\pm0.9$   & $33.6$ & $37.9$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Supplementary $\lambda$ interaction ($M{=}5$, $n{=}10$ paired seeds): the
+fifo advantage is positive at every $\lambda$ and grows with $T$
+(all paired $t(9)\geq 11$, $p<10^{-6}$).}
+\label{tab:supp-lambda}
+\begin{tabular}{llccc}
+\toprule
+$\lambda$ & $T$ & unbounded BWT/$\acc$ & fifo BWT/$\acc$ & $\Delta\acc$ \\
+\midrule
+1000  & 10 & $-11.6 / 63.9$ & $-10.8 / 67.4$ & $+3.5$ \\
+5000  & 10 & $-5.2 / 54.5$  & $-6.7 / 59.0$  & $+4.5$ \\
+20000 & 10 & $-1.9 / 49.0$  & $-4.0 / 53.1$  & $+4.1$ \\
+1000  & 20 & $-13.8 / 38.6$ & $-19.7 / 49.5$ & $+10.9$ \\
+5000  & 20 & $-4.5 / 33.4$  & $-11.7 / 42.4$ & $+9.0$ \\
+20000 & 20 & $-1.5 / 29.8$  & $-6.6 / 37.3$  & $+7.5$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Supplementary Criteria $2{\times}2$: primary key (rows) $\times$ secondary
+signal (columns). Only age-first criteria avoid the trap.
+$T{=}10$/$T{=}20$ BWT and accuracy, $M{=}2$ or $M{=}5$ as marked,
+$n{=}3$.}
+\label{tab:supp-criteria}
+\begin{tabular}{lll}
+\toprule
+Primary key & Secondary & Outcome \\
+\midrule
+mass  & ---   & redun: grandfathering, BWT $-30.2$ ($M5$, T20) \\
+mass  & $\times$ age & agew $\equiv$ redun (bit-identical) \\
+age   & ---   & fifo: sliding window, BWT $-10.2$ ($M5$, T20) \\
+age   & median mass & agew2 $\approx$ fifo ($\pm1.5$ pts) \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \section*{Data availability}

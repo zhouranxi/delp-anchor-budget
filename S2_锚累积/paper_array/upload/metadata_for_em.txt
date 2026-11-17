@@ -1,17 +1,19 @@
 TARGET JOURNAL
-Array (Elsevier, ISSN 2590-0056) -- submission entry: https://submit.elsevier.com/ARRAY
+Information Sciences (Elsevier; ISSN 0020-0255 print / 1872-6291 online)
+Submission entry: https://submit.elsevier.com/INS
+Journal homepage: https://www.sciencedirect.com/journal/information-sciences
 
 ARTICLE TYPE
-Regular paper -- "research paper reporting new results"
-(technical notes are capped at 10 pages and are NOT this manuscript's type)
+Original research work
+(the guide lists only this one named type)
 
 TITLE
 The Anchor Accumulation Problem: Bounded Anchor Sets, a Soft–Hard Protection Law, and the Auditable Cost of Regularized Continual Learning
 
-ABSTRACT (247 words -- Array limit 250)
-Regularized continual-learning schemes storing one protection state per task pay a cost growing with sequence length. In usage-localized elastic weight consolidation (DeLP), per-neuron elastic anchors persist at full weight, dragging later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem and repair it by bounding the stack at M entries. A FIFO budget recovers +4.5 and +9.0 final-accuracy points over unbounded DeLP at T = 10 and 20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002), and the budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design is ruled by one constraint: criteria keyed to current constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Discounting online EWC's Fisher mass is itself a soft bound, and both obey one log-linear law between the learning term and the protected-mass horizon (l = 84 - 11ln h, R^2 = 0.99): bounding accumulated anchor mass, not eviction, is the active ingredient, while the explicit window retains what a scalar discount cannot: a discrete, named, policy-selectable protection set readable from the stack trace. We report the boundary honestly: on Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-centric diagnosis and audit framework, not a drop-in accuracy win.
+ABSTRACT (197 words -- InfoSci limit: 250 in Writing/formatting, 200 in Article types; this satisfies BOTH)
+Regularized continual learning stores one protection state per task, whose cost grows with sequence length. In usage-localized elastic weight consolidation (DeLP), full-weight anchors drag later learning; a retention decomposition a_T = l + (T-1)/T BWT localizes the cost in the learning term l. We call this the anchor accumulation problem, repairing it by bounding the stack at M entries. A FIFO budget recovers +4.5/+9.0 accuracy points over unbounded DeLP at T = 10/20 (M = 5; n = 10 paired seeds; Wilcoxon p = 0.002). The budget is distinct from the elastic weight lambda: it controls the age structure of forgetting, lambda its amount. Eviction design obeys one constraint: criteria keyed to constraint mass grandfather-protect stale anchors and evict new ones at birth (-34.5 BWT); age-first criteria are immune. Online EWC's Fisher discount is a soft bound, and both obey one log-linear law in protected-mass horizon (l = 84 - 11ln h, R^2 = 0.99): bounding anchor mass, not eviction, is the active ingredient. On Split-CIFAR-100 a no-protection baseline stays above every protection arm, so the budget result is internal to the protected family. The contribution is a knowledge-centric diagnosis and audit framework, not an accuracy gain.
 
-KEYWORDS (6 -- Array requires 1 to 7)
+KEYWORDS (6 -- InfoSci requires 1 to 7)
 continual learning, elastic weight consolidation, catastrophic forgetting, knowledge management, protection-state curation, stability–plasticity dilemma
 
 AUTHORS
@@ -19,36 +21,47 @@ Given name: Ranxi
 Family name: Zhou
 Affiliation: Hunan University of Chinese Medicine, 300 Xueshi Avenue, Hanpu, Yuelu District, Changsha 410208, Hunan, China
 Email: zhouranxi@foxmail.com
-Role: Corresponding author (also sole author; CRediT roles: Conceptualization, Methodology, Software, Investigation, Formal analysis, Data curation, Writing - original draft, Writing - review & editing, Visualization)
+Role: Corresponding author (also sole author)
+CRediT: Conceptualization, Methodology, Software, Investigation, Formal analysis, Data curation, Writing - original draft, Writing - review & editing, Visualization
 
 MANUSCRIPT STATS
-Pages: 33 double-spaced + 3 supplementary
+Pages: 31 double-spaced (guideline: <= 40 for experimental)  +  5 pages supplementary
 Figures: 5 (vector PDF)
-Tables: 6
+Tables: 3 (guideline: <= 8 figures + tables combined -- we are at 8 exactly)
 References: 30
 Keywords: 6
+Conclusions section: present (InfoSci requires one)
 
 REVIEW MODEL
-Single anonymized (single-blind) -- author names stay on the title page. NO anonymization needed.
+Single anonymized (single-blind). Author names stay on the title page; NO anonymized copy needed.
+Guide does NOT require a separate title-page file -- the title page details in main.pdf suffice.
 
 CITATION STYLE
-Numbered square brackets, numbered in order of first appearance. Current elsarticle-num.bst output already matches.
+No strict requirement at submission; any consistent style is accepted, journal style applied at proof.
+Current numbered elsarticle-num.bst output is already consistent -- no change needed.
 
 HIGHLIGHTS
-5 bullets, each <= 85 characters including spaces. File: highlights.docx
+Encouraged (not mandatory). 3 to 5 bullets, each <= 85 characters including spaces.
+File: highlights.docx  (filename must contain "highlights")
 
 GRAPHICAL ABSTRACT
-Optional but recommended. Must be >= 1328 px wide, longest side horizontal, readable at 13 cm.
-Current graphical_abstract.png: 3900 x 2280 px, 300 dpi, landscape -- COMPLIANT.
+NOT mentioned anywhere in the InfoSci guide -- neither required nor offered.
+Optional to upload. Current graphical_abstract.png: 3900 x 2280 px, 300 dpi, landscape.
 
-DECLARATIONS (upload these files)
-- Declaration of competing interest: declarations.docx (via Elsevier declarations tool output or this file)
-- CRediT authorship contribution statement: in declarations.docx and at the end of main.tex
-- Data availability: GitHub + Zenodo DOI, in declarations.docx and at the end of main.tex
+DECLARATIONS (upload as separate files)
+- Declaration of competing interest: declarations.docx  (MANDATORY; use the Elsevier declarations tool)
+- Vitae (author biography, <= 100 words, editable Word): vitae.docx   <-- InfoSci-specific
+- Passport-type photograph of the author: upload as a separate FIGURE file  <-- InfoSci-specific
+- CRediT authorship contribution statement: in main.tex end matter and in declarations.docx
+- Data availability: GitHub + Zenodo DOI (InfoSci uses Option C: deposit + link REQUIRED)
 - Funding: none
-- Generative AI declaration: in main.tex
+- Generative AI declaration: in main.tex end matter
 
-PRIOR SUBMISSIONS (for the "not under consideration" / prior publication questions)
+PRIOR SUBMISSIONS (for the prior-publication / concurrent-submission questions)
 - Pattern Recognition: PR-D-26-16069, declined without external review, 10 November 2026
 - Neurocomputing: NEUCOM-D-26-24422, declined, 26 October 2026
 Neither is under consideration. Zenodo preprints do not count as prior publication.
+
+COST
+Hybrid journal. Subscription route = no publication fee for authors (the option to select).
+Open-access route = USD 3,040 APC. DO NOT select OA if you want to avoid the fee.

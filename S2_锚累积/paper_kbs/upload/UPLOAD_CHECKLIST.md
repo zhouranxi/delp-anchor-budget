@@ -25,7 +25,7 @@
 | 7 | `Figure`（补充） | `Figure_S1.pdf`、`Figure_S2.pdf` | 补充材料内 2 张，随 supplementary 一并提交 |
 | 8 | `Graphical Abstract`（可选） | `graphical_abstract.png` | **KBS 指南完全没有 graphical abstract 章节**，传不传都不影响评审 |
 
-**图表总数**：正文 **3 图 + 1 表**（tab:paired），补充材料另 2 图 5 表。KBS 指南**未规定图表数量上限**（NOT STATED）。
+**图表总数**：正文 **3 图 + 1 表**（tab:paired），补充材料另 2 图 7 表。KBS 指南**未规定图表数量上限**（NOT STATED）。
 
 **不需要的文件**：作者 Vitae、作者照片 —— 这是 Pattern Recognition / Information Sciences 的要求，**KBS 指南无此要求**，故不传。
 

@@ -26,12 +26,12 @@ Role: Corresponding author (also sole author)
 CRediT: Conceptualization, Methodology, Software, Investigation, Formal analysis, Data curation, Writing - original draft, Writing - review & editing, Visualization
 
 MANUSCRIPT STATS
-Pages: 26 double-spaced (11pt) (11pt) (guide: "preferably no more than 20 double line spaced
+Pages: 26 double-spaced (11pt) (guide: "preferably no more than 20 double line spaced
         manuscript pages, including tables and figures" -- a preference, not a hard limit)
-Figures: 3
-Tables: 1
-Supplementary: separate PDF (statistics rationale, hyperparameters, 3 numerical grids,
-              complete per-task accuracy matrices, 2 auxiliary figures)
+Figures: 3 (main text, Figure_1-3) + 2 in supplementary (Figure_S1/S2)
+Tables: 1 (main text, tab:paired) + 7 in supplementary
+Supplementary: separate PDF, 7 pages (statistics rationale, hyperparameters, 3 numerical grids,
+              eviction-policy definitions, complete per-task accuracy matrices, 2 auxiliary figures)
 References: 30 (main text)
 Keywords: 5
 
